@@ -1,0 +1,34 @@
+{
+  "name": "syntaxsurge-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "node --experimental-strip-types scripts/theme.test.mjs && node --experimental-strip-types scripts/verify-build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test:startup": "node --test scripts/serve.test.mjs"
+  },
+  "dependencies": {
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^22.21.1 || ^24.15.0"
+  },
+  "packageManager": "pnpm@10.15.0"
+}
