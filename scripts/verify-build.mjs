@@ -50,9 +50,12 @@ check("Homepage landmarks, navigation, and all project destinations", () => {
 check(
   "Theme is initialized before content and both controls are available",
   () => {
-    assert.ok(
-      homepage.indexOf("syntaxsurge-theme") < homepage.indexOf("<body"),
-    );
+    const bodyStart = homepage.indexOf("<body");
+    const initializer = homepage.indexOf('<script id="syntaxsurge-theme-init"');
+    assert.ok(bodyStart >= 0 && initializer > bodyStart);
+    assert.ok(initializer < homepage.indexOf('class="skip-link"'));
+    const head = homepage.match(/<head>([\s\S]*?)<\/head>/)?.[1] ?? "";
+    assert.ok(!head.includes("syntaxsurge-theme"));
     assert.ok(homepage.includes('aria-label="Color theme"'));
     assert.ok(homepage.includes('data-mode="light"'));
     assert.ok(homepage.includes('data-mode="dark"'));

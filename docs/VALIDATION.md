@@ -30,3 +30,11 @@ The local preview runs separately on port 3001. The staged domain guide and Ngin
 - The real-run release was nested under ignored `.local/` solely for this check, which produced a Next.js workspace-root warning. The documented production runtime is a sibling of the source checkout. An unknown static project slug returned the expected 404 while Next.js also logged `NoFallbackError`; no route returned an unexpected HTTP status during these checks.
 
 aaPanel deployment is blocked by the browser tool's administrator-enforced policy-check service being unavailable. The aaPanel project and Nginx changes remain unapplied; these local tests are not live server verification.
+
+## Extension-related hydration fix — 25 September 2026
+
+The theme initializer now runs as the first body child instead of a React-owned inline script in the head. It still executes before visible content. This avoids React confusing it with the non-async extension script in the reported trace; no script-level warning suppression was added.
+
+An isolated DOM regression using the application's React/ReactDOM 19.2.8 and actual theme initializer reproduced one hydration attribute warning with the original head placement. With the same extension script prepended to the head and the initializer first in the body, it produced zero warnings and zero recoverable errors. Saved dark mode, color scheme, page content, and the injected extension node remained intact. The fixture and its temporary DOM dependency remain under ignored `.local/hydration-regression`; no runtime dependency was added. This is a DOM regression test, not a visual browser test or protection against arbitrary extension changes elsewhere in the document.
+
+`pnpm lint`, `pnpm build`, and all 38 existing theme/artifact checks pass. The build check now verifies the initializer is outside the head and before visible body content. Local diagnostic files and copied deployment releases are excluded from lint and TypeScript compilation.

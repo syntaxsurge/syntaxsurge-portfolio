@@ -3,7 +3,7 @@ export type Theme = "light" | "dark";
 export const THEME_STORAGE_KEY = "syntaxsurge-theme";
 const THEME_EVENT = "syntaxsurge-theme-change";
 
-// Run in the document head before the page is painted. This string contains no
+// Run at the start of the body before visible content. This string contains no
 // visitor-controlled values and does not depend on the client bundle loading.
 export const themeInitScript = `(function(){var theme;try{theme=window.localStorage.getItem("syntaxsurge-theme")}catch(e){}if(theme!=="light"&&theme!=="dark"){try{theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){theme="light"}}document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme})();`;
 

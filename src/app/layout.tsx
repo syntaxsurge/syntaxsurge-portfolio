@@ -49,10 +49,12 @@ export default function RootLayout({
       className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
       <body id="top">
+        {/* Run before visible content, outside the head where extensions inject scripts. */}
+        <script
+          id="syntaxsurge-theme-init"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
         <a className="skip-link" href="#main">
           Skip to content
         </a>

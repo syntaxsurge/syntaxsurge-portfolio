@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local diagnostics and deployment releases are not application source.
+    ".local/**",
+    ".syntaxsurge-portfolio-deploy/**",
+    "runtime/**",
   ]),
 ]);
 
