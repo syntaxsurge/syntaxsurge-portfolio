@@ -26,6 +26,16 @@ The homepage and all 17 detail routes are rendered at build time. The project se
 
 ## aaPanel startup and automatic updates
 
+Before the first start, install dependencies in the **source checkout configured as the aaPanel project path**, using the project's selected Node version and runtime user:
+
+```sh
+pnpm install --frozen-lockfile --prod=false
+```
+
+If aaPanel reports “Project dependency installation is abnormal,” run that installation in a server terminal using the project's configured directory and runtime user. Our startup runner installs dependencies in separate release directories; it cannot repair a panel dependency check that prevents the runner from being launched. The initial source installation and release installations serve different purposes. Keep pnpm 10.15.0 available to the project. Prefer this frozen install over aaPanel's one-click installer, whose current implementation removes dependency lockfiles before installing.
+
+Then use this startup command:
+
 ```sh
 pnpm serve
 ```

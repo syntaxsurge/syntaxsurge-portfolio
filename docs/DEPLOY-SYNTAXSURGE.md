@@ -36,6 +36,22 @@ runuser -u www -- git clone https://github.com/syntaxsurge/syntaxsurge-portfolio
 
 Install pnpm using the selected Node installation's package manager if it is not already available. Before configuring the service, verify the selected executables and write permissions while running as `www`. If a checkout was uploaded by an administrator instead of cloned as `www`, correct ownership of this portfolio's directories only. Do not recursively change ownership of `/www` or the WordPress and Kaldi directories.
 
+### Install the source dependencies before the first start
+
+Run the following in the actual source checkout configured in aaPanel, with the selected Node installation and as the project's runtime user. Do not assume a different project uses the example source path above.
+
+```sh
+node --version
+pnpm --version
+pnpm install --frozen-lockfile --prod=false
+```
+
+This initial installation prepares the configured project directory. The runner's later installations happen inside separate release directories and cannot satisfy a panel check that blocks launch beforehand. Do not copy dependencies from a Mac or create an empty `node_modules` directory to disguise a failed installation.
+
+If aaPanel displays **“Project dependency installation is abnormal. Please reinstall the dependencies in the module management first and try again!”**, complete the frozen pnpm install above in a server terminal. Wait for successful completion, then start the project with `pnpm serve`. The [official startup check](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/nodeMod.py#L142-L170) emits this message when a project declares dependencies but its configured folder has no `node_modules`, before running its startup command. The exact installed panel version has not been inspected.
+
+Prefer the terminal command over the Module page's one-click installer: the [current official installer implementation](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/packageManage.py#L56-L60) removes `pnpm-lock.yaml` and other lockfiles before installing. The frozen command preserves our committed dependency versions. If installation fails, capture the first actual error in its output; the panel popup alone does not identify a registry, permission, Node version, or package problem. Confirm Node 24.15.0+ within 24.x (or supported 22.x) and pnpm 10.15.0 are available under the selected user. Do not remove the dependency gate or edit panel internals to force a start.
+
 ## Configure the aaPanel Node.js project
 
 Create one Node.js process entry with these settings:
