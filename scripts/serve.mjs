@@ -264,13 +264,13 @@ async function prepareRelease() {
         });
     }
     // Include build tooling even when aaPanel exports NODE_ENV=production.
-    await run(
-      "Installing locked dependencies.",
+    log("Installing locked dependencies.");
+    await launch(
       "pnpm",
       ["install", "--frozen-lockfile", "--prod=false"],
       dir,
-      600_000,
-    );
+      { timeout: 600_000 },
+    ).done;
     const build = launch("pnpm", ["run", "build"], dir, { timeout: 900_000 });
     log(`Building ${sha.slice(0, 12)}. The previous release stays intact.`);
     await build.done;
