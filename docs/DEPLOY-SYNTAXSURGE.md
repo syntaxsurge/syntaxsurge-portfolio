@@ -173,3 +173,56 @@ Inspect an actual hashed `/_next/static/` script and stylesheet URL from the ren
 Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi still loads its own assets, wallet, and sign-in callback. Inspect the aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
 
 If verification fails, restore only the backed-up root routing and portfolio include changes, validate, and reload Nginx. Do not stop, restart, or change the Kaldi service during a portfolio rollback. Retain WordPress data even after a successful cutover.
+
+## Diagnose a 502 Bad Gateway
+
+A Next.js **Ready** message and the runner's homepage check describe startup, not current public health. Run these checks in the **server terminal** while the error occurs, before changing configuration.
+
+### 1. Check the current private services
+
+These are GET requests with response bodies discarded. `000` means no HTTP response; keep the accompanying connection error.
+
+```sh
+curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'portfolio: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3101/
+curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'kaldi: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3100/kaldi-coffee/api/health
+ss -ltnp '( sport = :3101 or sport = :3100 )'
+```
+
+If 3101 fails, inspect current portfolio aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. Leave Kaldi's process and port 3100 unchanged. If both private requests succeed but both public routes fail, investigate their shared Nginx/public routing.
+
+### 2. Inspect the Nginx configuration and matching error
+
+Verify the running Nginx executable and any custom `-c` configuration or `-p` prefix before using the aaPanel path below. Inspect the capture locally; share only relevant domain/upstream lines with private values removed, never the full configuration.
+
+```sh
+ps -eo pid,ppid,user,args | rg 'nginx: master process|nginx: worker process'
+portfolio_nginx_capture="$(mktemp /tmp/portfolio-nginx.XXXXXX)"
+/www/server/nginx/sbin/nginx -T > "$portfolio_nginx_capture" 2>&1
+rg -n 'configuration file|server_name.*syntaxsurge[.]com|proxy_pass|error_log|conflicting server name|duplicate location|test failed' "$portfolio_nginx_capture"
+```
+
+Inspect the captured `syntaxsurge.com` HTTPS block and its includes. Portfolio locations require **`http://127.0.0.1:3101`**: HTTP, IPv4 loopback, port 3101. Check for an old port, HTTPS upstream, or `localhost` resolving to `::1`. Check duplicate vhosts or aaPanel Node domain mappings: server-name warnings can accompany a successful syntax test. `nginx -T` reads configuration on disk, not the configuration loaded by existing workers. See [Nginx command documentation](https://nginx.org/en/docs/switches.html).
+
+Reproduce one failing request, then read the error log named by that active vhost's `error_log` directive. Replace the example path with the actual log path:
+
+```sh
+curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public: HTTP %{http_code}\n' https://syntaxsurge.com/
+tail -n 50 /path/to/the/active-vhost-error.log
+```
+
+Match the request timestamp, host, and upstream. `Connection refused` means the logged address had no reachable listener; `::1`, a wrong port, or upstream SSL errors suggest a routing mismatch. Investigate permission, timeout, or closed-connection errors individually. Separate containers/network namespaces have separate loopback addresses; confirm that topology if applicable. Preserve Kaldi's locations and upstream.
+
+### 3. Compare the origin with public routing
+
+This GET bypasses public DNS and Cloudflare while preserving hostname and TLS verification. If Nginx does not listen on loopback/all interfaces on port 443, replace `127.0.0.1` in `--resolve` with its verified origin address.
+
+```sh
+curl --noproxy '*' --resolve syntaxsurge.com:443:127.0.0.1 -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'origin: HTTP %{http_code}\n' https://syntaxsurge.com/
+curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public: HTTP %{http_code}; peer %{remote_ip}\n' https://syntaxsurge.com/
+```
+
+Keep TLS verification enabled. A Cloudflare Origin CA certificate needs its verified CA supplied with `--cacert /path/to/origin-ca.pem` for direct clients; otherwise report the trust error. See [Cloudflare Origin CA documentation](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/).
+
+If origin succeeds but public fails, compare the configured origin, IPv4/IPv6 DNS targets, proxy routing, and origin logs. Cloudflare can relay an origin 502; its response alone does not identify the cause. Keep the URL, timestamp/timezone, and request identifier for [Cloudflare 502 troubleshooting](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502-504/). Keep ports 3100/3101 private and firewall/TLS protections enabled.
+
+After identifying a configuration mistake, privately back up the affected file outside wildcard includes and fix that rule. Run `/www/server/nginx/sbin/nginx -t` with the verified configuration/prefix. **Reload with the same executable/options and `-s reload` only after the intended fix validates.** Confirm reload logs and repeat private, origin, public, asset, and Kaldi checks. Avoid whole-vhost replacement or blind reloads.
