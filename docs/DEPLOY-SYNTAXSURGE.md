@@ -168,7 +168,7 @@ curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
 curl -fsS https://syntaxsurge.com/kaldi-coffee/api/health
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 17 project pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that the homepage and project pages use their own HTTPS canonical URLs and that the sitemap has 18 portfolio URLs. The portfolio sitemap does not claim or replace Kaldi's internal routing.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the three app pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that the homepage, project pages, and app pages use their own HTTPS canonical URLs and that the sitemap has 22 portfolio URLs. The portfolio sitemap does not claim or replace Kaldi's internal routing.
 
 Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi still loads its own assets, wallet, and sign-in callback. Inspect the aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
 
