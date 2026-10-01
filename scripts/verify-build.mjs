@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { projects, awards } from "../src/data/portfolio.ts";
 import { awardMedia } from "../src/data/award-media.ts";
 import { parseSiteOrigin, siteHref } from "../src/lib/site.ts";
+import { wrapItUp, wrapItUpPaths } from "../src/data/wrap-it-up.ts";
 const root = process.cwd();
 const app = resolve(root, ".next/server/app");
 const read = (file) => readFileSync(resolve(app, file), "utf8");
@@ -20,8 +21,8 @@ function check(label, run) {
   console.log(`PASS ${label}`);
 }
 check("Complete, unique project and award collection", () => {
-  assert.equal(projects.length, 17);
-  assert.equal(new Set(projects.map((p) => p.id)).size, 17);
+  assert.equal(projects.length, 18);
+  assert.equal(new Set(projects.map((p) => p.id)).size, 18);
   assert.equal(awards.length, 14);
   for (const p of projects) {
     assert.match(p.id, /^[a-z0-9-]+$/);
@@ -107,7 +108,7 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   assert.ok(homepageCanonical);
   assert.equal(new URL(homepageCanonical).href, siteHref());
   const sitemap = read("sitemap.xml.body");
-  assert.equal((sitemap.match(/<loc>/g) || []).length, projects.length + 1);
+  assert.equal((sitemap.match(/<loc>/g) || []).length, projects.length + wrapItUpPaths.length + 1);
   for (const project of projects) {
     const canonical = siteHref(`/work/${project.id}`);
     assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
@@ -118,6 +119,37 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
     );
   }
   assert.ok(read("robots.txt.body").includes(siteHref("/sitemap.xml")));
+});
+check("Wrap It Up! pages have public metadata, support, and honest beta links", () => {
+  const sitemap = read("sitemap.xml.body");
+  for (const path of wrapItUpPaths) {
+    const html = read(`${path.slice(1)}.html`);
+    assert.equal((html.match(/<h1\b/g) || []).length, 1);
+    assert.ok(html.includes('id="main"'));
+    assert.ok(html.includes('aria-label="Wrap It Up! navigation"'));
+    assert.ok(html.includes(`rel="canonical" href="${siteHref(path)}"`));
+    assert.ok(html.includes('name="description"'));
+    assert.ok(html.includes('property="og:image"'));
+    assert.ok(sitemap.includes(`<loc>${siteHref(path)}</loc>`));
+    for (const destination of wrapItUpPaths)
+      assert.ok(html.includes(`href="${destination}"`));
+  }
+  const game = read("apps/wrap-it-up.html");
+  const support = read("apps/wrap-it-up/support.html");
+  const privacy = read("apps/wrap-it-up/privacy.html");
+  assert.ok(game.includes(`href="${wrapItUp.playTestingUrl}"`));
+  assert.ok(game.includes(`href="${wrapItUp.testFlightUrl}"`));
+  assert.ok(game.includes("allowlisted Google account"));
+  assert.ok(game.includes("not yet a public App Store or Google Play release"));
+  assert.ok(support.includes(wrapItUp.supportEmail));
+  assert.ok(support.includes("<details"));
+  assert.ok(support.includes("cannot restore a local save from a server"));
+  assert.ok(privacy.includes(wrapItUp.supportEmail));
+  assert.ok(privacy.includes("automatic startup entry points"));
+  assert.ok(privacy.includes("Google Mobile Ads"));
+  assert.ok(!privacy.includes("collect no data"));
+  assert.ok(privacy.includes("In build 4"));
+  assert.ok(privacy.includes("Release candidate 1.0.1 (5)"));
 });
 for (const project of projects) {
   check(`Static project page: ${project.title}`, () => {

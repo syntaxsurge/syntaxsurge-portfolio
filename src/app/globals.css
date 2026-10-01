@@ -1319,6 +1319,124 @@ svg {
 .project-page {
   padding: 43px 0 86px;
 }
+.app-navigation,
+.app-page-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 26px;
+  font-size: 16px;
+}
+.app-navigation {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0 22px;
+  margin-bottom: 36px;
+}
+.app-navigation a,
+.app-page-footer a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.app-artwork {
+  margin: 34px 0 50px;
+}
+.app-artwork img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.app-artwork figcaption,
+.app-small-copy,
+.app-page .project-page-header > .app-small-copy {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.app-artwork figcaption {
+  margin-top: 12px;
+}
+.app-copy {
+  max-width: 880px;
+  margin: 44px 0;
+}
+.app-copy h2 {
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.25;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+.app-copy p + p {
+  margin-top: 18px;
+}
+.app-copy p a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.app-callout {
+  max-width: none;
+  padding: clamp(22px, 4vw, 46px);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 18px;
+}
+.app-callout > p {
+  max-width: 800px;
+}
+.app-callout .project-links {
+  margin: 24px 0;
+}
+.app-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 28px;
+  margin-top: 30px;
+}
+.app-feature-grid h3 {
+  font-size: 21px;
+  margin-bottom: 10px;
+}
+.app-feature-grid p {
+  color: var(--muted);
+  font-size: 17px;
+}
+.app-faq details {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+}
+.app-faq details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.app-faq summary {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 4px 0;
+}
+.app-faq details p {
+  margin-top: 16px;
+  color: var(--muted);
+}
+.app-policy section {
+  margin: 42px 0;
+}
+.app-policy h2 {
+  font-size: 29px;
+}
+.app-page-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 60px;
+  padding-top: 24px;
+  color: var(--muted);
+}
+.visual-wrap-it-up img {
+  object-fit: cover;
+}
 .project-breadcrumb {
   display: flex;
   align-items: center;

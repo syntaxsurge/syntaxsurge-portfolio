@@ -1,6 +1,6 @@
 # Jade · SyntaxSurge
 
-A standalone Next.js portfolio for Jade Laurence Empleo. Contains 17 projects, 14 award entries with authentic project previews and YouTube demos, four featured product covers, project detail pages, a searchable/filterable archive, and LinkedIn/GitHub contact links. Light and dark themes follow the device preference initially and remember an explicit choice.
+A standalone Next.js portfolio for Jade Laurence Empleo. Contains 18 projects, 14 award entries with authentic project previews and YouTube demos, four featured product covers, project detail pages, a searchable/filterable archive, and LinkedIn/GitHub contact links. Light and dark themes follow the device preference initially and remember an explicit choice.
 
 ## Run locally
 
@@ -23,7 +23,7 @@ pnpm test
 pnpm test:startup
 ```
 
-The homepage and all 17 detail routes are rendered at build time. The project search/filter controls and theme switcher use client state. No database, secrets, login, contact-form provider, or visitor tracking is needed. Images and fonts are served locally. Demo links open YouTube on request; no video players or tracking scripts load on the portfolio. A generated PNG provides the social-sharing preview.
+The homepage and all 18 detail routes are rendered at build time. The project search/filter controls and theme switcher use client state. No database, secrets, login, contact-form provider, or visitor tracking is needed. Images and fonts are served locally. Demo links open YouTube on request; no video players or tracking scripts load on the portfolio. A generated PNG provides the social-sharing preview.
 
 ## aaPanel startup and automatic updates
 
@@ -60,6 +60,14 @@ The recommended source checkout is `/www/syntaxsurge-portfolio/source`, owned by
 An existing server running the earlier `pnpm serve` implementation needs a one-time source update while stopped, after this change is committed and pushed. Follow the adoption procedure in [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md). Subsequent starts update the runner's source automatically; a newly fetched runner implementation takes effect on the following restart because the current process already loaded its code.
 
 The production origin defaults to `https://syntaxsurge.com`. Canonical links, the sitemap, robots metadata, and social-preview URLs use that origin; `SITE_URL` can override it with another HTTP(S) origin. See [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md) for the exact aaPanel settings, update limits, logs, and rollback procedure. The staged Nginx configuration preserves `/kaldi-coffee` and replaces only WordPress's root routing. **Deployment preparation is not a completed live cutover.**
+
+## Wrap It Up! app pages
+
+- [Game](https://syntaxsurge.com/apps/wrap-it-up)
+- [Support](https://syntaxsurge.com/apps/wrap-it-up/support)
+- [Privacy](https://syntaxsurge.com/apps/wrap-it-up/privacy)
+
+These static pages share the portfolio navigation and theme. `src/data/wrap-it-up.ts` stores version-scoped release facts, tester links, and the verified support address. Privacy copy follows the app release audit: progress/captures are local, no player account or gameplay backend exists, ads and IAP are disabled, and packaged SDKs are disclosed without a blanket network-free claim. Update the policy alongside any change to runtime data handling.
 
 ## Edit content
 

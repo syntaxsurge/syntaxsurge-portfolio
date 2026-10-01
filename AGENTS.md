@@ -39,11 +39,12 @@ Analyze → Extend → Simplify → Delete. Every change should either improve c
 
 # Platform Summary
 
-A Next.js App Router portfolio for Jade Laurence Empleo (SyntaxSurge), with 17 projects, 14 hackathon recognitions, and locally served product artwork. Pages support light and dark themes and responsive, keyboard-accessible navigation.
+A Next.js App Router portfolio for Jade Laurence Empleo (SyntaxSurge), with 18 projects, 14 hackathon recognitions, and locally served product artwork. Pages support light and dark themes and responsive, keyboard-accessible navigation.
 
 ## Pages
 
 - `/`: selected projects, the searchable full project collection, about, recognition, and contact. Section anchors are `#work`, `#archive`, `#about`, `#recognition`, and `#contact`; the shared sticky header links directly to all five sections on every screen size.
+- `/apps/wrap-it-up`, `/apps/wrap-it-up/support`, and `/apps/wrap-it-up/privacy`: statically generated game, beta-install/support, and version-scoped privacy pages. Shared app navigation, the portfolio theme, and canonical HTTPS metadata are reused. `src/data/wrap-it-up.ts` owns the beta links, current disclosed build, approved local artwork, and verified publisher support email. Android internal testing is allowlist-only; TestFlight availability follows Apple review and group access.
 - `/work/[slug]`: statically generated project details with breadcrumbs, product/demo/source actions, project focus, recognition, and links to the next project and full collection.
 - Missing routes display a recovery page with links to the full collection and homepage, plus shared contact options.
 - Project browsing displays category counts, a live result count, and explicit details and product/demo/source links. Search and category filters combine; resetting restores all projects and focuses the search field.

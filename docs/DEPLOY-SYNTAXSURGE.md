@@ -6,7 +6,7 @@ Keep Kaldi at **https://syntaxsurge.com/kaldi-coffee** on its existing service. 
 
 | Public route | Application | Private listener |
 | --- | --- | --- |
-| `/`, `/work/*`, `/_next/*`, `/images/*`, metadata routes | Portfolio | `127.0.0.1:3101` |
+| `/`, `/work/*`, `/apps/wrap-it-up/*`, `/_next/*`, `/images/*`, metadata routes | Portfolio | `127.0.0.1:3101` |
 | `/kaldi-coffee`, `/kaldi-coffee/*` | Existing Kaldi app | `127.0.0.1:3100` |
 
 ## Install the source and runtime
@@ -226,3 +226,7 @@ Keep TLS verification enabled. A Cloudflare Origin CA certificate needs its veri
 If origin succeeds but public fails, compare the configured origin, IPv4/IPv6 DNS targets, proxy routing, and origin logs. Cloudflare can relay an origin 502; its response alone does not identify the cause. Keep the URL, timestamp/timezone, and request identifier for [Cloudflare 502 troubleshooting](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502-504/). Keep ports 3100/3101 private and firewall/TLS protections enabled.
 
 After identifying a configuration mistake, privately back up the affected file outside wildcard includes and fix that rule. Run `/www/server/nginx/sbin/nginx -t` with the verified configuration/prefix. **Reload with the same executable/options and `-s reload` only after the intended fix validates.** Confirm reload logs and repeat private, origin, public, asset, and Kaldi checks. Avoid whole-vhost replacement or blind reloads.
+
+## Wrap It Up! public pages
+
+The portfolio owns `/apps/wrap-it-up`, `/apps/wrap-it-up/support`, and `/apps/wrap-it-up/privacy` on the same HTTPS origin. These extensionless pages use the existing portfolio catch-all; their local image uses the existing `/images/` route. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify all three live pages, their individual canonical/description/social metadata, the publisher support address, and their sitemap entries after each release.

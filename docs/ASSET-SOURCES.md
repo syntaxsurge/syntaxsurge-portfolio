@@ -20,3 +20,7 @@ Suggested image descriptions:
 - Sipava: “Sipava campaign artwork showing its tasks, social feed, and leaderboard screens.”
 - ClipLore background: use empty alt text when a nearby project title already identifies the card.
 - SyntaxSurge mark: “SyntaxSurge.”
+
+## Wrap It Up!
+
+`public/images/wrap-it-up-cover.webp` is a 1024×500 WebP derivative of the approved `docs/store/feature-graphic-1024x500.png` from the owner’s Wrap It Up! repository. It is official promotional artwork, not a gameplay screenshot. The source uses paper/ribbon/gift scenery and excludes the character artwork under the app’s separate release audit. Converted locally at quality 88; no external image service is used at runtime.

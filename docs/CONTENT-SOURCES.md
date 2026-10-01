@@ -6,7 +6,7 @@ Reviewed on 25 September 2026. This is an editorial record for future updates, n
 
 The portfolio owner supplied the project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts in the project request. The awards are represented as the owner's résumé claims; this work did not independently authenticate prize disbursements or official winner certificates.
 
-The site contains 17 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
+The site contains 18 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
 
 - [GitHub profile](https://github.com/syntaxsurge) confirms the name Jade Laurence Empleo and the SyntaxSurge handle.
 - [LinkedIn profile](https://www.linkedin.com/in/jade-laurence-empleo/) was supplied by the owner. No private LinkedIn content was collected.
@@ -49,3 +49,9 @@ The descriptions and awards below are based on the owner's supplied text. The li
 | AIPenGuild | [Repository](https://github.com/syntaxsurge/AIPenGuild) | NFT Category 1st place, Polkadot Byaheng Pilipinas, March 2025. No prize amount supplied. |
 
 Project years in the archive use the associated award year, not a claimed first launch date. Categories and short tags are editorial groupings, not assertions of an exhaustive technology stack. The public-site links identify products or demos; their inclusion does not assert that external services are continuously available. No user counts, revenue, clients, uptime figures, performance claims, or missing award amounts were invented.
+
+## Wrap It Up!
+
+The app pages and portfolio entry are based on the owner’s Wrap It Up! repository, its current `CLAUDE.md`, `docs/PRIVACY.md`, release checklist, and verified mobile release configuration. The published privacy scope includes distributed beta 1.0.1 (4) and release candidate 1.0.1 (5): local saves/captures, no player account or gameplay backend, and disabled rewarded ads and real-money IAP. It explicitly discloses build 4’s automatic SDK startup risk and build 5’s reviewed startup-blocking configuration without applying that behavior to older installed binaries. This is not a claim that all platform services or packaged components are network-free. Future ad data categories link to official Google, Unity, AppLovin, and Pangle disclosures.
+
+The publisher support address `ejadelaurence@icloud.com` was verified from the same App Store Connect app’s publisher/review information. Beta links are the owner’s Google Play internal enrollment page `4701089363572737974` and TestFlight invitation `9f2WNa94`; the copy explains their access and review limits. No public-store launch is claimed.

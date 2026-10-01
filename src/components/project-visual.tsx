@@ -8,6 +8,18 @@ export function ProjectVisual({
   id: string;
   priority?: boolean;
 }) {
+  if (id === "wrap-it-up")
+    return (
+      <div className="project-visual visual-wrap-it-up">
+        <Image
+          src="/images/wrap-it-up-cover.webp"
+          alt="Wrap It Up! game artwork with paper, ribbon, scissors, and two wrapped gifts in a cozy shop"
+          fill
+          sizes="(max-width: 700px) 100vw, 1100px"
+          preload={priority}
+        />
+      </div>
+    );
   if (id === "cliplore")
     return (
       <div className="project-visual visual-cliplore">

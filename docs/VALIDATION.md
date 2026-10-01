@@ -59,3 +59,11 @@ These checks ran locally on macOS. The change has not been committed, pushed, or
 - Browser interaction checks covered combined category/search filtering, empty results, reset to all 17 projects, long unbroken queries, focus restoration to search, the keyboard skip link, dark-theme persistence across navigation/reload, and recovery from the missing-page screen.
 - No console warnings or errors were observed for the normal production-preview routes. Existing artifact checks confirm text-token contrast across both themes and reduced-motion/focus CSS; these checks are not a complete accessibility certification.
 - Desktop/mobile screenshots are saved under ignored `.local/ux-review/`. The reviewed local production preview uses loopback port 3005. No server deployment is part of this UI task.
+
+## Wrap It Up! public app pages — 2 October 2026
+
+- `pnpm typecheck`, `pnpm lint`, `pnpm build`, and 40 theme/generated-artifact checks pass on Node 22.21.1 and pnpm 10.15.0. No dependency or startup-runner changes are needed.
+- All 18 project detail routes and the three app pages render statically. The sitemap contains 22 URLs, and each app page has one H1, shared navigation, its own HTTPS canonical URL, description, and social metadata.
+- Support uses the verified publisher address `ejadelaurence@icloud.com`; FAQs explain beta enrollment, offline gameplay, local-save limits, capture sharing, disabled monetization, and data removal.
+- Privacy distinguishes distributed Android build 4’s packaged SDK startup from release candidate 5’s reviewed startup-blocking configuration, and describes platform beta services, local data, voluntary support messages, and website hosting logs. No blanket no-data or zero-network guarantee is made.
+- The local production preview was visually checked on desktop and at 390px/320px phone widths in dark and light themes. Support FAQs expand correctly and their beta links are exposed as real links.

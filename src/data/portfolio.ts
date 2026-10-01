@@ -83,6 +83,18 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "wrap-it-up",
+    title: "Wrap It Up!",
+    description:
+      "A cozy, offline gift-wrapping shop game. Handcraft presents, meet customers, and find your own rhythm behind Grandma Mimi's counter.",
+    category: "Products",
+    year: "Current",
+    tags: ["Godot", "Mobile game", "Offline play"],
+    links: [
+      { label: "Visit game", href: "https://syntaxsurge.com/apps/wrap-it-up" },
+    ],
+  },
+  {
     id: "croignite",
     title: "CroIgnite",
     description:
