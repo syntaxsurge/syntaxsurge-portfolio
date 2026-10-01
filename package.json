@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types scripts/theme.test.mjs && node --experimental-strip-types scripts/verify-build.mjs",
     "serve": "node scripts/serve.mjs",
+    "deploy:server": "node scripts/serve.mjs",
     "test:startup": "node --test scripts/serve.test.mjs"
   },
   "dependencies": {

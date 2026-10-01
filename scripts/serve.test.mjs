@@ -10,6 +10,7 @@ import {
   rmSync,
   existsSync,
   readdirSync,
+  symlinkSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
@@ -100,6 +101,7 @@ if(process.argv[2]==='install'){
   return {
     dir,
     source,
+    remote,
     state,
     env,
     port,
@@ -116,6 +118,19 @@ if(process.argv[2]==='install'){
       return JSON.parse(readFileSync(join(state, "releases.json"), "utf8"));
     },
   };
+}
+function publisher(f) {
+  const directory = join(f.dir, "publisher");
+  git(f.dir, "clone", "--branch", "main", f.remote, directory);
+  git(directory, "config", "user.email", "test@example.invalid");
+  git(directory, "config", "user.name", "Remote publisher");
+  return directory;
+}
+function publish(directory, message, { force = false } = {}) {
+  git(directory, "add", "-A");
+  git(directory, "commit", "-m", message);
+  git(directory, "push", ...(force ? ["--force"] : []), "origin", "main");
+  return git(directory, "rev-parse", "HEAD");
 }
 function start(source, env) {
   const child = spawn(process.execPath, ["scripts/serve.mjs"], {
@@ -206,6 +221,167 @@ test("fetches pinned commits, reuses completed builds, promotes only healthy rel
   await stop(child);
   assert.equal(readdirSync(join(f.state, "releases")).length, 2);
 });
+test("force-sync replaces local commits, staged and unstaged changes, and untracked source while preserving operational files", async (t) => {
+  const f = await fixture(t);
+  const remote = publisher(f);
+  writeFileSync(join(remote, "version"), "published");
+  writeFileSync(join(remote, ".gitignore"), "unrelated-file\n");
+  const expected = publish(remote, "Published update");
+
+  writeFileSync(join(f.source, "version"), "unpublished local commit");
+  git(f.source, "add", "version");
+  git(f.source, "commit", "-m", "Server-local commit");
+  writeFileSync(join(f.source, "version"), "staged server edit");
+  git(f.source, "add", "version");
+  writeFileSync(join(f.source, "version"), "unstaged server edit");
+  writeFileSync(join(f.source, "temporary-source"), "remove me");
+  mkdirSync(join(f.source, "temporary-directory"));
+  writeFileSync(join(f.source, "temporary-directory", "file"), "remove me");
+  writeFileSync(join(f.source, ".git", "info", "exclude"), "ignored-note\n");
+  writeFileSync(join(f.source, "ignored-note"), "keep ignored local files");
+  writeFileSync(join(f.source, ".env.extra"), "LOCAL_SETTING=preserved\n");
+  for (const directory of ["node_modules", ".next"]) {
+    mkdirSync(join(f.source, directory));
+    writeFileSync(join(f.source, directory, "local-marker"), "preserved");
+  }
+  const originalEnvironment = readFileSync(join(f.source, ".env.local"), "utf8");
+
+  const child = f.start();
+  await waitFor(child, "Serving");
+  assert.equal(git(f.source, "rev-parse", "HEAD"), expected);
+  assert.equal(readFileSync(join(f.source, "version"), "utf8"), "published");
+  assert.equal(git(f.source, "diff", "--name-only"), "");
+  assert.equal(git(f.source, "diff", "--cached", "--name-only"), "");
+  assert.equal(existsSync(join(f.source, "temporary-source")), false);
+  assert.equal(existsSync(join(f.source, "temporary-directory")), false);
+  assert.equal(readFileSync(join(f.source, ".env.local"), "utf8"), originalEnvironment);
+  assert.equal(readFileSync(join(f.source, ".env.extra"), "utf8"), "LOCAL_SETTING=preserved\n");
+  assert.equal(readFileSync(join(f.source, "ignored-note"), "utf8"), "keep ignored local files");
+  for (const directory of ["node_modules", ".next"])
+    assert.equal(readFileSync(join(f.source, directory, "local-marker"), "utf8"), "preserved");
+  assert.equal(readFileSync(join(f.state, "releases", f.history()[0], "version"), "utf8"), "published");
+  await stop(child);
+});
+
+test("a cached release still force-syncs the source without reinstalling or rebuilding", async (t) => {
+  const f = await fixture(t);
+  let child = f.start();
+  await waitFor(child, "Serving");
+  await stop(child);
+  const release = f.history()[0];
+  const commands = readFileSync(join(f.dir, "commands"), "utf8");
+  const expected = git(f.source, "rev-parse", "HEAD");
+  writeFileSync(join(f.source, "version"), "server edit");
+  writeFileSync(join(f.source, "temporary-source"), "remove me");
+  child = f.start();
+  await waitFor(child, "Serving");
+  assert.match(child.logs, /Reusing completed release/);
+  assert.equal(git(f.source, "rev-parse", "HEAD"), expected);
+  assert.equal(readFileSync(join(f.source, "version"), "utf8"), "one");
+  assert.equal(existsSync(join(f.source, "temporary-source")), false);
+  assert.equal(f.history()[0], release);
+  assert.equal(readFileSync(join(f.dir, "commands"), "utf8"), commands);
+  await stop(child);
+});
+
+test("force-sync follows a force-pushed origin/main history", async (t) => {
+  const f = await fixture(t);
+  const remote = publisher(f);
+  const initial = git(remote, "rev-parse", "HEAD");
+  writeFileSync(join(remote, "version"), "two");
+  const replaced = publish(remote, "Second release");
+  let child = f.start();
+  await waitFor(child, "Serving");
+  assert.equal(git(f.source, "rev-parse", "HEAD"), replaced);
+  await stop(child);
+
+  git(remote, "reset", "--hard", initial);
+  writeFileSync(join(remote, "version"), "rewritten history");
+  const expected = publish(remote, "Replacement history", { force: true });
+  child = f.start();
+  await waitFor(child, "Serving");
+  assert.equal(git(f.source, "rev-parse", "HEAD"), expected);
+  assert.equal(readFileSync(join(f.source, "version"), "utf8"), "rewritten history");
+  assert.equal(readFileSync(join(f.state, "releases", f.history()[0], "version"), "utf8"), "rewritten history");
+  await stop(child);
+});
+
+test("overlapping runtime directories fail before source mutation or runtime initialization", async (t) => {
+  for (const location of ["source", "nested", "symlink", "outward-symlink", "ancestor"]) {
+    await t.test(location, async (t) => {
+      const f = await fixture(t);
+      const originalHead = git(f.source, "rev-parse", "HEAD");
+      writeFileSync(join(f.source, "version"), "preserve server edit");
+      writeFileSync(join(f.source, "temporary-source"), "preserve untracked file");
+      if (location === "source") f.env.PORTFOLIO_DEPLOY_DIR = f.source;
+      if (location === "nested") f.env.PORTFOLIO_DEPLOY_DIR = join(f.source, "unsafe-runtime");
+      if (location === "ancestor") f.env.PORTFOLIO_DEPLOY_DIR = f.dir;
+      if (location === "symlink") {
+        const alias = join(f.dir, "source-alias");
+        symlinkSync(f.source, alias, "dir");
+        f.env.PORTFOLIO_DEPLOY_DIR = join(alias, "unsafe-runtime");
+      }
+      if (location === "outward-symlink") {
+        const external = join(f.dir, "external-runtime");
+        mkdirSync(external);
+        const alias = join(f.source, "runtime-alias");
+        symlinkSync(external, alias, "dir");
+        f.env.PORTFOLIO_DEPLOY_DIR = alias;
+      }
+      const child = f.start();
+      assert.equal(await child.done, 1);
+      assert.match(child.logs, /runtime|PORTFOLIO_DEPLOY_DIR|outside|overlap/i);
+      assert.equal(git(f.source, "rev-parse", "HEAD"), originalHead);
+      assert.equal(readFileSync(join(f.source, "version"), "utf8"), "preserve server edit");
+      assert.equal(readFileSync(join(f.source, "temporary-source"), "utf8"), "preserve untracked file");
+      assert.equal(existsSync(join(f.env.PORTFOLIO_DEPLOY_DIR, "serve.lock")), false);
+      assert.equal(existsSync(join(f.env.PORTFOLIO_DEPLOY_DIR, "releases")), false);
+      assert.equal(existsSync(join(f.source, "unsafe-runtime")), false);
+    });
+  }
+});
+
+test("a runner copied beneath another Git checkout cannot reset the parent repository", async (t) => {
+  const f = await fixture(t);
+  const copied = join(f.source, "copied-app");
+  mkdirSync(join(copied, "scripts"), { recursive: true });
+  cpSync(script, join(copied, "scripts", "serve.mjs"));
+  const originalHead = git(f.source, "rev-parse", "HEAD");
+  writeFileSync(join(f.source, "version"), "preserve parent changes");
+  const child = start(copied, f.env);
+  assert.equal(await child.done, 1);
+  assert.match(child.logs, /repository|checkout|root|top.level/i);
+  assert.equal(git(f.source, "rev-parse", "HEAD"), originalHead);
+  assert.equal(readFileSync(join(f.source, "version"), "utf8"), "preserve parent changes");
+  assert.equal(existsSync(join(copied, "scripts", "serve.mjs")), true);
+  assert.equal(existsSync(join(f.state, "serve.lock")), false);
+  assert.equal(existsSync(join(f.state, "releases")), false);
+});
+
+test("a target commit tracking operational files fails before discarding local configuration", async (t) => {
+  for (const file of [".env.local", "node_modules/local-marker", ".next/local-marker"]) {
+    await t.test(file, async (t) => {
+      const f = await fixture(t);
+      const remote = publisher(f);
+      const originalHead = git(f.source, "rev-parse", "HEAD");
+      const originalEnvironment = readFileSync(join(f.source, ".env.local"), "utf8");
+      const directory = file.includes("/") ? file.split("/")[0] : null;
+      if (directory) mkdirSync(join(remote, directory));
+      writeFileSync(join(remote, file), directory ? "tracked incoming dependency/build" : "SITE_URL=https://incoming.example.invalid\n");
+      git(remote, "add", "-f", file);
+      publish(remote, "Unsafe operational file");
+      writeFileSync(join(f.source, "version"), "preserve server edit");
+      const child = f.start();
+      assert.equal(await child.done, 1);
+      assert.match(child.logs, /track|protected|operational|environment/i);
+      assert.equal(git(f.source, "rev-parse", "HEAD"), originalHead);
+      assert.equal(readFileSync(join(f.source, "version"), "utf8"), "preserve server edit");
+      assert.equal(readFileSync(join(f.source, ".env.local"), "utf8"), originalEnvironment);
+      assert.equal(existsSync(join(f.dir, "commands")), false);
+      assert.equal(existsSync(join(f.state, "releases.json")), false);
+    });
+  }
+});
 for (const failure of ["bad-install", "bad-build", "bad-start"]) {
   test(`${failure} preserves the last healthy release`, async (t) => {
     const f = await fixture(t);
@@ -280,6 +456,8 @@ test("stale locks recover but invalid locks fail closed", async (t) => {
 });
 test("an occupied port fails without terminating the existing listener", async (t) => {
   const f = await fixture(t);
+  writeFileSync(join(f.source, "version"), "preserve server edit");
+  writeFileSync(join(f.source, "temporary-source"), "preserve untracked file");
   const unrelated = createServer();
   await new Promise((res) => unrelated.listen(f.port, "127.0.0.1", res));
   try {
@@ -287,6 +465,9 @@ test("an occupied port fails without terminating the existing listener", async (
     assert.equal(await child.done, 1);
     assert.match(child.logs, /already occupied/);
     assert.equal(unrelated.listening, true);
+    assert.equal(readFileSync(join(f.source, "version"), "utf8"), "preserve server edit");
+    assert.equal(readFileSync(join(f.source, "temporary-source"), "utf8"), "preserve untracked file");
+    assert.equal(existsSync(join(f.dir, "commands")), false);
   } finally {
     await new Promise((res) => unrelated.close(res));
   }

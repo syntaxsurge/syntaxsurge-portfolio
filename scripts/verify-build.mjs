@@ -41,6 +41,16 @@ check("Homepage landmarks, navigation, and all project destinations", () => {
   assert.ok(homepage.includes('id="main"'));
   for (const id of ["work", "about", "recognition", "archive", "contact"])
     assert.ok(homepage.includes(`id="${id}"`));
+  const header = homepage.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
+  assert.ok(header);
+  for (const id of ["work", "archive", "about", "recognition", "contact"])
+    assert.ok(header.includes(`href="/#${id}"`));
+  assert.ok(homepage.indexOf('id="archive"') < homepage.indexOf('id="about"'));
+  assert.ok(!homepage.includes("<details"));
+  assert.equal(
+    (homepage.match(/class="award-card(?: award-card-compact)?"/g) || []).length,
+    awards.length,
+  );
   for (const p of projects)
     assert.ok(homepage.includes(`href="/work/${p.id}"`));
   assert.ok(!homepage.includes("Create Next App"));
@@ -62,7 +72,7 @@ check(
   },
 );
 check(
-  "Every recognition has a real local preview and a direct YouTube link",
+  "Every recognition has local media and a direct YouTube link",
   () => {
     assert.equal(Object.keys(awardMedia).length, awards.length);
     for (const award of awards) {
@@ -117,6 +127,12 @@ for (const project of projects) {
     assert.ok(plain(headings[0][1]).includes(project.title));
     assert.ok(html.includes('name="description"'));
     assert.ok(html.includes('id="main"'));
+    assert.ok(html.includes('aria-label="Breadcrumb"'));
+    assert.ok(html.includes('aria-label="More projects"'));
+    const header = html.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
+    assert.ok(header);
+    for (const id of ["work", "archive", "about", "recognition", "contact"])
+      assert.ok(header.includes(`href="/#${id}"`));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));
   });

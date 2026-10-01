@@ -48,18 +48,19 @@ export default async function ProjectPage({
   return (
     <>
       <Header />
-      <main id="main" className="project-page shell">
-        <Link href="/#archive" className="back-link">
-          <span>←</span> All projects
-        </Link>
+      <main id="main" tabIndex={-1} className="project-page shell">
+        <nav className="project-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/#archive">All projects</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{p.title}</span>
+        </nav>
         <div className="project-page-header">
           <span className="eyebrow section-label">
             {p.category.toUpperCase()} / {p.year}
           </span>
-          <h1>
-            {p.title}
-            <span>↗</span>
-          </h1>
+          <h1>{p.title}</h1>
           <p>{p.description}</p>
           <div className="project-links">
             {p.links.map((l, i) => (
@@ -71,6 +72,7 @@ export default async function ProjectPage({
                 href={l.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${l.label}: ${p.title} (opens in a new tab)`}
               >
                 {l.label}
                 <Arrow diagonal />
@@ -85,6 +87,7 @@ export default async function ProjectPage({
                   href={media.video.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Watch ${p.title} demo (opens in a new tab)`}
                 >
                   <PlayIcon />
                   Watch demo
@@ -92,6 +95,9 @@ export default async function ProjectPage({
                 </a>
               )}
           </div>
+          <p className="project-action-note">
+            Product, demo, and source links open in a new tab.
+          </p>
         </div>
         {media && !featuredIds.includes(p.id) ? (
           <DemoPreview projectId={p.id} priority />
@@ -107,8 +113,20 @@ export default async function ProjectPage({
           </div>
         )}
         <div className="project-detail-grid">
-          <div>
-            <span className="eyebrow">BUILT AROUND</span>
+          <section aria-labelledby="project-focus-title">
+            <dl className="project-overview">
+              <div>
+                <dt>Category</dt>
+                <dd>{p.category}</dd>
+              </div>
+              <div>
+                <dt>Year</dt>
+                <dd>{p.year}</dd>
+              </div>
+            </dl>
+            <h2 className="eyebrow" id="project-focus-title">
+              PROJECT FOCUS
+            </h2>
             <div className="detail-tags">
               {p.tags.map((t) => (
                 <span key={t}>{t}</span>
@@ -119,19 +137,20 @@ export default async function ProjectPage({
               href="https://github.com/syntaxsurge"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit SyntaxSurge on GitHub (opens in a new tab)"
             >
-              By SyntaxSurge <Arrow diagonal />
+              GitHub profile <Arrow diagonal />
             </a>
-          </div>
-          <div>
-            <span className="eyebrow">
+          </section>
+          <section aria-labelledby="project-recognition-title">
+            <h2 className="eyebrow" id="project-recognition-title">
               {recognition.length ? "RECOGNITION" : "EXPLORE THE PRODUCT"}
-            </span>
+            </h2>
             {recognition.length ? (
               recognition.map((a) => (
-                <section key={a.event} className="detail-award">
+                <div key={a.event} className="detail-award">
                   <Trophy />
-                  <h2>{a.title}</h2>
+                  <h3>{a.title}</h3>
                   <p>{a.event}</p>
                   <p className="detail-award-meta">
                     {a.issuer} ·{" "}
@@ -141,27 +160,25 @@ export default async function ProjectPage({
                     )}
                   </p>
                   {a.prize && <strong>{a.prize}</strong>}
-                </section>
+                </div>
               ))
             ) : (
               <div className="detail-note">
-                <h2>See it in action.</h2>
-                <p>
-                  Open the product to explore the experience. Find more of my
-                  work in the project archive.
-                </p>
+                <h3>Try {p.title}.</h3>
+                <p>Open the product to explore its features.</p>
                 <a
                   className="text-link"
                   href={p.links[0].href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
                 >
                   {p.links[0].label}
                   <Arrow diagonal />
                 </a>
               </div>
             )}
-          </div>
+          </section>
         </div>
         {media && featuredIds.includes(p.id) && (
           <section className="project-demo-extra">
@@ -169,13 +186,18 @@ export default async function ProjectPage({
             <DemoPreview projectId={p.id} />
           </section>
         )}
-        <Link href={`/work/${next.id}`} className="next-project">
-          <div>
-            <span className="eyebrow">NEXT PROJECT</span>
-            <h2>{next.title}</h2>
-          </div>
-          <Arrow diagonal />
-        </Link>
+        <nav className="project-navigation" aria-label="More projects">
+          <Link href="/#archive" className="button button-outline">
+            All projects <Arrow />
+          </Link>
+          <Link href={`/work/${next.id}`} className="next-project">
+            <div>
+              <span className="eyebrow">NEXT PROJECT</span>
+              <h2>{next.title}</h2>
+            </div>
+            <Arrow />
+          </Link>
+        </nav>
       </main>
       <Footer />
     </>

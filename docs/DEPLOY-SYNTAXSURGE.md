@@ -17,10 +17,10 @@ Use these separate directories, outside WordPress's document root:
 
 | Directory | Purpose |
 | --- | --- |
-| `/www/syntaxsurge-portfolio/source` | Git checkout and stable `pnpm serve` startup entry point |
+| `/www/syntaxsurge-portfolio/source` | Force-synced Git checkout and `pnpm deploy:server` startup entry point |
 | `/www/syntaxsurge-portfolio/runtime` | Build releases, startup lock, and last-successful-release history |
 
-Both directories must be owned by the runtime user `www`, with sufficient free disk space for dependency installation and two successful releases plus one build in progress. The user also needs a writable package-manager cache/store. Do not copy local `node_modules`, `.next`, or environment files from another application.
+Both directories must be owned by the runtime user `www`, with sufficient free disk space for dependency installation and two successful releases plus one build in progress. The runtime directory must be outside the source checkout and must not contain it; the runner checks resolved paths, including symlinks. The user also needs a writable package-manager cache/store. Do not copy local `node_modules`, `.next`, or environment files from another application.
 
 The repository is `https://github.com/syntaxsurge/syntaxsurge-portfolio.git`. Clone it only after the initial `main` commit has been pushed. Keep `.git`: startup uses it to fetch the newest commit. The public HTTPS origin avoids putting a developer's SSH key or GitHub token on the web server.
 
@@ -48,7 +48,7 @@ pnpm install --frozen-lockfile --prod=false
 
 This initial installation prepares the configured project directory. The runner's later installations happen inside separate release directories and cannot satisfy a panel check that blocks launch beforehand. Do not copy dependencies from a Mac or create an empty `node_modules` directory to disguise a failed installation.
 
-If aaPanel displays **“Project dependency installation is abnormal. Please reinstall the dependencies in the module management first and try again!”**, complete the frozen pnpm install above in a server terminal. Wait for successful completion, then start the project with `pnpm serve`. The [official startup check](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/nodeMod.py#L142-L170) emits this message when a project declares dependencies but its configured folder has no `node_modules`, before running its startup command. The exact installed panel version has not been inspected.
+If aaPanel displays **“Project dependency installation is abnormal. Please reinstall the dependencies in the module management first and try again!”**, complete the frozen pnpm install above in a server terminal. Wait for successful completion, then start the project with `pnpm deploy:server`. The [official startup check](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/nodeMod.py#L142-L170) emits this message when a project declares dependencies but its configured folder has no `node_modules`, before running its startup command. The exact installed panel version has not been inspected.
 
 Prefer the terminal command over the Module page's one-click installer: the [current official installer implementation](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/packageManage.py#L56-L60) removes `pnpm-lock.yaml` and other lockfiles before installing. The frozen command preserves our committed dependency versions. If installation fails, capture the first actual error in its output; the panel popup alone does not identify a registry, permission, Node version, or package problem. Confirm Node 24.15.0+ within 24.x (or supported 22.x) and pnpm 10.15.0 are available under the selected user. Do not remove the dependency gate or edit panel internals to force a start.
 
@@ -61,7 +61,7 @@ Create one Node.js process entry with these settings:
 | Name | `syntaxsurge-portfolio` |
 | Project path / working directory | `/www/syntaxsurge-portfolio/source` |
 | Run mode | Custom command |
-| Startup command | `pnpm serve` |
+| Startup command | `pnpm deploy:server` (`pnpm serve` runs the same runner) |
 | Node.js version | Verified Node 24.15.0+ in the 24.x series |
 | Runtime user | `www` |
 | Port | `3101` |
@@ -78,19 +78,21 @@ PORT=3101
 PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
 ```
 
-The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It refuses to stop another process occupying that port. Do not expose ports 3100 or 3101 in the firewall; Nginx is the public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
+The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose ports 3100 or 3101 in the firewall; Nginx is the public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
 
-`SITE_URL` is an origin only: no `/kaldi-coffee`, credentials, query, or fragment. Invalid values fail the build. The portfolio needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
+`SITE_URL` is an origin only: no `/kaldi-coffee`, credentials, query, or fragment. Invalid values fail the build. The portfolio needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
 
 ### What happens on every start
 
-1. The runner takes an exclusive startup lock and fetches `origin/main` without prompting for credentials.
-2. It pins that commit and exports it into a separate release directory. It does not reset or overwrite source working files.
-3. It installs dependencies from `pnpm-lock.yaml` and builds the release. A matching completed build is reused when the commit, Node version, and relevant environment configuration have not changed.
+1. The runner validates that its source directory is the Git root, checks that the runtime directory does not overlap it, takes an exclusive startup lock, and checks that port 3101 is free.
+2. It fetches `origin/main` without prompting for credentials and pins the exact commit. After checking the target for tracked production environment/generated files, it runs `git reset --hard` to that commit and `git clean -fd` with explicit exclusions for `.env*`, `node_modules/`, and `.next/`. It never uses `git clean -x`, so other ignored files are retained.
+3. It exports the pinned commit into a separate release directory, installs frozen dependencies including development tools needed for the build, and builds the release. A matching completed build is reused when the commit, Node version, and relevant environment configuration have not changed.
 4. It starts Next.js in the foreground, waits for a successful homepage response, then records the release as successful. It retains the current and previous successful releases.
 5. aaPanel supervises the foreground command. On stop, the runner forwards the signal to its child processes and forces their shutdown after 10 seconds if needed.
 
-If fetching, dependency installation, building, or startup fails, the runner logs the cause and attempts the most recent successful release. A fallback is labeled `DEGRADED` in the logs so a stale deployment is not mistaken for a successful update. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. If there is no healthy compatible saved release, startup fails visibly. A successful homepage response is a startup check, not a substitute for the wider release checks below.
+**After fetching and validating the target, the shortcut replaces staged and unstaged source edits, local commits, and nonignored untracked source files.** Keep server configuration in aaPanel or ignored environment files. Commit and push code changes through GitHub before restarting this service. Protected environment/dependency/build paths and other ignored files remain; the separate runtime directory is outside the cleanup boundary.
+
+If fetching, dependency installation, building, or startup fails, the runner logs the cause and attempts the most recent successful release. A failed fetch leaves source working files unchanged. If installation or building fails after the reset, the source checkout can already be at the new commit; fallback serves the previous complete release with its own unchanged source, dependencies, and build. A fallback is labeled `DEGRADED` in the logs so a stale deployment is not mistaken for a successful update. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. If there is no healthy compatible saved release, startup fails visibly. A successful homepage response is a startup check, not a substitute for the wider release checks below.
 
 Allow at least **20 seconds for shutdown**. The runner allows up to 2 minutes per Git/archive step, 10 minutes for installation, 15 minutes for the build, and 1 minute per startup readiness check. The manager must not kill a legitimate build after a short startup timeout; allow at least 40 minutes for a cold start if a configurable startup deadline exists. Build output and the selected commit are written to the Node project's logs. Inspect those logs if aaPanel reports that the port is unavailable while a first build is still running.
 
@@ -98,7 +100,7 @@ This workflow intentionally rebuilds on restart when the pushed commit or build 
 
 ### Publishing future updates
 
-Run the local checks, commit the intended files, and push `main` to GitHub. Then restart this portfolio's Node.js project in aaPanel. Only pushed commits are fetched; uncommitted or unpushed local changes do not appear on the server.
+Run the local checks, commit the intended files, and push `main` to GitHub. Then restart this portfolio's Node.js project in aaPanel. Only pushed commits are fetched; uncommitted or unpushed development changes do not appear on the server, and local changes in the server checkout are discarded.
 
 ```sh
 pnpm lint
@@ -108,7 +110,20 @@ pnpm test:startup
 git push origin main
 ```
 
-The startup runner itself is the copy in the stable source checkout. Application changes are fetched automatically, but a later change to `scripts/serve.mjs` or its bootstrap command requires an intentional source-checkout update while the project is stopped. After preserving any local configuration and reviewing the incoming change, run `git pull --ff-only origin main` as `www` in the source directory, then restart. Do not use a hard reset that could discard server-specific files.
+The startup runner itself is loaded from the source checkout. Every start also updates that checkout, so future runner changes are fetched automatically. The process already executing keeps its loaded implementation; a newly fetched `scripts/serve.mjs` takes effect on the following restart. Read the serving-commit log to confirm which application release is active.
+
+### One-time adoption on an existing server
+
+The earlier `pnpm serve` runner builds fetched releases without updating the source checkout, so it cannot install this updated runner by restarting alone. After these changes are committed and pushed to `origin/main`, stop only this portfolio's aaPanel project. Verify the source and external runtime paths above, and preserve any needed server edits outside the checkout before replacing it. Keep production environment files ignored and untracked; keep the runtime history intact.
+
+From the server administrator's terminal, run these commands for the configured runtime user against the actual server checkout. The reset intentionally discards tracked source edits and local commits:
+
+```sh
+runuser -u www -- git -C /www/syntaxsurge-portfolio/source fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+runuser -u www -- git -C /www/syntaxsurge-portfolio/source reset --hard origin/main
+```
+
+With the selected Node installation, run `pnpm install --frozen-lockfile --prod=false` as `www` in the source directory if the initial aaPanel dependency check is not already satisfied. Change the aaPanel startup command to `pnpm deploy:server` and start the project. `pnpm serve` remains accepted. The new runner handles force-sync, cleanup, and isolated release builds on every subsequent start; no repeated manual source update is required.
 
 ### Recovery
 

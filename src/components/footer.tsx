@@ -1,28 +1,35 @@
 import Link from "next/link";
 import { Arrow, Github, Spark } from "./icons";
+
 export function Footer() {
   return (
-    <footer id="contact" className="footer">
+    <footer id="contact" className="footer" aria-labelledby="contact-title">
       <div className="shell">
         <div className="contact-top">
           <span className="eyebrow">
-            <span className="status-dot" /> HAVE SOMETHING IN MIND?
+            <span className="status-dot" /> GET IN TOUCH
           </span>
           <span className="mono">LET’S MAKE IT REAL</span>
         </div>
-        <a
-          className="contact-title"
-          href="https://www.linkedin.com/in/jade-laurence-empleo/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <h2 id="contact-title" className="contact-title">
           Good things start
           <br />
           with a conversation.
-          <span className="contact-arrow">
-            <Arrow diagonal />
-          </span>
-        </a>
+        </h2>
+        <div className="contact-actions">
+          <p className="contact-copy">
+            Have a project in mind? Reach out on LinkedIn and tell me about it.
+          </p>
+          <a
+            className="button button-lime"
+            href="https://www.linkedin.com/in/jade-laurence-empleo/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Message me on LinkedIn <Arrow diagonal />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </div>
         <div className="footer-bottom">
           <Link className="footer-brand" href="/" aria-label="Back to home">
             <Spark /> Jade Laurence Empleo
@@ -35,13 +42,7 @@ export function Footer() {
               rel="noopener noreferrer"
             >
               <Github /> GitHub <Arrow diagonal />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/jade-laurence-empleo/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              LinkedIn <Arrow diagonal />
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
             <a href="#top">Back to top ↑</a>
           </div>

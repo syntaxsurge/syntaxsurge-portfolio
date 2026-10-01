@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Foreground aaPanel entry point. Updates are built separately from the last good release.
+// Foreground aaPanel entry point. Force-sync source; build isolated releases for rollback.
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import {
@@ -11,13 +11,28 @@ import {
   renameSync,
   readdirSync,
   statSync,
+  realpathSync,
 } from "node:fs";
 import { get } from "node:http";
 import { createServer } from "node:net";
-import { dirname, resolve, join } from "node:path";
+import {
+  basename,
+  dirname,
+  isAbsolute,
+  relative,
+  resolve,
+  join,
+  sep,
+} from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const root = realpathSync(resolve(dirname(fileURLToPath(import.meta.url)), ".."));
+const environmentFiles = [
+  ".env.production.local",
+  ".env.local",
+  ".env.production",
+  ".env",
+];
 loadEnvironment();
 const state = resolve(
   process.env.PORTFOLIO_DEPLOY_DIR ||
@@ -165,17 +180,49 @@ async function run(label, command, args, cwd = root, timeout = 120_000) {
   return launch(command, args, cwd, { capture: true, timeout }).done;
 }
 function loadEnvironment() {
-  for (const file of [
-    ".env.production.local",
-    ".env.local",
-    ".env.production",
-    ".env",
-  ]) {
+  for (const file of environmentFiles) {
     const path = join(root, file);
     if (existsSync(path)) process.loadEnvFile(path);
   }
   process.env.NODE_ENV = "production";
   process.env.SITE_URL ||= "https://syntaxsurge.com";
+}
+function canonicalPath(path) {
+  try {
+    return realpathSync(path);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    return join(canonicalPath(dirname(path)), basename(path));
+  }
+}
+function containsPath(parent, path) {
+  const part = relative(parent, path);
+  return (
+    part === "" ||
+    (!isAbsolute(part) && part !== ".." && !part.startsWith(`..${sep}`))
+  );
+}
+async function validateCheckout() {
+  const actualState = canonicalPath(state);
+  let overlaps = containsPath(actualState, root);
+  // Inspect ancestors too: a runtime symlink inside source can be unlinked by
+  // git clean even when its destination is outside the checkout.
+  for (let path = state; ; path = dirname(path)) {
+    if (containsPath(root, canonicalPath(path))) overlaps = true;
+    if (dirname(path) === path) break;
+  }
+  if (overlaps)
+    throw new Error(
+      "PORTFOLIO_DEPLOY_DIR must be outside the source checkout and must not contain it.",
+    );
+  const gitRoot = await run("Checking the deployment checkout.", "git", [
+    "rev-parse",
+    "--show-toplevel",
+  ]);
+  if (realpathSync(gitRoot) !== root)
+    throw new Error(
+      "The startup script must run from the Git repository root; refusing to reset a parent repository.",
+    );
 }
 function releaseKey(sha) {
   const fingerprint = createHash("sha256")
@@ -185,12 +232,7 @@ function releaseKey(sha) {
     .filter(([key]) => key.startsWith("NEXT_PUBLIC_"))
     .sort())
     fingerprint.update(`${key}=${value}\n`);
-  for (const file of [
-    ".env.production.local",
-    ".env.local",
-    ".env.production",
-    ".env",
-  ]) {
+  for (const file of environmentFiles) {
     if (existsSync(join(root, file)))
       fingerprint.update(file).update(readFileSync(join(root, file)));
   }
@@ -228,6 +270,41 @@ async function prepareRelease() {
   ]);
   if (!/^[a-f0-9]{40,64}$/.test(sha))
     throw new Error("Git returned an invalid commit.");
+  const trackedRuntime = await run(
+    "Checking that server configuration stays untracked.",
+    "git",
+    [
+      "ls-tree",
+      "-r",
+      "--name-only",
+      sha,
+      "--",
+      ...environmentFiles,
+      "node_modules",
+      ".next",
+    ],
+  );
+  if (trackedRuntime)
+    throw new Error(
+      "The remote commit tracks environment files, node_modules, or .next; refusing to overwrite server configuration.",
+    );
+  await run(
+    `Replacing local source with origin/main (${sha.slice(0, 12)}).`,
+    "git",
+    ["reset", "--hard", sha],
+  );
+  // Keep configuration and generated files even if the incoming .gitignore changes.
+  // Never use -x: other ignored server files must survive as well.
+  await run("Removing untracked source files.", "git", [
+    "clean",
+    "-fd",
+    "-e",
+    ".env*",
+    "-e",
+    "node_modules/",
+    "-e",
+    ".next/",
+  ]);
   const key = releaseKey(sha);
   if (usable(key)) {
     log(`Reusing completed release ${sha.slice(0, 12)}.`);
@@ -252,12 +329,7 @@ async function prepareRelease() {
     ]);
     if (!existsSync(join(dir, "pnpm-lock.yaml")))
       throw new Error("The release must contain pnpm-lock.yaml.");
-    for (const file of [
-      ".env.production.local",
-      ".env.local",
-      ".env.production",
-      ".env",
-    ]) {
+    for (const file of environmentFiles) {
       if (existsSync(join(root, file)))
         writeFileSync(join(dir, file), readFileSync(join(root, file)), {
           mode: 0o600,
@@ -374,7 +446,9 @@ function promote(key, previous) {
 async function main() {
   if (!Number.isInteger(port) || port < 1024 || port > 65535)
     throw new Error("PORT must be an integer from 1024 to 65535.");
+  await validateCheckout();
   takeLock();
+  await freePort();
   const previous = history();
   let candidate;
   try {

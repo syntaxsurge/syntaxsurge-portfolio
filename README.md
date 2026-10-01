@@ -17,6 +17,7 @@ Open http://localhost:3001. Port 3001 keeps the existing Kaldi preview separate.
 
 ```sh
 pnpm lint
+pnpm typecheck
 pnpm build
 pnpm test
 pnpm test:startup
@@ -37,12 +38,14 @@ If aaPanel reports “Project dependency installation is abnormal,” run that i
 Then use this startup command:
 
 ```sh
-pnpm serve
+pnpm deploy:server
 ```
 
-Use this as the custom startup command for the portfolio's aaPanel Node.js project. Each start fetches the latest **pushed `origin/main` commit**, installs its locked dependencies, builds a separate release, and starts it on `127.0.0.1:3101`. Repeated starts reuse a completed build when its commit, Node version, and build configuration match. Local edits are not published until committed and pushed.
+Use this as the custom startup command for the portfolio's aaPanel Node.js project. `pnpm serve` remains an alias for the same runner. Each start fetches the latest **pushed `origin/main` commit**, forcefully replaces the server's source checkout with that exact commit, installs its locked dependencies, builds a separate release, and starts it on `127.0.0.1:3101`. Repeated starts reuse a completed build when its commit, Node version, and build configuration match.
 
-If fetching, building, or starting the new release fails, the command tries a previously successful release and reports the failure in the logs. The current and previous successful releases are retained. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. On the first deployment, there is no previous release to fall back to. A restart stops the old process before preparing the new one, so updates have downtime; this is not a zero-downtime deployment system.
+**The server shortcut discards staged and unstaged source edits, local commits, and nonignored untracked source files.** It preserves untracked `.env*`, `node_modules`, `.next`, and other ignored files. Supported production environment files and generated dependency/build directories must remain untracked. Put changes in GitHub before restarting; keep server settings in aaPanel's environment or ignored environment files.
+
+If fetching, installing, building, or starting the new release fails, the command tries a previously successful complete release and reports the failure in the logs. A failed fetch leaves the source checkout unchanged; an installation or build failure can leave it at the new commit while the previous release serves with its own source, dependencies, and build. The current and previous successful releases are retained. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. On the first deployment, there is no previous release to fall back to. A restart stops the old process before preparing the new one, so updates have downtime; this is not a zero-downtime deployment system.
 
 Set these variables in the aaPanel project environment:
 
@@ -52,7 +55,9 @@ PORT=3101
 PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
 ```
 
-The recommended source checkout is `/www/syntaxsurge-portfolio/source`, owned by the aaPanel runtime user `www`. The runtime directory is separate and writable by the same user. Keep the source `.git` directory and use the public HTTPS origin `https://github.com/syntaxsurge/syntaxsurge-portfolio.git`; no GitHub private key is needed for server updates. `pnpm start` remains available for starting an already-built checkout without fetching or rebuilding.
+The recommended source checkout is `/www/syntaxsurge-portfolio/source`, owned by the aaPanel runtime user `www`. The runtime directory must be outside the source checkout and must not contain it, including through symlinks; it is writable by the same user. The runner checks the Git root and occupied port before changing the checkout, and refuses a remote commit that tracks supported production environment files, `node_modules`, or `.next`. Keep the source `.git` directory and use the public HTTPS origin `https://github.com/syntaxsurge/syntaxsurge-portfolio.git`; no GitHub private key is needed for server updates. `pnpm start` remains available for starting an already-built checkout without fetching or rebuilding.
+
+An existing server running the earlier `pnpm serve` implementation needs a one-time source update while stopped, after this change is committed and pushed. Follow the adoption procedure in [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md). Subsequent starts update the runner's source automatically; a newly fetched runner implementation takes effect on the following restart because the current process already loaded its code.
 
 The production origin defaults to `https://syntaxsurge.com`. Canonical links, the sitemap, robots metadata, and social-preview URLs use that origin; `SITE_URL` can override it with another HTTP(S) origin. See [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md) for the exact aaPanel settings, update limits, logs, and rollback procedure. The staged Nginx configuration preserves `/kaldi-coffee` and replaces only WordPress's root routing. **Deployment preparation is not a completed live cutover.**
 
@@ -72,4 +77,6 @@ Recognition details originate from the owner’s supplied award history. USD and
 
 ## Accessibility and verification
 
-Semantic landmarks, a skip link, labeled search and theme controls, keyboard focus, filter state announcements, native disclosure for the full award record, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Responsive rules cover phones, tablets, and desktop. Build/lint, theme behavior, and route/link checks are recorded in `docs/VALIDATION.md`.
+The shared sticky navigation links directly to work, all projects, about, recognition, and contact on phones, tablets, and desktop. The full project collection follows selected work and includes visible category/result counts, combined search and filters, one-click reset, and direct project/product/demo/source actions. Project pages include breadcrumbs and an easy return to the collection; missing pages offer clear recovery links and contact options. All recognition entries are visible, with preview highlights and compact cards.
+
+Semantic landmarks, a focusable skip destination, labeled search and theme controls, visible keyboard focus, live filter announcements, focus restoration after reset, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Validation is recorded in `docs/VALIDATION.md`.

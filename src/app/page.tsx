@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <section className="hero shell" aria-labelledby="hero-title">
           <div className="hero-intro">
             <span className="eyebrow">
@@ -45,14 +45,17 @@ export default function Home() {
               </h1>
               <div className="hero-bottom">
                 <p>
-                  I’m Jade Laurence Empleo.
-                  <br />I build thoughtful digital products —
-                  <br className="desktop-break" /> from the first sketch to the
-                  last detail.
+                  I’m Jade Laurence Empleo, a developer and product builder.
+                  I create AI tools, everyday apps, and Web3 experiences.
                 </p>
-                <a href="#work" className="button button-dark">
-                  Explore my work <Arrow />
-                </a>
+                <div className="hero-actions">
+                  <a href="#work" className="button button-dark">
+                    View my work <Arrow />
+                  </a>
+                  <a href="#contact" className="button button-outline">
+                    Get in touch <Arrow diagonal />
+                  </a>
+                </div>
               </div>
             </div>
             <div className="hero-object" aria-hidden="true">
@@ -110,16 +113,19 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="work" className="selected-section shell">
+        <section
+          id="work"
+          className="selected-section shell"
+          aria-labelledby="work-title"
+        >
           <div className="section-heading">
             <div>
               <span className="eyebrow section-label">01 / SELECTED WORK</span>
-              <h2>Built with intention.</h2>
+              <h2 id="work-title">Selected projects.</h2>
             </div>
             <p>
-              A few things I’ve brought to life.
-              <br />
-              Different problems. The same care.
+              A few things I’ve brought to life. Explore the details or open a
+              product.
             </p>
           </div>
           <div className="featured-grid">
@@ -155,18 +161,57 @@ export default function Home() {
                     </div>
                     <span className="feature-number mono">0{index + 1}</span>
                   </div>
+                  <div className="feature-actions">
+                    <Link
+                      className="text-link"
+                      href={`/work/${id}`}
+                      aria-label={`View ${p.title} project details`}
+                    >
+                      Project details <Arrow />
+                    </Link>
+                    <a
+                      className="text-link"
+                      href={p.links[0].href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
+                    >
+                      {p.links[0].label} <Arrow diagonal />
+                    </a>
+                  </div>
                 </article>
               );
             })}
           </div>
         </section>
-        <section id="about" className="about-section">
-          <div className="shell about-grid">
+        <section
+          id="archive"
+          className="archive-section shell"
+          aria-labelledby="archive-title"
+        >
+          <div className="section-heading">
             <div>
               <span className="eyebrow section-label">
-                02 / THE PERSON BEHIND THE PIXELS
+                02 / THE FULL COLLECTION
               </span>
-              <h2>
+              <h2 id="archive-title">All projects.</h2>
+            </div>
+            <p>
+              Browse {projects.length} projects. Search by name, topic, or
+              technology.
+            </p>
+          </div>
+          <ProjectArchive />
+        </section>
+        <section
+          id="about"
+          className="about-section"
+          aria-labelledby="about-title"
+        >
+          <div className="shell about-grid">
+            <div>
+              <span className="eyebrow section-label">03 / ABOUT ME</span>
+              <h2 id="about-title">
                 A builder’s mind.
                 <br />A designer’s eye.
               </h2>
@@ -202,17 +247,17 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="recognition" className="recognition-section shell">
+        <section
+          id="recognition"
+          className="recognition-section shell"
+          aria-labelledby="recognition-title"
+        >
           <div className="section-heading">
             <div>
-              <span className="eyebrow section-label">03 / RECOGNITION</span>
-              <h2>Ideas put to the test.</h2>
+              <span className="eyebrow section-label">04 / RECOGNITION</span>
+              <h2 id="recognition-title">Hackathon recognition.</h2>
             </div>
-            <p>
-              Built, presented, and recognized
-              <br />
-              on a global stage.
-            </p>
+            <p>Built, presented, and recognized on a global stage.</p>
           </div>
           <div className="recognition-intro">
             <span className="award-big">
@@ -222,9 +267,8 @@ export default function Home() {
             <div>
               <h3>Hackathons. Bounties. Buildathons.</h3>
               <p>
-                From creative interfaces to verifiable systems.
-                <br />
-                Here’s the record, one project at a time.
+                From creative interfaces to verifiable systems. Here’s the
+                record, one project at a time.
               </p>
             </div>
             <span className="mono recognition-years">2025 — 2026</span>
@@ -234,35 +278,11 @@ export default function Home() {
               <AwardCard key={`${a.projectId}-${a.date}`} award={a} />
             ))}
           </div>
-          <details className="more-awards">
-            <summary>
-              <span className="expand-awards-label">
-                Explore all {awards.length} recognitions
-              </span>
-              <span className="collapse-awards-label">Show the highlights</span>{" "}
-              <span aria-hidden="true">+</span>
-            </summary>
-            <div className="awards-grid">
-              {awards.slice(4).map((a) => (
-                <AwardCard key={`${a.projectId}-${a.date}`} award={a} />
-              ))}
-            </div>
-          </details>
-        </section>
-        <section id="archive" className="archive-section shell">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow section-label">
-                04 / THE FULL COLLECTION
-              </span>
-              <h2>Always making something.</h2>
-            </div>
-            <p>
-              Products, prototypes, and
-              <br />a few ambitious experiments.
-            </p>
+          <div className="awards-list">
+            {awards.slice(4).map((a) => (
+              <AwardCard key={`${a.projectId}-${a.date}`} award={a} compact />
+            ))}
           </div>
-          <ProjectArchive />
         </section>
       </main>
       <Footer />
