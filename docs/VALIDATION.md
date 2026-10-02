@@ -79,3 +79,9 @@ These checks ran locally on macOS. The change has not been committed, pushed, or
 - Production serves commit `48aadff9631876c76f12f5e89e6b390214f33f25`, verified in the existing aaPanel project log after restarting only `syntaxsurge_portfolio`. The production build completed on the existing Node 24.15.0 configuration and serves loopback port 3101.
 - Public HTTPS checks return 200 for the three canonical routes, homepage, artwork, robots file, and sitemap. Each page carries its correct canonical URL, title, description, Open Graph metadata, one H1, and one main landmark. The live sitemap has 21 unique URLs and no `/apps` entries. All three old addresses return 308 to their matching new route while preserving a test query string.
 - Live browser verification follows the old game URL to the merged project, checks its desktop and 320px layout, expands the Support installation FAQ at 320px in light mode, and visits Privacy at 390px in dark mode. Canonical navigation and the unchanged beta enrollment and publisher email links work. DNS, routing, permissions, Kaldi, and other services were not changed.
+
+## Wrap It Up! distributed build 6 — 2 October 2026
+
+- The release owner confirmed Google Play internal build 6 completed with matching local/server bundle hashes and TestFlight build 6 approved and available in Public Beta before updating the central website version to 1.0.1 (6).
+- The game, Support, and Privacy pages inherit that one version value. The historical Android build 4 SDK-startup warning remains; ads and real-money purchases remain disabled. Canonical routes and beta enrollment links are unchanged.
+- `pnpm build`, `pnpm typecheck`, `pnpm lint`, and all 41 theme/generated-artifact checks pass. This refresh changes version copy only; the previously verified responsive layout is unchanged.
