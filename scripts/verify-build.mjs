@@ -153,6 +153,20 @@ check("Wrap It Up! pages have public metadata, support, and honest beta links", 
   assert.ok(support.includes(wrapItUp.supportEmail));
   assert.ok(support.includes("<details"));
   assert.ok(support.includes("cannot restore a local save from a server"));
+  for (const html of [game, support, privacy]) {
+    assert.ok(html.includes("ESRB Everyone"));
+    assert.ok(html.includes("PEGI 3"));
+    assert.ok(html.includes("18+ in Australia"));
+  }
+  for (const html of [game, support]) {
+    if (wrapItUp.closedTestingAvailable) {
+      assert.ok(html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
+      assert.ok(html.includes("first leave it"));
+    } else {
+      assert.ok(html.includes("closed Alpha test is not yet available; review and publication must be confirmed first"));
+      assert.ok(!html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
+    }
+  }
   assert.ok(privacy.includes(wrapItUp.supportEmail));
   assert.ok(privacy.includes("automatic startup entry points"));
   assert.ok(privacy.includes("Google Mobile Ads"));

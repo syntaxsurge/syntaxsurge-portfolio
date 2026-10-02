@@ -30,7 +30,28 @@ export function WrapItUpBetaNote() {
       <h3>Join the beta.</h3>
       <p>The Android and TestFlight actions above open beta enrollment pages. Availability depends on your tester access and the store&apos;s current review status.</p>
       <p>Android requires an allowlisted Google account. TestFlight requires Apple&apos;s TestFlight app and an available invitation. The game is not yet a public App Store or Google Play release.</p>
+      <WrapItUpClosedTesting />
     </div>
+  );
+}
+
+export function WrapItUpClosedTesting() {
+  return wrapItUp.closedTestingAvailable ? (
+    <>
+      <p>Invited Android testers can join the <a href={wrapItUp.playClosedTestingUrl} target="_blank" rel="noopener noreferrer">closed Alpha test</a> using the Google account on the tester list. Opt in, then follow Google Play&apos;s installation link.</p>
+      <p>If you already joined internal testing, first leave it on the <a href={wrapItUp.playTestingUrl} target="_blank" rel="noopener noreferrer">internal-test enrollment page</a>, then join the closed test. Google Play does not enroll an internal tester into a closed test automatically.</p>
+    </>
+  ) : (
+    <p>The Android closed Alpha test is not yet available; review and publication must be confirmed first. The internal-test link remains available to invited testers; being on the email list does not enroll you in the closed test.</p>
+  );
+}
+
+export function WrapItUpAgeRatings() {
+  return (
+    <>
+      <p>{wrapItUp.playAgeRatingSummary}</p>
+      <p>{wrapItUp.appleAgeRatingSummary}</p>
+    </>
   );
 }
 
@@ -46,6 +67,10 @@ export function WrapItUpDetails() {
           <article><h3>Find your rhythm</h3><p>Play through shop days, discover supplies and customer stories, or relax in Zen mode.</p></article>
           <article><h3>Play wherever you are</h3><p>Core gameplay works offline. No player account, energy bars, or cloud save is required.</p></article>
         </div>
+      </section>
+      <section className="app-copy" aria-labelledby="game-age-ratings">
+        <h2 id="game-age-ratings">Store age ratings.</h2>
+        <WrapItUpAgeRatings />
       </section>
       <section className="app-copy" aria-labelledby="game-help">
         <h2 id="game-help">A helping hand.</h2>
