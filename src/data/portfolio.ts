@@ -81,7 +81,7 @@ export const projects: Project[] = [
     year: "Current",
     tags: ["NFC", "Customer loyalty", "Next.js"],
     links: [
-      { label: "Visit website", href: "https://syntaxsurge.com/kaldi-coffee" },
+      { label: "Visit website", href: "https://kaldi-rewards.syntaxsurge.com/" },
     ],
   },
   {

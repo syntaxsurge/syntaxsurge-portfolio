@@ -59,7 +59,7 @@ The recommended source checkout is `/www/syntaxsurge-portfolio/source`, owned by
 
 An existing server running the earlier `pnpm serve` implementation needs a one-time source update while stopped, after this change is committed and pushed. Follow the adoption procedure in [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md). Subsequent starts update the runner's source automatically; a newly fetched runner implementation takes effect on the following restart because the current process already loaded its code.
 
-The production origin defaults to `https://syntaxsurge.com`. Canonical links, the sitemap, robots metadata, and social-preview URLs use that origin; `SITE_URL` can override it with another HTTP(S) origin. See [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md) for the exact aaPanel settings, update limits, logs, and rollback procedure. The staged Nginx configuration preserves `/kaldi-coffee` and replaces only WordPress's root routing. **Deployment preparation is not a completed live cutover.**
+The production origin defaults to `https://syntaxsurge.com`. Canonical links, the sitemap, robots metadata, and social-preview URLs use that origin; `SITE_URL` can override it with another HTTP(S) origin. See [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md) for the exact aaPanel settings, update limits, logs, and rollback procedure. The staged Nginx configuration applies to the portfolio vhost. Kaldi runs independently at `https://kaldi-rewards.syntaxsurge.com/` with its own domain routing. **Deployment preparation is not a completed live cutover.**
 
 ## Wrap It Up! app pages
 

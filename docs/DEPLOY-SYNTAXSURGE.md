@@ -2,16 +2,16 @@
 
 The portfolio is prepared for **https://syntaxsurge.com/**. Its canonical URLs, social previews, robots file, and sitemap use that origin by default. This document and the Nginx snippet are deployment preparation; they do not change the live server.
 
-Keep Kaldi at **https://syntaxsurge.com/kaldi-coffee** on its existing service. Do not add a Next.js `basePath` to this portfolio or reuse Kaldi's process, environment file, database, or port.
+Kaldi is published separately at **https://kaldi-rewards.syntaxsurge.com/**, with its own domain/vhost configuration. This guide configures only the portfolio at `syntaxsurge.com`; Kaldi's server, process, and private listener are managed by its deployment. Do not add a Next.js `basePath` to this portfolio or reuse another application's process, environment file, database, or port.
 
 | Public route | Application | Private listener |
 | --- | --- | --- |
 | `/`, `/work/*`, `/_next/*`, `/images/*`, metadata routes; `/apps/wrap-it-up` redirect addresses | Portfolio | `127.0.0.1:3101` |
-| `/kaldi-coffee`, `/kaldi-coffee/*` | Existing Kaldi app | `127.0.0.1:3100` |
+| `https://kaldi-rewards.syntaxsurge.com/` | Kaldi | Managed by its separate deployment |
 
 ## Install the source and runtime
 
-Use the existing aaPanel Node.js manager as the only process supervisor. Its [official guide](https://www.aapanel.com/docs/Function/Node.html) supports a custom startup command, a Node version, and a runtime user. Choose `www`, not `root`. Creating a new domain mapping is unnecessary because the existing Nginx vhost already owns `syntaxsurge.com` and serves Kaldi.
+Use the existing aaPanel Node.js manager as the only process supervisor. Its [official guide](https://www.aapanel.com/docs/Function/Node.html) supports a custom startup command, a Node version, and a runtime user. Choose `www`, not `root`. Creating a new domain mapping is unnecessary because the existing Nginx vhost already owns `syntaxsurge.com`. Kaldi's subdomain configuration is separate.
 
 Use these separate directories, outside WordPress's document root:
 
@@ -78,9 +78,9 @@ PORT=3101
 PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
 ```
 
-The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose ports 3100 or 3101 in the firewall; Nginx is the public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
+The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose port 3101 in the firewall; Nginx is the portfolio's public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
 
-`SITE_URL` is an origin only: no `/kaldi-coffee`, credentials, query, or fragment. Invalid values fail the build. The portfolio needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
+`SITE_URL` is an origin only: no path, credentials, query, or fragment. Invalid values fail the build. The portfolio needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
 
 ### What happens on every start
 
@@ -137,16 +137,15 @@ Inspect the current effective Nginx configuration and take private backups befor
 
 - Vhost: `/www/server/panel/vhost/nginx/syntaxsurge.com.conf`
 - WordPress rewrite include: `/www/server/panel/vhost/rewrite/syntaxsurge.com.conf`
-- Kaldi include: `/www/server/panel/vhost/nginx/extension/syntaxsurge.com/kaldi-coffee.conf`
 - WordPress files: `/www/wwwroot/syntaxsurge.com`
 
-Verify these paths and contents again. The WordPress homepage returned an error during the earlier Kaldi deployment; that is historical information, not a current health check.
+Verify these paths and contents again. Kaldi's separate `kaldi-rewards.syntaxsurge.com` vhost is outside these portfolio routing changes; use its deployment configuration for server details.
 
 The previous WordPress rewrite include contained a `location /` block with `try_files $uri $uri/ /index.php?$args`. **Remove that one catch-all, then include [nginx-portfolio.conf](../deploy/nginx-portfolio.conf) once inside the existing server; the snippet contains its replacement. Do not keep or add a second `location /`.** Keep the backup outside wildcard include directories so Nginx does not load it. Preserve the WordPress files/database, PHP settings, TLS certificate, HTTP-to-HTTPS behavior, ACME challenge rules, and existing security rules. Do not replace the entire vhost or add another website claiming the same domain.
 
-Retain Kaldi's exact `location = /kaldi-coffee` and `location ^~ /kaldi-coffee/` unchanged. They are more specific than the portfolio's catch-all. The portfolio's `^~ /_next/`, `^~ /work/`, and `^~ /images/` blocks prevent WordPress file-extension regexes from intercepting those routes. Exact blocks handle the portfolio icon, social preview, robots file, and sitemap. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
+Install the portfolio snippet only in the `syntaxsurge.com` server block; leave Kaldi's subdomain vhost and deployment configuration unchanged. The portfolio's `^~ /_next/`, `^~ /work/`, and `^~ /images/` blocks prevent WordPress file-extension regexes from intercepting those routes. Exact blocks handle the portfolio icon, social preview, robots file, and sitemap. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
 
-The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Do not replace the existing Kaldi header or cache rules with portfolio settings. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
+The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Keep portfolio proxy settings scoped to its own vhost. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
 
 Only after the portfolio passes its private listener checks, validate the combined Nginx configuration with the server's existing Nginx executable. Reload only if validation passes. On the earlier aaPanel installation, the executable was `/www/server/nginx/sbin/nginx`; verify the active executable rather than starting a second Nginx instance.
 
@@ -165,12 +164,12 @@ curl -fsS https://syntaxsurge.com/sitemap.xml
 curl -fsS https://syntaxsurge.com/icon.svg -o /dev/null
 curl -fsS https://syntaxsurge.com/opengraph-image -o /dev/null
 curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
-curl -fsS https://syntaxsurge.com/kaldi-coffee/api/health
+curl -fsS https://kaldi-rewards.syntaxsurge.com/ -o /dev/null
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the two Wrap It Up! support/privacy pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 21 unique portfolio URLs. The portfolio sitemap does not claim or replace Kaldi's internal routing.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the two Wrap It Up! support/privacy pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 21 unique portfolio URLs. Kaldi's separate origin is not part of the portfolio sitemap.
 
-Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi still loads its own assets, wallet, and sign-in callback. Inspect the aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
+Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi loads at `https://kaldi-rewards.syntaxsurge.com/` with its own assets, wallet, and sign-in callback. Inspect the portfolio aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
 
 If verification fails, restore only the backed-up root routing and portfolio include changes, validate, and reload Nginx. Do not stop, restart, or change the Kaldi service during a portfolio rollback. Retain WordPress data even after a successful cutover.
 
@@ -178,17 +177,16 @@ If verification fails, restore only the backed-up root routing and portfolio inc
 
 A Next.js **Ready** message and the runner's homepage check describe startup, not current public health. Run these checks in the **server terminal** while the error occurs, before changing configuration.
 
-### 1. Check the current private services
+### 1. Check the current portfolio listener
 
 These are GET requests with response bodies discarded. `000` means no HTTP response; keep the accompanying connection error.
 
 ```sh
 curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'portfolio: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3101/
-curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'kaldi: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3100/kaldi-coffee/api/health
-ss -ltnp '( sport = :3101 or sport = :3100 )'
+ss -ltnp '( sport = :3101 )'
 ```
 
-If 3101 fails, inspect current portfolio aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. Leave Kaldi's process and port 3100 unchanged. If both private requests succeed but both public routes fail, investigate their shared Nginx/public routing.
+If 3101 fails, inspect current portfolio aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. If this private request succeeds but the portfolio's public route fails, investigate its Nginx/public routing. Check Kaldi separately at `https://kaldi-rewards.syntaxsurge.com/`; this guide assumes no Kaldi private listener or health endpoint.
 
 ### 2. Inspect the Nginx configuration and matching error
 
@@ -210,7 +208,7 @@ curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public
 tail -n 50 /path/to/the/active-vhost-error.log
 ```
 
-Match the request timestamp, host, and upstream. `Connection refused` means the logged address had no reachable listener; `::1`, a wrong port, or upstream SSL errors suggest a routing mismatch. Investigate permission, timeout, or closed-connection errors individually. Separate containers/network namespaces have separate loopback addresses; confirm that topology if applicable. Preserve Kaldi's locations and upstream.
+Match the request timestamp, host, and upstream. `Connection refused` means the logged address had no reachable listener; `::1`, a wrong port, or upstream SSL errors suggest a routing mismatch. Investigate permission, timeout, or closed-connection errors individually. Separate containers/network namespaces have separate loopback addresses; confirm that topology if applicable. Leave Kaldi's separate vhost unchanged.
 
 ### 3. Compare the origin with public routing
 
@@ -223,7 +221,7 @@ curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public
 
 Keep TLS verification enabled. A Cloudflare Origin CA certificate needs its verified CA supplied with `--cacert /path/to/origin-ca.pem` for direct clients; otherwise report the trust error. See [Cloudflare Origin CA documentation](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/).
 
-If origin succeeds but public fails, compare the configured origin, IPv4/IPv6 DNS targets, proxy routing, and origin logs. Cloudflare can relay an origin 502; its response alone does not identify the cause. Keep the URL, timestamp/timezone, and request identifier for [Cloudflare 502 troubleshooting](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502-504/). Keep ports 3100/3101 private and firewall/TLS protections enabled.
+If origin succeeds but public fails, compare the configured origin, IPv4/IPv6 DNS targets, proxy routing, and origin logs. Cloudflare can relay an origin 502; its response alone does not identify the cause. Keep the URL, timestamp/timezone, and request identifier for [Cloudflare 502 troubleshooting](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502-504/). Keep port 3101 private and firewall/TLS protections enabled.
 
 After identifying a configuration mistake, privately back up the affected file outside wildcard includes and fix that rule. Run `/www/server/nginx/sbin/nginx -t` with the verified configuration/prefix. **Reload with the same executable/options and `-s reload` only after the intended fix validates.** Confirm reload logs and repeat private, origin, public, asset, and Kaldi checks. Avoid whole-vhost replacement or blind reloads.
 

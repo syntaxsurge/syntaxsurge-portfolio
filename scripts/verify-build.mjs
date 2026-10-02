@@ -97,7 +97,7 @@ check(
 check("Domain metadata and sitemap use the portfolio origin", () => {
   assert.equal(parseSiteOrigin().origin, "https://syntaxsurge.com");
   for (const value of [
-    "https://syntaxsurge.com/kaldi-coffee",
+    "https://syntaxsurge.com/work/kaldi",
     "https://user:password@example.com",
     "javascript:alert(1)",
   ]) {

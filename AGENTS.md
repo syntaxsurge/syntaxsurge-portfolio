@@ -62,7 +62,7 @@ There are no application API endpoints, database, authentication, contact form, 
 - `src/app/globals.css` defines shared theme tokens, typography, layouts, focus states, responsive rules, and reduced-motion support. Images and fonts are served locally; videos open externally on request.
 - `src/lib/site.ts` supplies the canonical HTTP(S) origin from `SITE_URL`, defaulting to `https://syntaxsurge.com`.
 - `scripts/serve.mjs` synchronizes a server checkout to pushed `origin/main`, prepares isolated production releases, reuses matching builds, and supports fallback to a compatible successful release. Runtime files stay outside the source checkout. Configuration and deployment requirements are in `docs/DEPLOY-SYNTAXSURGE.md`.
-- Production routing requires the domain's Nginx vhost to proxy portfolio requests over HTTP to `127.0.0.1:3101`, while preserving Kaldi at `127.0.0.1:3100`. Startup readiness checks the private portfolio listener; public routing and ongoing service health are verified separately using the deployment guide's gateway diagnostics.
+- Production routing requires the `syntaxsurge.com` Nginx vhost to proxy portfolio requests over HTTP to `127.0.0.1:3101`. Kaldi is linked at `https://kaldi-rewards.syntaxsurge.com/` and uses independent domain routing and deployment configuration. Startup readiness checks the private portfolio listener; public routing and ongoing service health are verified separately using the deployment guide's gateway diagnostics.
 
 ## Core Commands
 

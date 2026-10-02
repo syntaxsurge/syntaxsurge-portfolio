@@ -18,7 +18,7 @@ The site contains 18 named projects and 14 recognition entries. A recognition en
 | StudySoda | [studysoda.com](https://studysoda.com/) | Public page title, description, and page text: AI reviewers, flashcards, practice exams, notebooks, and public study materials. |
 | ClipLore | [cliplore.ai](https://cliplore.ai/) | Public page: AI video generation, editable timeline, captions, audio, and exports. |
 | Sipava | [sipava.com](https://sipava.com/) | Public page: plans and routines, alarms, proof, and buddy accountability. No native-app availability is claimed; the site says mobile apps are coming soon. |
-| Kaldi Circle | [Kaldi Coffee page](https://syntaxsurge.com/kaldi-coffee) | Public page title/metadata plus the owner's application brief and work in this conversation: NFC, reviews, loyalty points, and vouchers. No approved merchant partnership or live POS integration is asserted. |
+| Kaldi Circle | [Kaldi Rewards](https://kaldi-rewards.syntaxsurge.com/) | Public page title/metadata plus the owner's application brief and work in this conversation: NFC, reviews, loyalty points, and vouchers. No approved merchant partnership or live POS integration is asserted. |
 
 The products use “Current” rather than an invented launch year. Copyright dates do not establish launch dates. Descriptions are concise original summaries, not marketing copy copied verbatim from those sites. Primary pages were read through public web tools or ordinary unauthenticated HTTP requests when the web reader could not open them.
 
