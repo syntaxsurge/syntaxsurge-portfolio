@@ -15,12 +15,9 @@ export default function WrapItUpLayout({
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
+          <Link href="/#archive">All projects</Link>
+          <span aria-hidden="true">/</span>
           <Link href={wrapItUp.path}>{wrapItUp.name}</Link>
-        </nav>
-        <nav className="app-navigation" aria-label="Wrap It Up! navigation">
-          <Link href={wrapItUp.path}>The game</Link>
-          <Link href={`${wrapItUp.path}/support`}>Support</Link>
-          <Link href={`${wrapItUp.path}/privacy`}>Privacy</Link>
         </nav>
         {children}
         <div className="app-page-footer">

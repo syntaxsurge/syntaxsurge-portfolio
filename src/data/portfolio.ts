@@ -1,3 +1,5 @@
+import { wrapItUp } from "./wrap-it-up.ts";
+
 export type ProjectCategory = "Products" | "AI & Web3" | "Tools";
 
 export type ProjectLink = {
@@ -91,7 +93,8 @@ export const projects: Project[] = [
     year: "Current",
     tags: ["Godot", "Mobile game", "Offline play"],
     links: [
-      { label: "Visit game", href: "https://syntaxsurge.com/apps/wrap-it-up" },
+      { label: "Android beta", href: wrapItUp.playTestingUrl },
+      { label: "TestFlight", href: wrapItUp.testFlightUrl },
     ],
   },
   {

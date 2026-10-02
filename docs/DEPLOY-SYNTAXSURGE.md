@@ -6,7 +6,7 @@ Keep Kaldi at **https://syntaxsurge.com/kaldi-coffee** on its existing service. 
 
 | Public route | Application | Private listener |
 | --- | --- | --- |
-| `/`, `/work/*`, `/apps/wrap-it-up/*`, `/_next/*`, `/images/*`, metadata routes | Portfolio | `127.0.0.1:3101` |
+| `/`, `/work/*`, `/_next/*`, `/images/*`, metadata routes; `/apps/wrap-it-up` redirect addresses | Portfolio | `127.0.0.1:3101` |
 | `/kaldi-coffee`, `/kaldi-coffee/*` | Existing Kaldi app | `127.0.0.1:3100` |
 
 ## Install the source and runtime
@@ -168,7 +168,7 @@ curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
 curl -fsS https://syntaxsurge.com/kaldi-coffee/api/health
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the three app pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that the homepage, project pages, and app pages use their own HTTPS canonical URLs and that the sitemap has 22 portfolio URLs. The portfolio sitemap does not claim or replace Kaldi's internal routing.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the two Wrap It Up! support/privacy pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 21 unique portfolio URLs. The portfolio sitemap does not claim or replace Kaldi's internal routing.
 
 Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi still loads its own assets, wallet, and sign-in callback. Inspect the aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
 
@@ -229,4 +229,4 @@ After identifying a configuration mistake, privately back up the affected file o
 
 ## Wrap It Up! public pages
 
-The portfolio owns `/apps/wrap-it-up`, `/apps/wrap-it-up/support`, and `/apps/wrap-it-up/privacy` on the same HTTPS origin. These extensionless pages use the existing portfolio catch-all; their local image uses the existing `/images/` route. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify all three live pages, their individual canonical/description/social metadata, the publisher support address, and their sitemap entries after each release.
+The portfolio owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 21 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.

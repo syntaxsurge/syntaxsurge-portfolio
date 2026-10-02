@@ -108,7 +108,11 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   assert.ok(homepageCanonical);
   assert.equal(new URL(homepageCanonical).href, siteHref());
   const sitemap = read("sitemap.xml.body");
-  assert.equal((sitemap.match(/<loc>/g) || []).length, projects.length + wrapItUpPaths.length + 1);
+  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
+  const expected = new Set([siteHref("/"), ...projects.map((project) => siteHref(`/work/${project.id}`)), ...wrapItUpPaths.map((path) => siteHref(path))]);
+  assert.equal(locations.length, expected.size);
+  assert.equal(new Set(locations).size, locations.length);
+  assert.ok(!sitemap.includes("/apps/wrap-it-up"));
   for (const project of projects) {
     const canonical = siteHref(`/work/${project.id}`);
     assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
@@ -130,13 +134,18 @@ check("Wrap It Up! pages have public metadata, support, and honest beta links", 
     assert.ok(html.includes(`rel="canonical" href="${siteHref(path)}"`));
     assert.ok(html.includes('name="description"'));
     assert.ok(html.includes('property="og:image"'));
+    assert.ok(html.includes(wrapItUp.version));
+    assert.ok(!html.includes("/apps/wrap-it-up"));
     assert.ok(sitemap.includes(`<loc>${siteHref(path)}</loc>`));
     for (const destination of wrapItUpPaths)
       assert.ok(html.includes(`href="${destination}"`));
   }
-  const game = read("apps/wrap-it-up.html");
-  const support = read("apps/wrap-it-up/support.html");
-  const privacy = read("apps/wrap-it-up/privacy.html");
+  const game = read("work/wrap-it-up.html");
+  const support = read("work/wrap-it-up/support.html");
+  const privacy = read("work/wrap-it-up/privacy.html");
+  assert.ok(game.includes("Your own cozy wrapping shop."));
+  assert.ok(game.includes("PROJECT FOCUS"));
+  assert.ok(game.includes('aria-label="More projects"'));
   assert.ok(game.includes(`href="${wrapItUp.playTestingUrl}"`));
   assert.ok(game.includes(`href="${wrapItUp.testFlightUrl}"`));
   assert.ok(game.includes("allowlisted Google account"));
@@ -152,6 +161,18 @@ check("Wrap It Up! pages have public metadata, support, and honest beta links", 
   assert.ok(privacy.includes("The distributed Android beta"));
   assert.ok(privacy.includes(wrapItUp.version));
   assert.ok(!privacy.toLowerCase().includes("release candidate"));
+});
+check("Installed beta links redirect permanently to the canonical project pages", () => {
+  assert.ok(!existsSync(resolve(root, "src/app/apps/wrap-it-up/page.tsx")));
+  assert.ok(!existsSync(resolve(app, "apps/wrap-it-up.html")));
+  assert.ok(!homepage.includes("/apps/wrap-it-up"));
+  const routes = JSON.parse(readFileSync(resolve(root, ".next/routes-manifest.json"), "utf8"));
+  for (const suffix of ["", "/support", "/privacy"]) {
+    const redirect = routes.redirects.find((route) => route.source === `/apps/wrap-it-up${suffix}`);
+    assert.ok(redirect);
+    assert.equal(redirect.destination, `${wrapItUp.path}${suffix}`);
+    assert.equal(redirect.statusCode, 308);
+  }
 });
 for (const project of projects) {
   check(`Static project page: ${project.title}`, () => {

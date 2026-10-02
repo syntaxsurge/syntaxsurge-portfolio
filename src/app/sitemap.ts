@@ -10,6 +10,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: siteHref(`/work/${project.id}`),
       priority: 0.8,
     })),
-    ...wrapItUpPaths.map((path) => ({ url: siteHref(path), priority: 0.7 })),
+    ...wrapItUpPaths.slice(1).map((path) => ({ url: siteHref(path), priority: 0.7 })),
   ];
 }

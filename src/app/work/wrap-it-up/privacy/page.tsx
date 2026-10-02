@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { wrapItUp } from "@/data/wrap-it-up";
+import { WrapItUpNavigation } from "@/components/wrap-it-up-details";
 
 const description = "How Wrap It Up! handles local progress, captures, beta services, packaged SDKs, and support information.";
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function WrapItUpPrivacyPage() {
   return (
     <>
+      <WrapItUpNavigation current="privacy" />
       <div className="project-page-header">
         <span className="eyebrow section-label">WRAP IT UP! / PRIVACY</span>
         <h1>Privacy policy.</h1>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Arrow } from "@/components/icons";
 import { wrapItUp } from "@/data/wrap-it-up";
+import { WrapItUpNavigation } from "@/components/wrap-it-up-details";
 
 const description = "Installation help, gameplay FAQs, save-data guidance, and developer support for Wrap It Up!";
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export default function WrapItUpSupportPage() {
   return (
     <>
+      <WrapItUpNavigation current="support" />
       <div className="project-page-header">
         <span className="eyebrow section-label">WRAP IT UP! / SUPPORT</span>
         <h1>A helping hand.</h1>

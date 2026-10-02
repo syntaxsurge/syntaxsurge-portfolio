@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    return ["", "/support", "/privacy"].map((suffix) => ({
+      source: `/apps/wrap-it-up${suffix}`,
+      destination: `/work/wrap-it-up${suffix}`,
+      permanent: true,
+    }));
+  },
   async headers() {
     return [
       {

@@ -63,11 +63,11 @@ The production origin defaults to `https://syntaxsurge.com`. Canonical links, th
 
 ## Wrap It Up! app pages
 
-- [Game](https://syntaxsurge.com/apps/wrap-it-up)
-- [Support](https://syntaxsurge.com/apps/wrap-it-up/support)
-- [Privacy](https://syntaxsurge.com/apps/wrap-it-up/privacy)
+- [Game and project](https://syntaxsurge.com/work/wrap-it-up)
+- [Support](https://syntaxsurge.com/work/wrap-it-up/support)
+- [Privacy](https://syntaxsurge.com/work/wrap-it-up/privacy)
 
-These static pages share the portfolio navigation and theme. `src/data/wrap-it-up.ts` stores version-scoped release facts, tester links, and the verified support address. Privacy copy follows the app release audit: progress/captures are local, no player account or gameplay backend exists, ads and IAP are disabled, and packaged SDKs are disclosed without a blanket network-free claim. Update the policy alongside any change to runtime data handling.
+The game information extends the existing project-detail template, with Support and Privacy beneath that project. These static pages share portfolio navigation, artwork, and theme. The three `/apps/wrap-it-up` addresses are permanent redirects for already installed beta links; they have no separate pages or sitemap entries. `src/data/wrap-it-up.ts` stores version-scoped release facts, tester links, and the verified support address. Privacy copy follows the app release audit: progress/captures are local, no player account or gameplay backend exists, ads and IAP are disabled, and packaged SDKs are disclosed without a blanket network-free claim. Update the policy alongside any change to runtime data handling.
 
 ## Edit content
 

@@ -9,6 +9,8 @@ import { ProjectVisual, featuredIds } from "@/components/project-visual";
 import { awardMedia } from "@/data/award-media";
 import { DemoPreview } from "@/components/demo-preview";
 import { PlayIcon } from "@/components/award-card";
+import { wrapItUp } from "@/data/wrap-it-up";
+import { WrapItUpBetaNote, WrapItUpDetails, WrapItUpNavigation } from "@/components/wrap-it-up-details";
 export const dynamicParams = false;
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.id }));
@@ -30,6 +32,9 @@ export async function generateMetadata({
       type: "website",
       title: `${p.title} — Jade Laurence Empleo`,
       description: p.description,
+      ...(p.id === "wrap-it-up" && {
+        images: [{ url: wrapItUp.artwork, width: 1024, height: 500, alt: "Wrap It Up! gift-wrapping shop artwork" }],
+      }),
     },
   };
 }
@@ -56,6 +61,7 @@ export default async function ProjectPage({
           <span aria-hidden="true">/</span>
           <span aria-current="page">{p.title}</span>
         </nav>
+        {p.id === "wrap-it-up" && <WrapItUpNavigation current="game" />}
         <div className="project-page-header">
           <span className="eyebrow section-label">
             {p.category.toUpperCase()} / {p.year}
@@ -104,7 +110,7 @@ export default async function ProjectPage({
         ) : (
           <div className="project-detail-visual">
             <ProjectVisual id={p.id} priority />
-            {!featuredIds.includes(p.id) && (
+            {!featuredIds.includes(p.id) && p.id !== "wrap-it-up" && (
               <span className="detail-visual-title">
                 {p.title}
                 <small>{p.tags[0]}</small>
@@ -112,6 +118,7 @@ export default async function ProjectPage({
             )}
           </div>
         )}
+        {p.id === "wrap-it-up" && <p className="project-artwork-caption">Official game artwork. Fold. Tape. Ribbon. Delight!</p>}
         <div className="project-detail-grid">
           <section aria-labelledby="project-focus-title">
             <dl className="project-overview">
@@ -162,6 +169,8 @@ export default async function ProjectPage({
                   {a.prize && <strong>{a.prize}</strong>}
                 </div>
               ))
+            ) : p.id === "wrap-it-up" ? (
+              <WrapItUpBetaNote />
             ) : (
               <div className="detail-note">
                 <h3>Try {p.title}.</h3>
@@ -180,6 +189,7 @@ export default async function ProjectPage({
             )}
           </section>
         </div>
+        {p.id === "wrap-it-up" && <WrapItUpDetails />}
         {media && featuredIds.includes(p.id) && (
           <section className="project-demo-extra">
             <h2>The award-winning demo.</h2>

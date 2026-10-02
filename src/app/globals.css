@@ -1340,24 +1340,14 @@ svg {
   text-decoration: underline;
   text-underline-offset: 5px;
 }
-.app-artwork {
-  margin: 34px 0 50px;
-}
-.app-artwork img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-.app-artwork figcaption,
+.project-artwork-caption,
 .app-small-copy,
 .app-page .project-page-header > .app-small-copy {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.7;
 }
-.app-artwork figcaption {
+.project-artwork-caption {
   margin-top: 12px;
 }
 .app-copy {
@@ -1436,6 +1426,10 @@ svg {
 }
 .visual-wrap-it-up img {
   object-fit: cover;
+}
+.project-detail-visual .project-visual.visual-wrap-it-up {
+  height: auto;
+  aspect-ratio: 1024 / 500;
 }
 .project-breadcrumb {
   display: flex;
