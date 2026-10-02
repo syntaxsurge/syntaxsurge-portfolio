@@ -149,7 +149,9 @@ check("Wrap It Up! pages have public metadata, support, and honest beta links", 
   assert.ok(privacy.includes("Google Mobile Ads"));
   assert.ok(!privacy.includes("collect no data"));
   assert.ok(privacy.includes("In build 4"));
-  assert.ok(privacy.includes("Release candidate 1.0.1 (5)"));
+  assert.ok(privacy.includes("The distributed Android beta"));
+  assert.ok(privacy.includes(wrapItUp.version));
+  assert.ok(!privacy.toLowerCase().includes("release candidate"));
 });
 for (const project of projects) {
   check(`Static project page: ${project.title}`, () => {
