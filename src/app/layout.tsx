@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { themeInitScript } from "@/lib/theme";
 import { siteUrl } from "@/lib/site";
+import { business } from "@/data/business";
 const sans = Geist({
   variable: "--font-geist",
   subsets: ["latin"],
@@ -16,25 +17,25 @@ const mono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: "Jade Laurence Empleo — Developer & Product Builder",
-    template: "%s — Jade Laurence Empleo",
+    default: business.legalName,
+    template: `%s — ${business.name}`,
   },
-  description:
-    "The selected work of Jade Laurence Empleo, also known as SyntaxSurge. Thoughtful products, AI tools, and award-winning Web3 applications.",
-  applicationName: "Jade · SyntaxSurge",
-  authors: [
-    { name: "Jade Laurence Empleo", url: "https://github.com/syntaxsurge" },
-  ],
+  description: business.description,
+  applicationName: business.name,
+  authors: [{ name: business.legalName, url: siteUrl.toString() }],
+  creator: business.name,
+  publisher: business.legalName,
   openGraph: {
     type: "website",
     url: "/",
-    title: "Jade Laurence Empleo — Ideas into things people use.",
-    description:
-      "Explore products and award-winning experiments by SyntaxSurge.",
+    siteName: business.name,
+    title: business.legalName,
+    description: business.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jade Laurence Empleo — Developer & Product Builder",
+    title: business.legalName,
+    description: business.description,
   },
   robots: { index: true, follow: true },
 };

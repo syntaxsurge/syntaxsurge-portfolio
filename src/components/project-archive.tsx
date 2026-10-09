@@ -8,7 +8,6 @@ const filters = [
   "Products",
   "AI & Web3",
   "Tools",
-  "Awarded",
 ] as const;
 export function ProjectArchive() {
   const [filter, setFilter] = useState<(typeof filters)[number]>("All projects");
@@ -25,8 +24,7 @@ export function ProjectArchive() {
     () =>
       projects.filter(
         (p) =>
-          (filter === "All projects" ||
-            (filter === "Awarded" ? !!p.award : p.category === filter)) &&
+          (filter === "All projects" || p.category === filter) &&
           `${p.title} ${p.description} ${p.category} ${p.year} ${p.tags.join(" ")} ${p.award ?? ""}`
             .toLowerCase()
             .includes(search),
@@ -49,8 +47,7 @@ export function ProjectArchive() {
               <span>
                 {projects.filter(
                   (p) =>
-                    f === "All projects" ||
-                    (f === "Awarded" ? !!p.award : p.category === f),
+                    f === "All projects" || p.category === f,
                 ).length}
               </span>
             </button>
@@ -95,9 +92,6 @@ export function ProjectArchive() {
       <div className="archive-list" id="project-results">
         {visible.map((p) => (
           <article className="archive-row" key={p.id}>
-            <span className="project-index mono" aria-hidden="true">
-              {String(projects.indexOf(p) + 1).padStart(2, "0")}
-            </span>
             <div className="archive-name">
               <div className="archive-project-meta">
                 <span>{p.category}</span>
@@ -109,9 +103,9 @@ export function ProjectArchive() {
                   </span>
                 )}
               </div>
-              <h3>
+              <h2>
                 <Link href={`/work/${p.id}`}>{p.title}</Link>
-              </h3>
+              </h2>
               <p>{p.description}</p>
             </div>
             <div className="archive-actions">
@@ -139,7 +133,7 @@ export function ProjectArchive() {
       </div>
       {visible.length === 0 && (
         <div className="empty-results">
-          <h3>No projects found</h3>
+          <h2>No projects found</h2>
           <p>Try another search or browse the full collection.</p>
           <button
             className="button button-outline"

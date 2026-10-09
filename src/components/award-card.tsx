@@ -77,9 +77,9 @@ export function AwardCard({
           </time>
           {award.prize && <span className="award-prize">{award.prize}</span>}
         </div>
-        <h3>
+        <h2>
           <Link href={`/work/${award.projectId}`}>{project.title}</Link>
-        </h3>
+        </h2>
         <p className="award-title">
           <Trophy />
           {award.title}

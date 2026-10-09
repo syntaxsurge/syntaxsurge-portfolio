@@ -1,13 +1,14 @@
-# Portfolio at syntaxsurge.com
+# Syntax Surge business website at syntaxsurge.com
 
-The portfolio is prepared for **https://syntaxsurge.com/**. Its canonical URLs, social previews, robots file, and sitemap use that origin by default. This document and the Nginx snippet are deployment preparation; they do not change the live server.
+The SyntaxSurge Software Development Services website, branded as Syntax Surge, is prepared for **https://syntaxsurge.com/**. Its canonical URLs, business social previews, robots file, and sitemap use that origin by default. This document and the Nginx snippet are deployment preparation; they do not change the live server.
 
-Kaldi is published separately at **https://kaldi-rewards.syntaxsurge.com/**, with its own domain/vhost configuration. This guide configures only the portfolio at `syntaxsurge.com`; Kaldi's server, process, and private listener are managed by its deployment. Do not add a Next.js `basePath` to this portfolio or reuse another application's process, environment file, database, or port.
+Kaldi is published separately at **https://kaldi-rewards.syntaxsurge.com/**, with its own domain/vhost configuration. MC Dental Station is a separate clinic application at **https://mc-dental.syntaxsurge.com/**. This guide configures only the business website at `syntaxsurge.com`; linked applications' servers, processes, and private listeners are managed by their deployments. Do not add a Next.js `basePath` to this website or reuse another application's process, environment file, database, or port.
 
 | Public route | Application | Private listener |
 | --- | --- | --- |
-| `/`, `/work/*`, `/_next/*`, `/images/*`, metadata routes; `/apps/wrap-it-up` redirect addresses | Portfolio | `127.0.0.1:3101` |
+| `/`, `/work`, `/recognition`, `/work/*`, `/_next/*`, `/images/*`, `/documents/*`, metadata routes; `/apps/wrap-it-up` redirect addresses | Business website | `127.0.0.1:3101` |
 | `https://kaldi-rewards.syntaxsurge.com/` | Kaldi | Managed by its separate deployment |
+| `https://mc-dental.syntaxsurge.com/` | MC Dental Station | Managed by its separate deployment |
 
 ## Install the source and runtime
 
@@ -34,7 +35,7 @@ install -d -o www -g www -m 0700 /www/syntaxsurge-portfolio/runtime
 runuser -u www -- git clone https://github.com/syntaxsurge/syntaxsurge-portfolio.git /www/syntaxsurge-portfolio/source
 ```
 
-Install pnpm using the selected Node installation's package manager if it is not already available. Before configuring the service, verify the selected executables and write permissions while running as `www`. If a checkout was uploaded by an administrator instead of cloned as `www`, correct ownership of this portfolio's directories only. Do not recursively change ownership of `/www` or the WordPress and Kaldi directories.
+Install pnpm using the selected Node installation's package manager if it is not already available. Before configuring the service, verify the selected executables and write permissions while running as `www`. If a checkout was uploaded by an administrator instead of cloned as `www`, correct ownership of this business website's directories only. Do not recursively change ownership of `/www` or other applications' directories.
 
 ### Install the source dependencies before the first start
 
@@ -78,9 +79,9 @@ PORT=3101
 PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
 ```
 
-The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose port 3101 in the firewall; Nginx is the portfolio's public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
+The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose port 3101 in the firewall; Nginx is the business website's public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
 
-`SITE_URL` is an origin only: no path, credentials, query, or fragment. Invalid values fail the build. The portfolio needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
+`SITE_URL` is an origin only: no path, credentials, query, or fragment. Invalid values fail the build. The business website needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
 
 ### What happens on every start
 
@@ -100,7 +101,7 @@ This workflow intentionally rebuilds on restart when the pushed commit or build 
 
 ### Publishing future updates
 
-Run the local checks, commit the intended files, and push `main` to GitHub. Then restart this portfolio's Node.js project in aaPanel. Only pushed commits are fetched; uncommitted or unpushed development changes do not appear on the server, and local changes in the server checkout are discarded.
+Run the local checks, commit the intended files, and push `main` to GitHub. Then restart this business website's Node.js project in aaPanel. Only pushed commits are fetched; uncommitted or unpushed development changes do not appear on the server, and local changes in the server checkout are discarded.
 
 ```sh
 pnpm lint
@@ -114,7 +115,7 @@ The startup runner itself is loaded from the source checkout. Every start also u
 
 ### One-time adoption on an existing server
 
-The earlier `pnpm serve` runner builds fetched releases without updating the source checkout, so it cannot install this updated runner by restarting alone. After these changes are committed and pushed to `origin/main`, stop only this portfolio's aaPanel project. Verify the source and external runtime paths above, and preserve any needed server edits outside the checkout before replacing it. Keep production environment files ignored and untracked; keep the runtime history intact.
+The earlier `pnpm serve` runner builds fetched releases without updating the source checkout, so it cannot install this updated runner by restarting alone. After these changes are committed and pushed to `origin/main`, stop only this business website's aaPanel project. Verify the source and external runtime paths above, and preserve any needed server edits outside the checkout before replacing it. Keep production environment files ignored and untracked; keep the runtime history intact.
 
 From the server administrator's terminal, run these commands for the configured runtime user against the actual server checkout. The reset intentionally discards tracked source edits and local commits:
 
@@ -127,7 +128,7 @@ With the selected Node installation, run `pnpm install --frozen-lockfile --prod=
 
 ### Recovery
 
-When an update fails, first read the logged error and check whether the previous release is serving. Fix the cause, push a corrected commit if needed, and restart. Do not delete the runtime directory: it contains the saved builds used for fallback. A lock owned by an exited process is recovered automatically. If startup reports a lock owned by a live process, confirm which portfolio process is already running; do not remove its lock to start a duplicate service.
+When an update fails, first read the logged error and check whether the previous release is serving. Fix the cause, push a corrected commit if needed, and restart. Do not delete the runtime directory: it contains the saved builds used for fallback. A lock owned by an exited process is recovered automatically. If startup reports a lock owned by a live process, confirm which website process is already running; do not remove its lock to start a duplicate service.
 
 For a release that starts successfully but later proves incorrect, revert the offending commit in Git, verify the fix locally, push it to `main`, and restart. The next start fetches that corrected history. Do not edit generated files inside a saved release. If the root route must be taken back to WordPress immediately, use the Nginx rollback below; leave Kaldi running throughout.
 
@@ -139,15 +140,15 @@ Inspect the current effective Nginx configuration and take private backups befor
 - WordPress rewrite include: `/www/server/panel/vhost/rewrite/syntaxsurge.com.conf`
 - WordPress files: `/www/wwwroot/syntaxsurge.com`
 
-Verify these paths and contents again. Kaldi's separate `kaldi-rewards.syntaxsurge.com` vhost is outside these portfolio routing changes; use its deployment configuration for server details.
+Verify these paths and contents again. Kaldi's and MC Dental Station's separate vhosts are outside these business-site routing changes; use each application's deployment configuration for server details.
 
 The previous WordPress rewrite include contained a `location /` block with `try_files $uri $uri/ /index.php?$args`. **Remove that one catch-all, then include [nginx-portfolio.conf](../deploy/nginx-portfolio.conf) once inside the existing server; the snippet contains its replacement. Do not keep or add a second `location /`.** Keep the backup outside wildcard include directories so Nginx does not load it. Preserve the WordPress files/database, PHP settings, TLS certificate, HTTP-to-HTTPS behavior, ACME challenge rules, and existing security rules. Do not replace the entire vhost or add another website claiming the same domain.
 
-Install the portfolio snippet only in the `syntaxsurge.com` server block; leave Kaldi's subdomain vhost and deployment configuration unchanged. The portfolio's `^~ /_next/`, `^~ /work/`, and `^~ /images/` blocks prevent WordPress file-extension regexes from intercepting those routes. Exact blocks handle the portfolio icon, social preview, robots file, and sitemap. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
+Install the business-site snippet only in the `syntaxsurge.com` server block; leave linked applications' vhosts and deployment configurations unchanged. The `^~ /_next/`, `^~ /work/`, `^~ /images/`, and `^~ /documents/` blocks prevent WordPress file-extension regexes from intercepting those routes. The catch-all also handles `/work` and `/recognition`; exact blocks handle the business icon, social preview, robots file, and sitemap. `/documents/syntax-surge-dti-certificate.pdf` serves the unchanged supplied registration certificate; its rendered preview uses `/images/syntax-surge-dti-certificate.png`. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
 
-The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Keep portfolio proxy settings scoped to its own vhost. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
+The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Keep business-site proxy settings scoped to its own vhost. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
 
-Only after the portfolio passes its private listener checks, validate the combined Nginx configuration with the server's existing Nginx executable. Reload only if validation passes. On the earlier aaPanel installation, the executable was `/www/server/nginx/sbin/nginx`; verify the active executable rather than starting a second Nginx instance.
+Only after the business website passes its private listener checks, validate the combined Nginx configuration with the server's existing Nginx executable. Reload only if validation passes. On the earlier aaPanel installation, the executable was `/www/server/nginx/sbin/nginx`; verify the active executable rather than starting a second Nginx instance.
 
 ## Confirm the cutover
 
@@ -155,38 +156,52 @@ Check these privately first, then on HTTPS after the reload:
 
 ```sh
 curl -fsS http://127.0.0.1:3101/ -o /dev/null
+curl -fsS http://127.0.0.1:3101/work -o /dev/null
+curl -fsS http://127.0.0.1:3101/recognition -o /dev/null
 curl -fsS http://127.0.0.1:3101/work/cliplore -o /dev/null
+curl -fsS http://127.0.0.1:3101/documents/syntax-surge-dti-certificate.pdf -o /dev/null
 curl -fsS http://127.0.0.1:3101/sitemap.xml
 curl -fsS https://syntaxsurge.com/ -o /dev/null
+curl -fsS https://syntaxsurge.com/work -o /dev/null
+curl -fsS https://syntaxsurge.com/recognition -o /dev/null
+curl -fsS https://syntaxsurge.com/work/mc-dental-station -o /dev/null
 curl -fsS https://syntaxsurge.com/work/cliplore -o /dev/null
 curl -fsS https://syntaxsurge.com/robots.txt
 curl -fsS https://syntaxsurge.com/sitemap.xml
 curl -fsS https://syntaxsurge.com/icon.svg -o /dev/null
 curl -fsS https://syntaxsurge.com/opengraph-image -o /dev/null
 curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/images/syntaxsurge-logo.jpg -o /dev/null
+curl -fsS https://syntaxsurge.com/images/jade-laurence-empleo.jpg -o /dev/null
+curl -fsS https://syntaxsurge.com/images/mc-dental-cover.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/documents/syntax-surge-dti-certificate.pdf -o /dev/null
+curl -fsS https://syntaxsurge.com/images/syntax-surge-dti-certificate.png -o /dev/null
 curl -fsS https://kaldi-rewards.syntaxsurge.com/ -o /dev/null
+curl -fsS https://mc-dental.syntaxsurge.com/ -o /dev/null
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify all 18 project pages and the two Wrap It Up! support/privacy pages, both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 21 unique portfolio URLs. Kaldi's separate origin is not part of the portfolio sitemap.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the business homepage, `/work`, `/recognition`, all 19 project pages, and the two Wrap It Up! support/privacy pages; also check both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 24 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
 
-Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi loads at `https://kaldi-rewards.syntaxsurge.com/` with its own assets, wallet, and sign-in callback. Inspect the portfolio aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
+Verify the registration preview, PDF view, and download actions. The PDF response should have `application/pdf` content type and match the original SHA-256 recorded in `docs/ASSET-SOURCES.md`; the preview should be a local PNG rendering. The canonical legal name is **SyntaxSurge Software Development Services**, while the business brand remains **Syntax Surge**. The certificate assets do not add sitemap pages and require no external document service.
 
-If verification fails, restore only the backed-up root routing and portfolio include changes, validate, and reload Nginx. Do not stop, restart, or change the Kaldi service during a portfolio rollback. Retain WordPress data even after a successful cutover.
+Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi loads at `https://kaldi-rewards.syntaxsurge.com/` with its own assets, wallet, and sign-in callback. Check MC Dental Station's public root independently; its booking, staff authentication, database, and FAQ integrations belong to that application. Inspect the business website's aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
+
+If verification fails, restore only the backed-up root routing and business-site include changes, validate, and reload Nginx. Do not stop, restart, or change linked applications during a business-site rollback. Retain WordPress data even after a successful cutover.
 
 ## Diagnose a 502 Bad Gateway
 
 A Next.js **Ready** message and the runner's homepage check describe startup, not current public health. Run these checks in the **server terminal** while the error occurs, before changing configuration.
 
-### 1. Check the current portfolio listener
+### 1. Check the current business-site listener
 
 These are GET requests with response bodies discarded. `000` means no HTTP response; keep the accompanying connection error.
 
 ```sh
-curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'portfolio: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3101/
+curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'website: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3101/
 ss -ltnp '( sport = :3101 )'
 ```
 
-If 3101 fails, inspect current portfolio aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. If this private request succeeds but the portfolio's public route fails, investigate its Nginx/public routing. Check Kaldi separately at `https://kaldi-rewards.syntaxsurge.com/`; this guide assumes no Kaldi private listener or health endpoint.
+If 3101 fails, inspect current business-site aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. If this private request succeeds but the business website's public route fails, investigate its Nginx/public routing. Check Kaldi and MC Dental Station separately at their public roots; this guide assumes no private listener or health endpoint for either application.
 
 ### 2. Inspect the Nginx configuration and matching error
 
@@ -199,7 +214,7 @@ portfolio_nginx_capture="$(mktemp /tmp/portfolio-nginx.XXXXXX)"
 rg -n 'configuration file|server_name.*syntaxsurge[.]com|proxy_pass|error_log|conflicting server name|duplicate location|test failed' "$portfolio_nginx_capture"
 ```
 
-Inspect the captured `syntaxsurge.com` HTTPS block and its includes. Portfolio locations require **`http://127.0.0.1:3101`**: HTTP, IPv4 loopback, port 3101. Check for an old port, HTTPS upstream, or `localhost` resolving to `::1`. Check duplicate vhosts or aaPanel Node domain mappings: server-name warnings can accompany a successful syntax test. `nginx -T` reads configuration on disk, not the configuration loaded by existing workers. See [Nginx command documentation](https://nginx.org/en/docs/switches.html).
+Inspect the captured `syntaxsurge.com` HTTPS block and its includes. Business-site locations require **`http://127.0.0.1:3101`**: HTTP, IPv4 loopback, port 3101. Check for an old port, HTTPS upstream, or `localhost` resolving to `::1`. Check duplicate vhosts or aaPanel Node domain mappings: server-name warnings can accompany a successful syntax test. `nginx -T` reads configuration on disk, not the configuration loaded by existing workers. See [Nginx command documentation](https://nginx.org/en/docs/switches.html).
 
 Reproduce one failing request, then read the error log named by that active vhost's `error_log` directive. Replace the example path with the actual log path:
 
@@ -227,4 +242,4 @@ After identifying a configuration mistake, privately back up the affected file o
 
 ## Wrap It Up! public pages
 
-The portfolio owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 21 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.
+The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 24 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.

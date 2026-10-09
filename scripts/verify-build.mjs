@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { projects, awards } from "../src/data/portfolio.ts";
+import { business } from "../src/data/business.ts";
 import { awardMedia } from "../src/data/award-media.ts";
 import { parseSiteOrigin, siteHref } from "../src/lib/site.ts";
 import { wrapItUp, wrapItUpPaths } from "../src/data/wrap-it-up.ts";
@@ -21,8 +22,8 @@ function check(label, run) {
   console.log(`PASS ${label}`);
 }
 check("Complete, unique project and award collection", () => {
-  assert.equal(projects.length, 18);
-  assert.equal(new Set(projects.map((p) => p.id)).size, 18);
+  assert.equal(projects.length, 19);
+  assert.equal(new Set(projects.map((p) => p.id)).size, 19);
   assert.equal(awards.length, 14);
   for (const p of projects) {
     assert.match(p.id, /^[a-z0-9-]+$/);
@@ -37,27 +38,72 @@ check("Complete, unique project and award collection", () => {
   assert.ok(awards.some((a) => a.prize?.includes("MUSD")));
 });
 const homepage = read("index.html");
-check("Homepage landmarks, navigation, and all project destinations", () => {
-  assert.equal((homepage.match(/<h1\b/g) || []).length, 1);
-  assert.ok(homepage.includes('id="main"'));
-  for (const id of ["work", "about", "recognition", "archive", "contact"])
-    assert.ok(homepage.includes(`id="${id}"`));
-  const header = homepage.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
-  assert.ok(header);
-  for (const id of ["work", "archive", "about", "recognition", "contact"])
-    assert.ok(header.includes(`href="/#${id}"`));
-  assert.ok(homepage.indexOf('id="archive"') < homepage.indexOf('id="about"'));
-  assert.ok(!homepage.includes("<details"));
-  assert.equal(
-    (homepage.match(/class="award-card(?: award-card-compact)?"/g) || []).length,
-    awards.length,
-  );
-  for (const p of projects)
-    assert.ok(homepage.includes(`href="/work/${p.id}"`));
-  assert.ok(!homepage.includes("Create Next App"));
-  assert.ok(homepage.includes('aria-pressed="true"'));
-  assert.ok(homepage.includes('aria-live="polite"'));
-});
+const collection = read("work.html");
+const recognition = read("recognition.html");
+check(
+  "Business homepage has direct navigation and a concise work selection",
+  () => {
+    assert.equal((homepage.match(/<h1\b/g) || []).length, 1);
+    assert.ok(homepage.includes('id="main"'));
+    for (const id of ["services", "work", "team", "registration", "contact"])
+      assert.ok(homepage.includes(`id="${id}"`));
+    const header = homepage.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
+    assert.ok(header);
+    for (const id of ["services", "team"])
+      assert.ok(header.includes(`href="/#${id}"`));
+    assert.ok(header.includes('href="/work"'));
+    assert.ok(header.includes('href="#contact"'));
+    assert.ok(header.includes(business.name));
+    assert.ok(!header.includes("Jade"));
+    assert.ok(homepage.includes(business.legalName));
+    assert.ok(homepage.includes(business.founder.name));
+    assert.ok(plain(homepage).includes(`Business Name No. ${business.certificate.number}`));
+    const certificateLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
+      .map((match) => match[0])
+      .filter((link) => link.includes(`href="${business.certificate.href}"`));
+    assert.equal(certificateLinks.length, 3);
+    assert.ok(certificateLinks.some((link) => /\bdownload=/.test(link)));
+    const certificate = readFileSync(
+      resolve(root, "public", business.certificate.href.slice(1)),
+    );
+    assert.equal(certificate.subarray(0, 5).toString(), "%PDF-");
+    assert.ok(homepage.includes('href="/work"'));
+    assert.ok(homepage.includes('href="/recognition"'));
+    assert.equal((homepage.match(/class="feature-card /g) || []).length, 3);
+    for (const id of ["mc-dental-station", "kaldi", "cliplore"])
+      assert.ok(homepage.includes(`href="/work/${id}"`));
+    assert.ok(!homepage.includes("<details"));
+    assert.ok(!homepage.includes('id="project-results"'));
+    assert.ok(!homepage.includes("Create Next App"));
+  },
+);
+check(
+  "Full collection and recognition have accessible standalone routes",
+  () => {
+    for (const html of [collection, recognition]) {
+      assert.equal((html.match(/<h1\b/g) || []).length, 1);
+      assert.ok(html.includes('id="main"'));
+      assert.ok(html.includes('aria-label="Breadcrumb"'));
+    }
+    assert.equal(
+      (recognition.match(/class="award-card(?: award-card-compact)?"/g) || [])
+        .length,
+      awards.length,
+    );
+    for (const p of projects)
+      assert.ok(collection.includes(`href="/work/${p.id}"`));
+    assert.ok(collection.includes('aria-pressed="true"'));
+    assert.ok(collection.includes('aria-live="polite"'));
+    assert.ok(collection.includes('id="project-results"'));
+    const dental = projects.find((p) => p.id === "mc-dental-station");
+    assert.equal(dental.links[0].href, "https://mc-dental.syntaxsurge.com/");
+    assert.ok(
+      read("work/mc-dental-station.html").includes(
+        "Clinic staff confirm the final appointment",
+      ),
+    );
+  },
+);
 check(
   "Theme is initialized before content and both controls are available",
   () => {
@@ -72,28 +118,25 @@ check(
     assert.ok(homepage.includes('data-mode="dark"'));
   },
 );
-check(
-  "Every recognition has local media and a direct YouTube link",
-  () => {
-    assert.equal(Object.keys(awardMedia).length, awards.length);
-    for (const award of awards) {
-      const media = awardMedia[award.projectId];
-      assert.ok(media.image.alt.length > 10);
-      assert.ok(media.image.width > 0 && media.image.height > 0);
-      const buffer = readFileSync(
-        resolve(root, "public", media.image.src.slice(1)),
-      );
-      assert.equal(buffer.subarray(8, 12).toString(), "WEBP");
-      assert.equal(new URL(media.video.href).hostname, "www.youtube.com");
-      assert.ok(homepage.includes(`href="${media.video.href}"`));
-      assert.ok(
-        read(`work/${award.projectId}.html`).includes(
-          `href="${media.video.href}"`,
-        ),
-      );
-    }
-  },
-);
+check("Every recognition has local media and a direct YouTube link", () => {
+  assert.equal(Object.keys(awardMedia).length, awards.length);
+  for (const award of awards) {
+    const media = awardMedia[award.projectId];
+    assert.ok(media.image.alt.length > 10);
+    assert.ok(media.image.width > 0 && media.image.height > 0);
+    const buffer = readFileSync(
+      resolve(root, "public", media.image.src.slice(1)),
+    );
+    assert.equal(buffer.subarray(8, 12).toString(), "WEBP");
+    assert.equal(new URL(media.video.href).hostname, "www.youtube.com");
+    assert.ok(recognition.includes(`href="${media.video.href}"`));
+    assert.ok(
+      read(`work/${award.projectId}.html`).includes(
+        `href="${media.video.href}"`,
+      ),
+    );
+  }
+});
 check("Domain metadata and sitemap use the portfolio origin", () => {
   assert.equal(parseSiteOrigin().origin, "https://syntaxsurge.com");
   for (const value of [
@@ -104,15 +147,31 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
     assert.throws(() => parseSiteOrigin(value));
   }
   assert.throws(() => siteHref("//example.com"));
-  const homepageCanonical = homepage.match(/rel="canonical" href="([^"]+)"/)?.[1];
+  const homepageCanonical = homepage.match(
+    /rel="canonical" href="([^"]+)"/,
+  )?.[1];
   assert.ok(homepageCanonical);
   assert.equal(new URL(homepageCanonical).href, siteHref());
   const sitemap = read("sitemap.xml.body");
-  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-  const expected = new Set([siteHref("/"), ...projects.map((project) => siteHref(`/work/${project.id}`)), ...wrapItUpPaths.map((path) => siteHref(path))]);
+  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(
+    (match) => match[1],
+  );
+  const expected = new Set([
+    siteHref("/"),
+    siteHref("/work"),
+    siteHref("/recognition"),
+    ...projects.map((project) => siteHref(`/work/${project.id}`)),
+    ...wrapItUpPaths.map((path) => siteHref(path)),
+  ]);
   assert.equal(locations.length, expected.size);
   assert.equal(new Set(locations).size, locations.length);
   assert.ok(!sitemap.includes("/apps/wrap-it-up"));
+  for (const path of ["work", "recognition"])
+    assert.ok(
+      read(`${path}.html`).includes(
+        `rel="canonical" href="${siteHref(`/${path}`)}"`,
+      ),
+    );
   for (const project of projects) {
     const canonical = siteHref(`/work/${project.id}`);
     assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
@@ -124,70 +183,86 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   }
   assert.ok(read("robots.txt.body").includes(siteHref("/sitemap.xml")));
 });
-check("Wrap It Up! pages have public metadata, support, and honest beta links", () => {
-  const sitemap = read("sitemap.xml.body");
-  for (const path of wrapItUpPaths) {
-    const html = read(`${path.slice(1)}.html`);
-    assert.equal((html.match(/<h1\b/g) || []).length, 1);
-    assert.ok(html.includes('id="main"'));
-    assert.ok(html.includes('aria-label="Wrap It Up! navigation"'));
-    assert.ok(html.includes(`rel="canonical" href="${siteHref(path)}"`));
-    assert.ok(html.includes('name="description"'));
-    assert.ok(html.includes('property="og:image"'));
-    assert.ok(html.includes(wrapItUp.version));
-    assert.ok(!html.includes("/apps/wrap-it-up"));
-    assert.ok(sitemap.includes(`<loc>${siteHref(path)}</loc>`));
-    for (const destination of wrapItUpPaths)
-      assert.ok(html.includes(`href="${destination}"`));
-  }
-  const game = read("work/wrap-it-up.html");
-  const support = read("work/wrap-it-up/support.html");
-  const privacy = read("work/wrap-it-up/privacy.html");
-  assert.ok(game.includes("Your own cozy wrapping shop."));
-  assert.ok(game.includes("PROJECT FOCUS"));
-  assert.ok(game.includes('aria-label="More projects"'));
-  assert.ok(game.includes(`href="${wrapItUp.playTestingUrl}"`));
-  assert.ok(game.includes(`href="${wrapItUp.testFlightUrl}"`));
-  assert.ok(game.includes("allowlisted Google account"));
-  assert.ok(game.includes("not yet a public App Store or Google Play release"));
-  assert.ok(support.includes(wrapItUp.supportEmail));
-  assert.ok(support.includes("<details"));
-  assert.ok(support.includes("cannot restore a local save from a server"));
-  for (const html of [game, support, privacy]) {
-    assert.ok(html.includes("ESRB Everyone"));
-    assert.ok(html.includes("PEGI 3"));
-    assert.ok(html.includes("18+ in Australia"));
-  }
-  for (const html of [game, support]) {
-    if (wrapItUp.closedTestingAvailable) {
-      assert.ok(html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
-      assert.ok(html.includes("first leave it"));
-    } else {
-      assert.ok(html.includes("closed Alpha test is not yet available; review and publication must be confirmed first"));
-      assert.ok(!html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
+check(
+  "Wrap It Up! pages have public metadata, support, and honest beta links",
+  () => {
+    const sitemap = read("sitemap.xml.body");
+    for (const path of wrapItUpPaths) {
+      const html = read(`${path.slice(1)}.html`);
+      assert.equal((html.match(/<h1\b/g) || []).length, 1);
+      assert.ok(html.includes('id="main"'));
+      assert.ok(html.includes('aria-label="Wrap It Up! navigation"'));
+      assert.ok(html.includes(`rel="canonical" href="${siteHref(path)}"`));
+      assert.ok(html.includes('name="description"'));
+      assert.ok(html.includes('property="og:image"'));
+      assert.ok(html.includes(wrapItUp.version));
+      assert.ok(!html.includes("/apps/wrap-it-up"));
+      assert.ok(sitemap.includes(`<loc>${siteHref(path)}</loc>`));
+      for (const destination of wrapItUpPaths)
+        assert.ok(html.includes(`href="${destination}"`));
     }
-  }
-  assert.ok(privacy.includes(wrapItUp.supportEmail));
-  assert.ok(privacy.includes("automatic startup entry points"));
-  assert.ok(privacy.includes("Google Mobile Ads"));
-  assert.ok(!privacy.includes("collect no data"));
-  assert.ok(privacy.includes("In build 4"));
-  assert.ok(privacy.includes("The distributed Android beta"));
-  assert.ok(privacy.includes(wrapItUp.version));
-  assert.ok(!privacy.toLowerCase().includes("release candidate"));
-});
-check("Installed beta links redirect permanently to the canonical project pages", () => {
-  assert.ok(!existsSync(resolve(root, "src/app/apps/wrap-it-up/page.tsx")));
-  assert.ok(!existsSync(resolve(app, "apps/wrap-it-up.html")));
-  assert.ok(!homepage.includes("/apps/wrap-it-up"));
-  const routes = JSON.parse(readFileSync(resolve(root, ".next/routes-manifest.json"), "utf8"));
-  for (const suffix of ["", "/support", "/privacy"]) {
-    const redirect = routes.redirects.find((route) => route.source === `/apps/wrap-it-up${suffix}`);
-    assert.ok(redirect);
-    assert.equal(redirect.destination, `${wrapItUp.path}${suffix}`);
-    assert.equal(redirect.statusCode, 308);
-  }
-});
+    const game = read("work/wrap-it-up.html");
+    const support = read("work/wrap-it-up/support.html");
+    const privacy = read("work/wrap-it-up/privacy.html");
+    assert.ok(game.includes("Your own cozy wrapping shop."));
+    assert.ok(game.includes("PROJECT FOCUS"));
+    assert.ok(game.includes('aria-label="More projects"'));
+    assert.ok(game.includes(`href="${wrapItUp.playTestingUrl}"`));
+    assert.ok(game.includes(`href="${wrapItUp.testFlightUrl}"`));
+    assert.ok(game.includes("allowlisted Google account"));
+    assert.ok(
+      game.includes("not yet a public App Store or Google Play release"),
+    );
+    assert.ok(support.includes(wrapItUp.supportEmail));
+    assert.ok(support.includes("<details"));
+    assert.ok(support.includes("cannot restore a local save from a server"));
+    for (const html of [game, support, privacy]) {
+      assert.ok(html.includes("ESRB Everyone"));
+      assert.ok(html.includes("PEGI 3"));
+      assert.ok(html.includes("18+ in Australia"));
+    }
+    for (const html of [game, support]) {
+      if (wrapItUp.closedTestingAvailable) {
+        assert.ok(html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
+        assert.ok(html.includes("first leave it"));
+      } else {
+        assert.ok(
+          html.includes(
+            "closed Alpha test is not yet available; review and publication must be confirmed first",
+          ),
+        );
+        assert.ok(!html.includes(`href="${wrapItUp.playClosedTestingUrl}"`));
+      }
+    }
+    assert.ok(privacy.includes(wrapItUp.supportEmail));
+    assert.ok(privacy.includes("automatic startup entry points"));
+    assert.ok(privacy.includes("Google Mobile Ads"));
+    assert.ok(!privacy.includes("collect no data"));
+    assert.ok(privacy.includes("In build 4"));
+    assert.ok(privacy.includes("The distributed Android beta"));
+    assert.ok(privacy.includes(wrapItUp.version));
+    assert.ok(!privacy.toLowerCase().includes("release candidate"));
+  },
+);
+check(
+  "Installed beta links redirect permanently to the canonical project pages",
+  () => {
+    assert.ok(!existsSync(resolve(root, "src/app/apps/wrap-it-up/page.tsx")));
+    assert.ok(!existsSync(resolve(app, "apps/wrap-it-up.html")));
+    assert.ok(!homepage.includes("/apps/wrap-it-up"));
+    const routes = JSON.parse(
+      readFileSync(resolve(root, ".next/routes-manifest.json"), "utf8"),
+    );
+    for (const suffix of ["", "/support", "/privacy"]) {
+      const redirect = routes.redirects.find(
+        (route) => route.source === `/apps/wrap-it-up${suffix}`,
+      );
+      assert.ok(redirect);
+      assert.equal(redirect.destination, `${wrapItUp.path}${suffix}`);
+      assert.equal(redirect.statusCode, 308);
+    }
+  },
+);
 for (const project of projects) {
   check(`Static project page: ${project.title}`, () => {
     const html = read(`work/${project.id}.html`);
@@ -200,8 +275,11 @@ for (const project of projects) {
     assert.ok(html.includes('aria-label="More projects"'));
     const header = html.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
     assert.ok(header);
-    for (const id of ["work", "archive", "about", "recognition", "contact"])
+    for (const id of ["services", "team"])
       assert.ok(header.includes(`href="/#${id}"`));
+    assert.ok(header.includes('href="/work"'));
+    assert.ok(header.includes('href="#contact"'));
+    assert.ok(html.includes('href="/work"'));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));
   });
@@ -212,6 +290,10 @@ check("Project artwork is local and present", () => {
     "studysoda-cover.webp",
     "sipava-cover.webp",
     "kaldi-cover.webp",
+    "mc-dental-cover.webp",
+    "syntaxsurge-logo.jpg",
+    "jade-laurence-empleo.jpg",
+    "syntax-surge-dti-certificate.png",
   ]) {
     const file = resolve(root, "public/images", filename);
     assert.ok(existsSync(file));

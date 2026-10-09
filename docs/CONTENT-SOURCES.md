@@ -1,20 +1,29 @@
-# Portfolio content sources
+# Business and project content sources
 
-Reviewed on 25 September 2026. This is an editorial record for future updates, not public site copy.
+Project sourcing was recorded on 25 September 2026; business identity and MC Dental Station sources were reviewed on 10 October 2026. This is an editorial record for future updates, not public site copy.
 
 ## Attribution
 
-The portfolio owner supplied the project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts in the project request. The awards are represented as the owner's résumé claims; this work did not independently authenticate prize disbursements or official winner certificates.
+The owner supplied the Syntax Surge business identity, services brief, founder identity, logo, portrait, project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts. Awards are attributed to founder Jade Laurence Empleo's work; prize disbursements and official winner certificates were not independently authenticated. Project totals are examples of work, not a count of paid clients or business revenue.
 
-The site contains 18 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
+The site contains 19 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
 
 - [GitHub profile](https://github.com/syntaxsurge) confirms the name Jade Laurence Empleo and the SyntaxSurge handle.
 - [LinkedIn profile](https://www.linkedin.com/in/jade-laurence-empleo/) was supplied by the owner. No private LinkedIn content was collected.
 
-## Current products
+## Business identity and registration
+
+`src/data/business.ts` stores the supplied business brand **Syntax Surge**, registered legal name **SyntaxSurge Software Development Services**, founder **Jade Laurence Empleo**, service descriptions, and existing LinkedIn/GitHub contact links. The team section identifies the founder and does not invent additional staff. Business inquiries open the supplied founder LinkedIn profile; no unverified business email or contact-form integration is presented.
+
+The source is the owner's original `BNRS-Certificate_OPQT791819131516_4fa16974-d870-4131-a5e5-1b61dcec90fd.pdf`, preserved unchanged at `public/documents/syntax-surge-dti-certificate.pdf`. Its extracted business name is **SYNTAXSURGE SOFTWARE DEVELOPMENT SERVICES** (no space between Syntax and Surge), scope **National**, Business Name No. **8161608**, issue date **5 May 2026**, and stated validity **5 May 2026 through 5 May 2031**. The named proprietor is **JADE LAURENCE CABARUAN EMPLEO**. These facts describe the supplied certificate; no independent check of ongoing government registration status is asserted.
+
+The homepage presents the legal name and scope with a locally rendered certificate preview and direct original-PDF view/download actions. `business.certificate.href` supplies the PDF path; `preview` is an image metadata object with `src`, `width`, and `height`. The preview is a rendering of the original document, not a recreated certificate. Asset provenance and the original PDF checksum are recorded in `docs/ASSET-SOURCES.md`.
+
+## Current websites and products
 
 | Project | Primary reference | Content used |
 | --- | --- | --- |
+| MC Dental Station | [Clinic website](https://mc-dental.syntaxsurge.com/) and the owner's `mc-dental-station` repository (`README.md`, `AGENTS.md`, implementation and photo-source records) | Clinic service/contact information, appointment requests requiring final staff confirmation, approved English/Filipino FAQ assistance, and the staff workspace. A request is not a confirmed appointment; FAQ help is not medical diagnosis or independent treatment advice. |
 | StudySoda | [studysoda.com](https://studysoda.com/) | Public page title, description, and page text: AI reviewers, flashcards, practice exams, notebooks, and public study materials. |
 | ClipLore | [cliplore.ai](https://cliplore.ai/) | Public page: AI video generation, editable timeline, captions, audio, and exports. |
 | Sipava | [sipava.com](https://sipava.com/) | Public page: plans and routines, alarms, proof, and buddy accountability. No native-app availability is claimed; the site says mobile apps are coming soon. |
@@ -24,7 +33,7 @@ The products use “Current” rather than an invented launch year. Copyright da
 
 ### ClipLore's two contexts
 
-The owner's historical award names ClipLore and links `cliplore.com`. That domain currently redirects to `cliplore.ai`. The verified public [ClipLore repository](https://github.com/syntaxsurge/cliplore) describes the Story Protocol hackathon project: a browser video studio with programmable IP and licensing. The current product page describes an AI video-editing workspace. The portfolio therefore has one ClipLore project with the current product link and separately labelled historical “Award-winning demo” and “Hackathon source” links. It does not claim the current product exposes every feature of the older hackathon entry.
+The owner's historical award names ClipLore and links `cliplore.com`. That domain currently redirects to `cliplore.ai`. The verified public [ClipLore repository](https://github.com/syntaxsurge/cliplore) describes the Story Protocol hackathon project: a browser video studio with programmable IP and licensing. The current product page describes an AI video-editing workspace. The business website therefore has one ClipLore project with the current product link and separately labelled historical “Award-winning demo” and “Hackathon source” links. It does not claim the current product exposes every feature of the older hackathon entry.
 
 The older [pitch deck link](https://cliplore.com/pitch-deck) was supplied by the owner but is not included in the site's current link list because the product domain has changed. The [award demo](https://www.youtube.com/watch?v=WRJlQDFcxVI) is preserved as supplied.
 
@@ -52,7 +61,7 @@ Project years in the archive use the associated award year, not a claimed first 
 
 ## Wrap It Up!
 
-The app pages and portfolio entry are based on the owner’s Wrap It Up! repository, its current `CLAUDE.md`, `docs/PRIVACY.md`, release checklist, and verified mobile release configuration. The current distributed beta is 1.0.1 (7) on Google Play internal testing and TestFlight: local saves/captures, no player account or gameplay backend, and disabled rewarded ads and real-money IAP. Both beta channels were confirmed available before updating the website’s current version. The published privacy scope retains guidance for earlier build 4 installations. It explicitly discloses build 4’s automatic SDK startup risk and build 7’s verified startup-blocking configuration without applying that behavior to older installed binaries. This is not a claim that all platform services or packaged components are network-free. Future ad data categories link to official Google, Unity, AppLovin, and Pangle disclosures.
+The app pages and project entry are based on the owner’s Wrap It Up! repository, its current `CLAUDE.md`, `docs/PRIVACY.md`, release checklist, and verified mobile release configuration. The current distributed beta is 1.0.1 (7) on Google Play internal testing and TestFlight: local saves/captures, no player account or gameplay backend, and disabled rewarded ads and real-money IAP. Both beta channels were confirmed available before updating the website’s current version. The published privacy scope retains guidance for earlier build 4 installations. It explicitly discloses build 4’s automatic SDK startup risk and build 7’s verified startup-blocking configuration without applying that behavior to older installed binaries. This is not a claim that all platform services or packaged components are network-free. Future ad data categories link to official Google, Unity, AppLovin, and Pangle disclosures.
 
 The publisher support address `ejadelaurence@icloud.com` was verified from the same App Store Connect app’s publisher/review information. Beta links are the owner’s Google Play internal enrollment page `4701089363572737974` and TestFlight invitation `9f2WNa94`; the copy explains their access and review limits. No public-store launch is claimed.
 

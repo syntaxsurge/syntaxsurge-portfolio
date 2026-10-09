@@ -1,13 +1,29 @@
 import Image from "next/image";
+import { business } from "@/data/business";
 import { Spark } from "./icons";
-export const featuredIds = ["cliplore", "studysoda", "sipava", "kaldi"];
 export function ProjectVisual({
   id,
   priority = false,
+  title,
+  subtitle,
 }: {
   id: string;
   priority?: boolean;
+  title?: string;
+  subtitle?: string;
 }) {
+  if (id === "mc-dental-station")
+    return (
+      <div className="project-visual visual-dental">
+        <Image
+          src="/images/mc-dental-cover.webp"
+          alt="Four MC Dental Station team members in white coats"
+          fill
+          sizes="(max-width: 700px) 100vw, 1100px"
+          preload={priority}
+        />
+      </div>
+    );
   if (id === "wrap-it-up")
     return (
       <div className="project-visual visual-wrap-it-up">
@@ -96,8 +112,14 @@ export function ProjectVisual({
     <div className={`project-visual visual-typographic tone-${id.length % 4}`}>
       <div className="type-grid" />
       <Spark className="project-large-spark" />
-      <span className="mono visual-mini">SYNTAXSURGE / PROJECT ARCHIVE</span>
+      <span className="mono visual-mini">{business.name.toUpperCase()} / PROJECT COLLECTION</span>
       <span className="abstract-orbit" aria-hidden="true" />
+      {title && (
+        <span className="detail-visual-title">
+          {title}
+          {subtitle && <small>{subtitle}</small>}
+        </span>
+      )}
     </div>
   );
 }

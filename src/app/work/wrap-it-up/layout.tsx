@@ -15,13 +15,13 @@ export default function WrapItUpLayout({
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/#archive">All projects</Link>
+          <Link href="/work">All projects</Link>
           <span aria-hidden="true">/</span>
           <Link href={wrapItUp.path}>{wrapItUp.name}</Link>
         </nav>
         {children}
         <div className="app-page-footer">
-          <p>Wrap It Up! by Jade Laurence Empleo · SyntaxSurge</p>
+          <p>Wrap It Up! by Jade Laurence Empleo · Syntax Surge</p>
           <Link href={`${wrapItUp.path}/support`}>Get help</Link>
           <Link href={`${wrapItUp.path}/privacy`}>Privacy policy</Link>
         </div>

@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects, awards } from "@/data/portfolio";
+import { business } from "@/data/business";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Arrow, Trophy } from "@/components/icons";
-import { ProjectVisual, featuredIds } from "@/components/project-visual";
+import { ProjectVisual } from "@/components/project-visual";
 import { awardMedia } from "@/data/award-media";
 import { DemoPreview } from "@/components/demo-preview";
 import { PlayIcon } from "@/components/award-card";
@@ -30,7 +31,7 @@ export async function generateMetadata({
     openGraph: {
       url: `/work/${p.id}`,
       type: "website",
-      title: `${p.title} — Jade Laurence Empleo`,
+      title: `${p.title} — ${business.name}`,
       description: p.description,
       ...(p.id === "wrap-it-up" && {
         images: [{ url: wrapItUp.artwork, width: 1024, height: 500, alt: "Wrap It Up! gift-wrapping shop artwork" }],
@@ -57,7 +58,7 @@ export default async function ProjectPage({
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/#archive">All projects</Link>
+          <Link href="/work">All projects</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{p.title}</span>
         </nav>
@@ -105,17 +106,16 @@ export default async function ProjectPage({
             Product, demo, and source links open in a new tab.
           </p>
         </div>
-        {media && !featuredIds.includes(p.id) ? (
+        {media && p.id !== "cliplore" ? (
           <DemoPreview projectId={p.id} priority />
         ) : (
           <div className="project-detail-visual">
-            <ProjectVisual id={p.id} priority />
-            {!featuredIds.includes(p.id) && p.id !== "wrap-it-up" && (
-              <span className="detail-visual-title">
-                {p.title}
-                <small>{p.tags[0]}</small>
-              </span>
-            )}
+            <ProjectVisual
+              id={p.id}
+              priority
+              title={p.title}
+              subtitle={p.tags[0]}
+            />
           </div>
         )}
         {p.id === "wrap-it-up" && <p className="project-artwork-caption">Official game artwork. Fold. Tape. Ribbon. Delight!</p>}
@@ -141,17 +141,21 @@ export default async function ProjectPage({
             </div>
             <a
               className="text-link"
-              href="https://github.com/syntaxsurge"
+              href={business.links.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Visit SyntaxSurge on GitHub (opens in a new tab)"
+              aria-label={`Visit ${business.name} on GitHub (opens in a new tab)`}
             >
               GitHub profile <Arrow diagonal />
             </a>
           </section>
           <section aria-labelledby="project-recognition-title">
             <h2 className="eyebrow" id="project-recognition-title">
-              {recognition.length ? "RECOGNITION" : "EXPLORE THE PRODUCT"}
+              {recognition.length
+                ? "RECOGNITION"
+                : p.focus
+                  ? "WHAT THE WEBSITE DOES"
+                  : "EXPLORE THE PRODUCT"}
             </h2>
             {recognition.length ? (
               recognition.map((a) => (
@@ -171,6 +175,15 @@ export default async function ProjectPage({
               ))
             ) : p.id === "wrap-it-up" ? (
               <WrapItUpBetaNote />
+            ) : p.focus ? (
+              <div className="project-focus-list">
+                {p.focus.map((item) => (
+                  <div className="detail-note" key={item.title}>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="detail-note">
                 <h3>Try {p.title}.</h3>
@@ -190,14 +203,14 @@ export default async function ProjectPage({
           </section>
         </div>
         {p.id === "wrap-it-up" && <WrapItUpDetails />}
-        {media && featuredIds.includes(p.id) && (
+        {media && p.id === "cliplore" && (
           <section className="project-demo-extra">
             <h2>The award-winning demo.</h2>
             <DemoPreview projectId={p.id} />
           </section>
         )}
         <nav className="project-navigation" aria-label="More projects">
-          <Link href="/#archive" className="button button-outline">
+          <Link href="/work" className="button button-outline">
             All projects <Arrow />
           </Link>
           <Link href={`/work/${next.id}`} className="next-project">

@@ -15,6 +15,7 @@ export type Project = {
   year: string;
   tags: string[];
   links: ProjectLink[];
+  focus?: { title: string; description: string }[];
   award?: string;
 };
 
@@ -31,6 +32,35 @@ export type Award = {
 
 // Content provenance and historical product distinctions: docs/CONTENT-SOURCES.md.
 export const projects: Project[] = [
+  {
+    id: "mc-dental-station",
+    title: "MC Dental Station",
+    description:
+      "A dental clinic website that brings service information, appointment requests, and approved FAQ assistance together, with a workspace for the clinic team.",
+    category: "Products",
+    year: "Current",
+    tags: ["Clinic website", "Appointment requests", "Staff workspace"],
+    links: [
+      { label: "Visit website", href: "https://mc-dental.syntaxsurge.com/" },
+    ],
+    focus: [
+      {
+        title: "A clear next step for patients",
+        description:
+          "Services, clinic hours, contact details, and directions help visitors plan their visit before sending an appointment request.",
+      },
+      {
+        title: "Appointment requests the team can manage",
+        description:
+          "A form and guided chat collect the preferred service and schedule. Clinic staff confirm the final appointment, with optional email reminders after confirmation.",
+      },
+      {
+        title: "Consistent answers and content",
+        description:
+          "English and Filipino FAQs use clinic-approved information. The staff workspace brings appointment management, website content, and the knowledge base together.",
+      },
+    ],
+  },
   {
     id: "cliplore",
     title: "ClipLore",

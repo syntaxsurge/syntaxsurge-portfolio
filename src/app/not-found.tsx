@@ -11,7 +11,7 @@ export default function NotFound() {
         <h1>This page couldn’t be found.</h1>
         <p>Check the address or find what you need in the project collection.</p>
         <div className="project-links">
-          <Link className="button button-dark" href="/#archive">
+          <Link className="button button-dark" href="/work">
             Browse all projects <Arrow />
           </Link>
           <Link className="button button-outline" href="/">

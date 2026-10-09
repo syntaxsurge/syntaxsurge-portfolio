@@ -1,287 +1,337 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, Spark, Trophy } from "@/components/icons";
-import { ProjectArchive } from "@/components/project-archive";
-import { ProjectVisual, featuredIds } from "@/components/project-visual";
+import { Arrow, Trophy } from "@/components/icons";
+import { ProjectVisual } from "@/components/project-visual";
 import { awards, projects } from "@/data/portfolio";
-import { AwardCard } from "@/components/award-card";
-import type { Metadata } from "next";
+import { business } from "@/data/business";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
-const featuredNotes: Record<string, string> = {
-  cliplore: "AI video creation, with the editor still in your hands.",
-  studysoda: "A fresh way to turn study material into understanding.",
-  sipava: "Small commitments. Real follow-through.",
-  kaldi: "From a tap at the café to a reason to come back.",
-};
-const featuredTags: Record<string, string> = {
-  cliplore: "AI · CREATOR TOOLS",
-  studysoda: "AI · EDUCATION",
-  sipava: "PRODUCTIVITY · ACCOUNTABILITY",
-  kaldi: "NFC · CUSTOMER EXPERIENCE",
-};
+const selectedWork = [
+  {
+    id: "mc-dental-station",
+    label: "A simpler clinic visit",
+    note: "Services, appointment requests, and answers in one place.",
+  },
+  {
+    id: "kaldi",
+    label: "A reason to come back",
+    note: "A café experience built around reviews, rewards, and loyalty.",
+  },
+  {
+    id: "cliplore",
+    label: "An idea, brought to life",
+    note: "AI video creation with a hands-on editor for every scene.",
+  },
+];
+
 export default function Home() {
   return (
     <>
       <Header />
       <main id="main" tabIndex={-1}>
-        <section className="hero shell" aria-labelledby="hero-title">
-          <div className="hero-intro">
+        <section className="business-hero shell" aria-labelledby="hero-title">
+          <div className="hero-copy">
             <span className="eyebrow">
-              <span className="status-dot" /> DEVELOPER & PRODUCT BUILDER
+              <span className="status-dot" /> SOFTWARE FOR YOUR BUSINESS
             </span>
-            <span className="mono hero-location">
-              BASED IN THE PHILIPPINES ↗
-            </span>
-          </div>
-          <div className="hero-main">
-            <div>
-              <h1 id="hero-title">
-                Ideas into things
-                <br />
-                <span>people use.</span>
-                <span className="title-period">✳</span>
-              </h1>
-              <div className="hero-bottom">
-                <p>
-                  I’m Jade Laurence Empleo, a developer and product builder.
-                  I create AI tools, everyday apps, and Web3 experiences.
-                </p>
-                <div className="hero-actions">
-                  <a href="#work" className="button button-dark">
-                    View my work <Arrow />
-                  </a>
-                  <a href="#contact" className="button button-outline">
-                    Get in touch <Arrow diagonal />
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="hero-object" aria-hidden="true">
-              <div className="object-grid" />
-              <div className="object-stamp">
-                <svg viewBox="0 0 240 240">
-                  <defs>
-                    <path
-                      id="circle-text"
-                      d="M120,120 m-94,0 a94,94 0 1,1 188,0 a94,94 0 1,1 -188,0"
-                    />
-                  </defs>
-                  <text>
-                    <textPath href="#circle-text" textLength="585">
-                      CURIOUS BY NATURE · BUILDER BY CHOICE ·{" "}
-                    </textPath>
-                  </text>
-                </svg>
-                <Spark />
-              </div>
-              <span className="object-note mono">DESIGN. DEVELOP. SHIP.</span>
-              <span className="object-cross">+</span>
-            </div>
-          </div>
-          <div className="hero-proof">
-            <div>
-              <span className="proof-count">
-                {awards.length}
-                <span>↗</span>
-              </span>
-              <p>
-                hackathon recognitions
-                <br />
-                <span>and counting</span>
-              </p>
-            </div>
-            <span className="proof-divider" />
-            <p className="proof-label mono">RECOGNIZED AT EVENTS BY</p>
-            <div className="recognizer-list">
-              <span>
-                Solana
-                <span className="solana-bars" aria-hidden="true">
-                  ≋
-                </span>
-              </span>
-              <span>
-                Base <span className="base-mark" aria-hidden="true" />
-              </span>
-              <span>
-                Story<span className="story-mark">✳</span>
-              </span>
-              <span>
-                Polkadot<span className="polka-dot">•</span>
-              </span>
-            </div>
-          </div>
-        </section>
-        <section
-          id="work"
-          className="selected-section shell"
-          aria-labelledby="work-title"
-        >
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow section-label">01 / SELECTED WORK</span>
-              <h2 id="work-title">Selected projects.</h2>
-            </div>
-            <p>
-              A few things I’ve brought to life. Explore the details or open a
-              product.
+            <h1 id="hero-title">
+              Your business,
+              <br />
+              <span>better connected.</span>
+            </h1>
+            <p className="hero-description">
+              Websites, custom software, and practical AI tools. Built around
+              the way you work, and the people you serve.
             </p>
-          </div>
-          <div className="featured-grid">
-            {featuredIds.map((id, index) => {
-              const p = projects.find((p) => p.id === id);
-              if (!p) return null;
-              return (
-                <article key={id} className={`feature-card feature-${id}`}>
-                  <Link
-                    href={`/work/${id}`}
-                    className="feature-image-link"
-                    aria-label={`Explore ${p.title}`}
-                  >
-                    <ProjectVisual id={id} priority={index === 0} />
-                    <span className="card-open">
-                      <Arrow diagonal />
-                    </span>
-                    {id === "cliplore" && (
-                      <span className="feature-award">
-                        <Trophy /> FRONT-END / UI / UX WINNER
-                      </span>
-                    )}
-                  </Link>
-                  <div className="feature-info">
-                    <div>
-                      <span className="mono feature-kicker">
-                        {featuredTags[id]}
-                      </span>
-                      <h3>
-                        <Link href={`/work/${id}`}>{p.title}</Link>
-                      </h3>
-                      <p>{featuredNotes[id]}</p>
-                    </div>
-                    <span className="feature-number mono">0{index + 1}</span>
-                  </div>
-                  <div className="feature-actions">
-                    <Link
-                      className="text-link"
-                      href={`/work/${id}`}
-                      aria-label={`View ${p.title} project details`}
-                    >
-                      Project details <Arrow />
-                    </Link>
-                    <a
-                      className="text-link"
-                      href={p.links[0].href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
-                    >
-                      {p.links[0].label} <Arrow diagonal />
-                    </a>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-        <section
-          id="archive"
-          className="archive-section shell"
-          aria-labelledby="archive-title"
-        >
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow section-label">
-                02 / THE FULL COLLECTION
-              </span>
-              <h2 id="archive-title">All projects.</h2>
-            </div>
-            <p>
-              Browse {projects.length} projects. Search by name, topic, or
-              technology.
-            </p>
-          </div>
-          <ProjectArchive />
-        </section>
-        <section
-          id="about"
-          className="about-section"
-          aria-labelledby="about-title"
-        >
-          <div className="shell about-grid">
-            <div>
-              <span className="eyebrow section-label">03 / ABOUT ME</span>
-              <h2 id="about-title">
-                A builder’s mind.
-                <br />A designer’s eye.
-              </h2>
-              <p className="about-signature">
-                Jade<span> / SyntaxSurge</span>
-              </p>
-            </div>
-            <div className="about-copy">
-              <p>
-                I like taking a complicated idea and finding the simple, useful
-                product inside it.
-              </p>
-              <p>
-                My work moves between AI, everyday tools, and on-chain
-                applications. Whether it’s a video editor, a study companion, or
-                a café loyalty experience, I care about the whole thing: what it
-                does, how it feels, and why someone would come back.
-              </p>
-              <div className="capabilities">
-                <span>Product development</span>
-                <span>UI & interaction design</span>
-                <span>AI experiences</span>
-                <span>Web3 applications</span>
-              </div>
+            <div className="hero-actions">
               <a
-                className="text-link"
-                href="https://github.com/syntaxsurge"
+                className="button button-dark"
+                href={business.links.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                A closer look at the code <Arrow diagonal />
+                Start a project <Arrow diagonal />
+                <span className="sr-only"> (opens LinkedIn in a new tab)</span>
               </a>
+              <a className="button button-outline" href="#work">
+                Explore our work <Arrow />
+              </a>
+            </div>
+            <p className="hero-business-name">{business.legalName}</p>
+          </div>
+          <div
+            className="brand-stage"
+            aria-label="Syntax Surge business identity"
+          >
+            <div className="stage-top">
+              <span className="mono">IDEA → DESIGN → BUILD</span>
+              <span aria-hidden="true">↗</span>
+            </div>
+            <div className="stage-logo">
+              <Image
+                src={business.logo.src}
+                alt="Syntax Surge blue lightning bolt and black code brackets logo"
+                width={business.logo.width}
+                height={business.logo.height}
+                sizes="(max-width: 700px) 220px, 280px"
+                preload
+              />
+            </div>
+            <div className="stage-bottom">
+              <span>
+                Clear. Useful.
+                <br />
+                Made for people.
+              </span>
+              <span className="stage-location">
+                BASED IN
+                <br />
+                THE PHILIPPINES
+              </span>
             </div>
           </div>
         </section>
+
+        <div className="business-proof shell">
+          <a href="#registration">
+            <span className="proof-symbol" aria-hidden="true">
+              ✓
+            </span>
+            <span>
+              DTI-registered business<span>National scope</span>
+            </span>
+            <Arrow />
+          </a>
+          <Link href="/work">
+            <strong>{projects.length}</strong>
+            <span>
+              Projects to explore<span>Websites, apps & tools</span>
+            </span>
+            <Arrow />
+          </Link>
+          <Link href="/recognition">
+            <Trophy />
+            <span>
+              {awards.length} hackathon recognitions
+              <span>A record of hands-on work</span>
+            </span>
+            <Arrow />
+          </Link>
+        </div>
+
         <section
-          id="recognition"
-          className="recognition-section shell"
-          aria-labelledby="recognition-title"
+          id="services"
+          className="business-section shell"
+          aria-labelledby="services-title"
         >
           <div className="section-heading">
             <div>
-              <span className="eyebrow section-label">04 / RECOGNITION</span>
-              <h2 id="recognition-title">Hackathon recognition.</h2>
+              <span className="eyebrow section-label">HOW WE CAN HELP</span>
+              <h2 id="services-title">
+                A useful next step
+                <br />
+                for your business.
+              </h2>
             </div>
-            <p>Built, presented, and recognized on a global stage.</p>
+            <p>
+              Start with what you need. We’ll work out the right solution
+              together.
+            </p>
           </div>
-          <div className="recognition-intro">
-            <span className="award-big">
-              {awards.length}
-              <Spark />
-            </span>
-            <div>
-              <h3>Hackathons. Bounties. Buildathons.</h3>
+          <div className="services-grid">
+            {business.services.map((service, index) => (
+              <article className="service-card" key={service.title}>
+                <span className="service-number mono">
+                  0{index + 1}
+                  <Arrow diagonal />
+                </span>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <span className="service-examples">{service.examples}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          id="work"
+          className="business-section work-section"
+          aria-labelledby="work-title"
+        >
+          <div className="shell">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow section-label">SELECTED WORK</span>
+                <h2 id="work-title">
+                  Good ideas.
+                  <br />
+                  Working in the real world.
+                </h2>
+              </div>
+              <Link href="/work" className="text-link">
+                All {projects.length} projects <Arrow />
+              </Link>
+            </div>
+            <div className="selected-work-grid">
+              {selectedWork.map(({ id, label, note }) => {
+                const project = projects.find((p) => p.id === id);
+                if (!project) return null;
+                return (
+                  <article className={`feature-card feature-${id}`} key={id}>
+                    <Link
+                      className="feature-image-link"
+                      href={`/work/${id}`}
+                      aria-label={`View ${project.title} project details`}
+                    >
+                      <ProjectVisual id={id} />
+                      <span className="card-open">
+                        <Arrow diagonal />
+                      </span>
+                    </Link>
+                    <div className="feature-info">
+                      <span className="eyebrow feature-kicker">{label}</span>
+                      <h3>
+                        <Link href={`/work/${id}`}>{project.title}</Link>
+                      </h3>
+                      <p>{note}</p>
+                    </div>
+                    <div className="feature-actions">
+                      <Link className="text-link" href={`/work/${id}`}>
+                        Project details <Arrow />
+                      </Link>
+                      <a
+                        className="text-link"
+                        href={project.links[0].href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.links[0].label}: ${project.title} (opens in a new tab)`}
+                      >
+                        {project.links[0].label}
+                        <Arrow diagonal />
+                      </a>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="team"
+          className="business-section shell"
+          aria-labelledby="team-title"
+        >
+          <div className="team-grid">
+            <div className="team-intro">
+              <span className="eyebrow section-label">THE TEAM</span>
+              <h2 id="team-title">
+                A person you can
+                <br />
+                build with.
+              </h2>
               <p>
-                From creative interfaces to verifiable systems. Here’s the
-                record, one project at a time.
+                Work directly with the person designing and developing your
+                project. Clear conversations, thoughtful decisions, and a shared
+                goal.
               </p>
+              <a
+                className="text-link"
+                href={business.links.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Let’s talk about your project <Arrow diagonal />
+                <span className="sr-only"> (opens LinkedIn in a new tab)</span>
+              </a>
             </div>
-            <span className="mono recognition-years">2025 — 2026</span>
+            <article className="team-card">
+              <div className="team-portrait">
+                <Image
+                  src={business.founder.portrait.src}
+                  alt="Jade Laurence Empleo, founder of Syntax Surge"
+                  width={business.founder.portrait.width}
+                  height={business.founder.portrait.height}
+                  sizes="(max-width: 700px) 100vw, 420px"
+                />
+              </div>
+              <div className="team-card-info">
+                <div>
+                  <h3>{business.founder.name}</h3>
+                  <p>{business.founder.role}</p>
+                </div>
+                <a
+                  href={business.links.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Meet Jade Laurence Empleo on LinkedIn (opens in a new tab)"
+                >
+                  <Arrow diagonal />
+                </a>
+              </div>
+            </article>
           </div>
-          <div className="awards-grid">
-            {awards.slice(0, 4).map((a) => (
-              <AwardCard key={`${a.projectId}-${a.date}`} award={a} />
-            ))}
-          </div>
-          <div className="awards-list">
-            {awards.slice(4).map((a) => (
-              <AwardCard key={`${a.projectId}-${a.date}`} award={a} compact />
-            ))}
+        </section>
+
+        <section
+          id="registration"
+          className="registration-section shell"
+          aria-labelledby="registration-title"
+        >
+          <div className="registration-card">
+            <div className="registration-copy">
+              <span className="eyebrow section-label">
+                BUSINESS REGISTRATION
+              </span>
+              <h2 id="registration-title">Registered. Ready to build.</h2>
+              <p className="registration-name">{business.legalName}</p>
+              <p className="registration-scope">
+                DTI business-name registration · {business.certificate.scope}{" "}
+                scope
+              </p>
+              <p className="registration-scope">
+                Business Name No. {business.certificate.number}
+              </p>
+              <div className="registration-actions">
+                <a
+                  className="button button-outline"
+                  href={business.certificate.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View certificate <Arrow diagonal />
+                  <span className="sr-only"> (PDF, opens in a new tab)</span>
+                </a>
+                <a
+                  className="text-link"
+                  href={business.certificate.href}
+                  download
+                >
+                  Download PDF <Arrow />
+                </a>
+              </div>
+            </div>
+            <a
+              className="certificate-preview"
+              href={business.certificate.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View the DTI business-name registration certificate (PDF, opens in a new tab)"
+            >
+              <Image
+                src={business.certificate.preview.src}
+                alt={`Preview of the DTI certificate for ${business.legalName}`}
+                width={business.certificate.preview.width}
+                height={business.certificate.preview.height}
+                sizes="(max-width: 700px) 240px, 260px"
+              />
+              <span>
+                DTI CERTIFICATE <Arrow diagonal />
+              </span>
+            </a>
           </div>
         </section>
       </main>

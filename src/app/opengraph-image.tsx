@@ -1,8 +1,18 @@
 import { ImageResponse } from "next/og";
-export const alt = "Jade Laurence Empleo — Ideas into things people use.";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { business } from "@/data/business";
+
+export const alt = business.legalName;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export default function OpenGraphImage() {
+
+export default async function OpenGraphImage() {
+  const logo = await readFile(
+    join(process.cwd(), "public", business.logo.src),
+    "base64",
+  );
+
   return new ImageResponse(
     (
       <div
@@ -11,49 +21,68 @@ export default function OpenGraphImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          padding: "65px 72px",
-          background: "#f6f5ef",
-          color: "#25342c",
-          position: "relative",
+          padding: "64px 68px",
+          background: "#f5f7fc",
+          color: "#172238",
+          justifyContent: "space-between",
         }}
       >
         <div
           style={{
-            position: "absolute",
-            right: -80,
-            top: -110,
-            width: 410,
-            height: 410,
-            borderRadius: "50%",
-            background: "#d0e9a0",
             display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: 28,
           }}
-        />
-        <div style={{ display: "flex", fontSize: 22, letterSpacing: 3 }}>
-          JADE LAURENCE EMPLEO / SYNTAXSURGE
+        >
+          <span style={{ fontWeight: 700 }}>{business.name}</span>
+          <span style={{ fontSize: 19, color: "#52617a" }}>
+            SOFTWARE DEVELOPMENT SERVICES
+          </span>
         </div>
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            fontSize: 99,
-            lineHeight: 1.05,
-            letterSpacing: -5,
-            marginTop: 91,
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 32,
           }}
         >
-          <span>Ideas into things</span>
-          <span style={{ color: "#7b8a70" }}>people use.</span>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontSize: 76,
+              fontWeight: 600,
+              lineHeight: 1.12,
+              letterSpacing: -3,
+            }}
+          >
+            <span>Software that works.</span>
+            <span style={{ color: "#295bff" }}>For your business.</span>
+          </div>
+          {/* ImageResponse uses a native image with embedded local asset bytes. */}
+          <img
+            src={`data:image/jpeg;base64,${logo}`}
+            alt=""
+            width={248}
+            height={248}
+            style={{ borderRadius: 24 }}
+          />
         </div>
         <div
           style={{
             display: "flex",
-            fontSize: 21,
-            marginTop: 56,
-            color: "#64725d",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: 18,
+            borderTop: "1px solid #dbe2f0",
+            paddingTop: 25,
+            color: "#52617a",
           }}
         >
-          PRODUCTS · AI · WEB3 · THOUGHTFUL INTERFACES
+          <span>WEB APPLICATIONS · AI EXPERIENCES · PRODUCT DEVELOPMENT</span>
+          <span style={{ color: "#172238" }}>syntaxsurge.com</span>
         </div>
       </div>
     ),

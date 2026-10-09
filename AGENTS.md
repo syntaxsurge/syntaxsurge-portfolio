@@ -39,16 +39,18 @@ Analyze → Extend → Simplify → Delete. Every change should either improve c
 
 # Platform Summary
 
-A Next.js App Router portfolio for Jade Laurence Empleo (SyntaxSurge), with 18 projects, 14 hackathon recognitions, and locally served product artwork. Pages support light and dark themes and responsive, keyboard-accessible navigation.
+A Next.js App Router business website for SyntaxSurge Software Development Services, branded as Syntax Surge. It presents business websites, custom software, and AI/automation services, with 19 projects and 14 hackathon recognitions earned by founder Jade Laurence Empleo. Supplied business branding, founder photography, and project artwork are served locally. Pages support light and dark themes and responsive, keyboard-accessible navigation.
 
 ## Pages
 
-- `/`: selected projects, the searchable full project collection, about, recognition, and contact. Section anchors are `#work`, `#archive`, `#about`, `#recognition`, and `#contact`; the shared sticky header links directly to all five sections on every screen size.
+- `/`: business overview, services (`#services`), three selected projects (`#work`), founder/team (`#team`), business registration (`#registration`), and contact (`#contact`). The shared sticky header links to homepage Services/Team, `/work`, and the current page's contact footer on every screen size. The homepage's work action reaches selected examples; separate links lead to the full collection and recognition pages.
+- `/work`: the searchable collection of 19 projects, with All projects, Products, AI & Web3, and Tools filters, category/result counts, combined search and filtering, one-click reset with search focus restoration, and direct project/product/demo/source actions.
+- `/recognition`: all 14 founder hackathon recognitions, with four preview highlights and compact cards for the remaining entries. Awards are individual project achievements, not a count of business clients or first-place wins.
 - `/work/[slug]`: statically generated project details with breadcrumbs, product/demo/source actions, project focus, recognition, and links to the next project and full collection. `/work/wrap-it-up` combines these project details with the game overview, gameplay features, artwork, beta-install actions, and shared Support/Privacy navigation.
+- `/work/mc-dental-station`: clinic website project details covering staff-confirmed appointment requests, approved English/Filipino FAQ assistance, and the staff workspace; the live website is `https://mc-dental.syntaxsurge.com/`.
 - `/work/wrap-it-up/support` and `/work/wrap-it-up/privacy`: statically generated beta-install/support and version-scoped privacy pages beneath the game’s project. `src/data/wrap-it-up.ts` owns the canonical project path, internal/closed beta links, verified closed-test availability, current disclosed build, territorial store ratings, approved local artwork, and verified publisher support email. Shared game-detail components present the same ratings and closed-test enrollment guidance across the game, support and privacy pages. Android testing is allowlist-only; closed enrollment appears only after release availability is verified, and internal testers must leave that track before joining a closed test. TestFlight availability follows Apple review and group access. `next.config.ts` permanently redirects the three `/apps/wrap-it-up` addresses to their matching project routes so installed beta links remain usable; they have no separate pages, navigation links, or sitemap entries.
 - Missing routes display a recovery page with links to the full collection and homepage, plus shared contact options.
-- Project browsing displays category counts, a live result count, and explicit details and product/demo/source links. Search and category filters combine; resetting restores all projects and focuses the search field.
-- All recognition entries are visible, with preview cards for highlights and compact cards for the remaining entries. Contact opens the owner's LinkedIn profile directly.
+- Contact opens the founder's existing LinkedIn profile directly; GitHub, full collection, recognition, and registration links are available in the footer. The registration section presents the certificate's exact legal business name, SyntaxSurge Software Development Services, National scope, and Business Name No. 8161608, with a local certificate preview plus view/download actions for the unchanged original PDF at `/documents/syntax-surge-dti-certificate.pdf`.
 
 ## API endpoints
 
@@ -56,13 +58,14 @@ There are no application API endpoints, database, authentication, contact form, 
 
 ## Architecture Overview
 
-- `src/data/portfolio.ts` is the canonical project, link, and award data source; `src/data/award-media.ts` maps recognitions to local previews and YouTube demos.
-- Shared components provide navigation, contact, project artwork, award cards, demo previews, search/filter controls, and theme controls. `AwardCard` supports preview and compact layouts.
+- `src/data/business.ts` is the canonical source for the business brand/legal name, service descriptions, supplied logo, founder identity/portrait, existing contact links, and registration certificate facts/assets. `certificate.href` points to the original local PDF; `certificate.preview` supplies the rendered image's `src`, `width`, and `height`.
+- `src/data/portfolio.ts` is the canonical project, link, optional project-focus, and award data source; `src/data/award-media.ts` maps recognitions to local previews and YouTube demos. Homepage selected work features MC Dental Station, Kaldi, and ClipLore.
+- Shared components provide business navigation/contact, project artwork, award cards, demo previews, search/filter controls, and theme controls. `AwardCard` supports preview and compact layouts. Business metadata, the social preview, and the favicon use Syntax Surge branding; the supplied logo is preserved.
 - Search/filter state lives in `ProjectArchive`. `src/lib/theme.ts` manages device preference, persisted selections, cross-tab updates, and initialization before visible content.
 - `src/app/globals.css` defines shared theme tokens, typography, layouts, focus states, responsive rules, and reduced-motion support. Images and fonts are served locally; videos open externally on request.
-- `src/lib/site.ts` supplies the canonical HTTP(S) origin from `SITE_URL`, defaulting to `https://syntaxsurge.com`.
+- `src/lib/site.ts` supplies the canonical HTTP(S) origin from `SITE_URL`, defaulting to `https://syntaxsurge.com`. The sitemap has 24 unique business-site URLs: homepage, work collection, recognition, 19 project details, and two game support/privacy pages.
 - `scripts/serve.mjs` synchronizes a server checkout to pushed `origin/main`, prepares isolated production releases, reuses matching builds, and supports fallback to a compatible successful release. Runtime files stay outside the source checkout. Configuration and deployment requirements are in `docs/DEPLOY-SYNTAXSURGE.md`.
-- Production routing requires the `syntaxsurge.com` Nginx vhost to proxy portfolio requests over HTTP to `127.0.0.1:3101`. Kaldi is linked at `https://kaldi-rewards.syntaxsurge.com/` and uses independent domain routing and deployment configuration. Startup readiness checks the private portfolio listener; public routing and ongoing service health are verified separately using the deployment guide's gateway diagnostics.
+- Production routing requires the `syntaxsurge.com` Nginx vhost to proxy business-site requests over HTTP to `127.0.0.1:3101`. Linked projects such as Kaldi (`https://kaldi-rewards.syntaxsurge.com/`) and MC Dental Station (`https://mc-dental.syntaxsurge.com/`) use independent domain routing and deployment configuration. Startup readiness checks the private business-site listener; public routing and ongoing service health are verified separately using the deployment guide's gateway diagnostics.
 
 ## Core Commands
 

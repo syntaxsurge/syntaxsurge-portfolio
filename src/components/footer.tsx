@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Arrow, Github, Spark } from "./icons";
+import { business } from "@/data/business";
+import { Arrow, Github } from "./icons";
 
 export function Footer() {
   return (
@@ -12,32 +13,41 @@ export function Footer() {
           <span className="mono">LET’S MAKE IT REAL</span>
         </div>
         <h2 id="contact-title" className="contact-title">
-          Good things start
+          Let’s build software
           <br />
-          with a conversation.
+          that works for you.
         </h2>
         <div className="contact-actions">
           <p className="contact-copy">
-            Have a project in mind? Reach out on LinkedIn and tell me about it.
+            Have a project in mind? Message our founder on LinkedIn to discuss
+            your goals and what you need.
           </p>
           <a
             className="button button-lime"
-            href="https://www.linkedin.com/in/jade-laurence-empleo/"
+            href={business.links.linkedin}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Message me on LinkedIn <Arrow diagonal />
+            Discuss your project <Arrow diagonal />
             <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </div>
         <div className="footer-bottom">
-          <Link className="footer-brand" href="/" aria-label="Back to home">
-            <Spark /> Jade Laurence Empleo
+          <Link
+            className="footer-brand"
+            href="/"
+            aria-label={`${business.name} — home`}
+          >
+            {business.legalName}
             <span>© {new Date().getFullYear()}</span>
           </Link>
           <div>
+            <Link href="/work">All projects</Link>
+            <Link href="/recognition">Recognition</Link>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+            <a href="/#registration">DTI registration</a>
             <a
-              href="https://github.com/syntaxsurge"
+              href={business.links.github}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Spark } from "./icons";
+import { business } from "@/data/business";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
@@ -9,21 +10,25 @@ export function Header() {
         <Link
           href="/#top"
           className="wordmark"
-          aria-label="Jade Laurence Empleo — home"
+          aria-label={`${business.name} — home`}
         >
           <span className="brand-symbol">
-            <Spark />
+            <Image
+              src={business.logo.src}
+              alt=""
+              width={44}
+              height={44}
+              sizes="44px"
+              preload
+            />
           </span>
-          <span>
-            jade<span className="wordmark-dot">.</span>
-          </span>
+          <span>{business.name}</span>
         </Link>
         <nav className="primary-navigation" aria-label="Main navigation">
-          <Link href="/#work">Work</Link>
-          <Link href="/#archive">All projects</Link>
-          <Link href="/#about">About</Link>
-          <Link href="/#recognition">Recognition</Link>
-          <Link className="header-contact" href="/#contact">
+          <Link href="/#services">Services</Link>
+          <Link href="/work">Work</Link>
+          <Link href="/#team">Team</Link>
+          <Link className="header-contact" href="#contact">
             Contact
           </Link>
         </nav>
