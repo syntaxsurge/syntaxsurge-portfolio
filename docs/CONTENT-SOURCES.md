@@ -13,11 +13,17 @@ The site contains 19 named projects and 14 recognition entries. A recognition en
 
 ## Business identity and registration
 
-`src/data/business.ts` stores the supplied business brand **Syntax Surge**, registered legal name **SyntaxSurge Software Development Services**, founder **Jade Laurence Empleo**, service descriptions, and existing LinkedIn/GitHub contact links. The team section identifies the founder and does not invent additional staff. Business inquiries open the supplied founder LinkedIn profile; no unverified business email or contact-form integration is presented.
+`src/data/business.ts` stores the supplied business brand **Syntax Surge**, registered legal name **SyntaxSurge Software Development Services**, founder professional name **Jade Laurence Empleo**, full name **Jade Laurence Cabaruan Empleo**, service descriptions, and existing LinkedIn/GitHub contact links. The team section identifies the founder and does not invent additional staff. Business inquiries open the supplied founder LinkedIn profile; no unverified business email or contact-form integration is presented.
 
 The source is the owner's original `BNRS-Certificate_OPQT791819131516_4fa16974-d870-4131-a5e5-1b61dcec90fd.pdf`, preserved unchanged at `public/documents/syntax-surge-dti-certificate.pdf`. Its extracted business name is **SYNTAXSURGE SOFTWARE DEVELOPMENT SERVICES** (no space between Syntax and Surge), scope **National**, Business Name No. **8161608**, issue date **5 May 2026**, and stated validity **5 May 2026 through 5 May 2031**. The named proprietor is **JADE LAURENCE CABARUAN EMPLEO**. These facts describe the supplied certificate; no independent check of ongoing government registration status is asserted.
 
 The homepage presents the legal name and scope with a locally rendered certificate preview and direct original-PDF view/download actions. `business.certificate.href` supplies the PDF path; `preview` is an image metadata object with `src`, `width`, and `height`. The preview is a rendering of the original document, not a recreated certificate. Asset provenance and the original PDF checksum are recorded in `docs/ASSET-SOURCES.md`.
+
+## Resume and project presentation
+
+The downloadable two-page resume uses `business.founder.fullName`, the supplied portrait, existing contacts, MC Dental Station/Kaldi/ClipLore examples, and every dated entry from the canonical awards array. It contains no invented education, employment chronology, phone number, or email address. `scripts/build-resume.py` reads the site exports directly; `business.resumeHref` supplies its public download path. Fact-by-fact sourcing and rebuild instructions are in `docs/RESUME-SOURCES.md`.
+
+All 19 projects appear as visual cards in the homepage work section. `src/data/project-media.ts` combines the established project-owned demo previews and original product/game artwork with concise summaries and explicit media labels. Fourteen homepage demos use their verified YouTube associations, loaded inline only on request. ClipLore's hackathon context remains distinct from its current product. Generated hero and MC Dental imagery represents labeled concepts, not captured application UI, clinic staff/facilities, or evidence of real clinical outcomes; generation provenance is in `docs/ASSET-SOURCES.md`.
 
 ## Current websites and products
 

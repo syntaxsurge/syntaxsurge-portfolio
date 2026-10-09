@@ -15,7 +15,7 @@ export default function WrapItUpLayout({
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/work">All projects</Link>
+          <Link href="/#work">All projects</Link>
           <span aria-hidden="true">/</span>
           <Link href={wrapItUp.path}>{wrapItUp.name}</Link>
         </nav>

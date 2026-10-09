@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { projects, awards } from "../src/data/portfolio.ts";
 import { business } from "../src/data/business.ts";
 import { awardMedia } from "../src/data/award-media.ts";
+import { projectPreviews } from "../src/data/project-media.ts";
 import { parseSiteOrigin, siteHref } from "../src/lib/site.ts";
 import { wrapItUp, wrapItUpPaths } from "../src/data/wrap-it-up.ts";
 const root = process.cwd();
@@ -15,6 +16,13 @@ const plain = (s) =>
     .replaceAll("&amp;", "&")
     .replaceAll("&#x27;", "'")
     .replaceAll("&quot;", '"');
+const imageSources = (html) =>
+  [...html.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)].map((match) => {
+    const url = new URL(match[1].replaceAll("&amp;", "&"), siteHref());
+    return url.pathname === "/_next/image"
+      ? url.searchParams.get("url")
+      : url.pathname;
+  });
 let checks = 0;
 function check(label, run) {
   run();
@@ -38,10 +46,9 @@ check("Complete, unique project and award collection", () => {
   assert.ok(awards.some((a) => a.prize?.includes("MUSD")));
 });
 const homepage = read("index.html");
-const collection = read("work.html");
 const recognition = read("recognition.html");
 check(
-  "Business homepage has direct navigation and a concise work selection",
+  "Business homepage has direct navigation, registration, and founder résumé",
   () => {
     assert.equal((homepage.match(/<h1\b/g) || []).length, 1);
     assert.ok(homepage.includes('id="main"'));
@@ -49,15 +56,15 @@ check(
       assert.ok(homepage.includes(`id="${id}"`));
     const header = homepage.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
     assert.ok(header);
-    for (const id of ["services", "team"])
+    for (const id of ["services", "work", "team"])
       assert.ok(header.includes(`href="/#${id}"`));
-    assert.ok(header.includes('href="/work"'));
     assert.ok(header.includes('href="#contact"'));
     assert.ok(header.includes(business.name));
     assert.ok(!header.includes("Jade"));
     assert.ok(homepage.includes(business.legalName));
     assert.ok(homepage.includes(business.founder.name));
-    assert.ok(plain(homepage).includes(`Business Name No. ${business.certificate.number}`));
+    assert.ok(plain(homepage).includes(business.certificate.number));
+    assert.ok(plain(homepage).includes(`${business.certificate.scope} scope`));
     const certificateLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
       .map((match) => match[0])
       .filter((link) => link.includes(`href="${business.certificate.href}"`));
@@ -67,41 +74,143 @@ check(
       resolve(root, "public", business.certificate.href.slice(1)),
     );
     assert.equal(certificate.subarray(0, 5).toString(), "%PDF-");
-    assert.ok(homepage.includes('href="/work"'));
+    const resumeLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
+      .map((match) => match[0])
+      .filter((link) => link.includes(`href="${business.resumeHref}"`));
+    assert.equal(resumeLinks.length, 2);
+    assert.ok(resumeLinks.some((link) => /\bdownload=/.test(link)));
+    assert.ok(resumeLinks.some((link) => link.includes('target="_blank"')));
+    const resume = readFileSync(
+      resolve(root, "public", business.resumeHref.slice(1)),
+    );
+    assert.equal(resume.subarray(0, 5).toString(), "%PDF-");
+    assert.ok(!homepage.includes('href="/work"'));
     assert.ok(homepage.includes('href="/recognition"'));
-    assert.equal((homepage.match(/class="feature-card /g) || []).length, 3);
-    for (const id of ["mc-dental-station", "kaldi", "cliplore"])
-      assert.ok(homepage.includes(`href="/work/${id}"`));
     assert.ok(!homepage.includes("<details"));
-    assert.ok(!homepage.includes('id="project-results"'));
     assert.ok(!homepage.includes("Create Next App"));
   },
 );
 check(
-  "Full collection and recognition have accessible standalone routes",
+  "Homepage collection has all project previews and on-request demo controls",
   () => {
-    for (const html of [collection, recognition]) {
-      assert.equal((html.match(/<h1\b/g) || []).length, 1);
-      assert.ok(html.includes('id="main"'));
-      assert.ok(html.includes('aria-label="Breadcrumb"'));
-    }
-    assert.equal(
-      (recognition.match(/class="award-card(?: award-card-compact)?"/g) || [])
-        .length,
-      awards.length,
+    assert.deepEqual(
+      Object.keys(projectPreviews).sort(),
+      projects.map((project) => project.id).sort(),
     );
-    for (const p of projects)
-      assert.ok(collection.includes(`href="/work/${p.id}"`));
-    assert.ok(collection.includes('aria-pressed="true"'));
-    assert.ok(collection.includes('aria-live="polite"'));
-    assert.ok(collection.includes('id="project-results"'));
-    const dental = projects.find((p) => p.id === "mc-dental-station");
-    assert.equal(dental.links[0].href, "https://mc-dental.syntaxsurge.com/");
-    assert.ok(
-      read("work/mc-dental-station.html").includes(
-        "Clinic staff confirm the final appointment",
+    const cards = [
+      ...homepage.matchAll(
+        /<article\b[^>]*class="archive-row"[^>]*>([\s\S]*?)<\/article>/g,
       ),
+    ].map((match) => match[1]);
+    assert.equal(cards.length, projects.length);
+    assert.equal((homepage.match(/<iframe\b/g) || []).length, 0);
+    const demoCount = projects.filter(
+      (project) => projectPreviews[project.id].demo,
+    ).length;
+    assert.equal(demoCount, 14);
+    const demoButtons = [
+      ...homepage.matchAll(/<button\b[^>]*class="archive-preview"[^>]*>/g),
+    ];
+    assert.equal(demoButtons.length, demoCount);
+    for (const button of demoButtons)
+      assert.ok(button[0].includes('aria-expanded="false"'));
+    for (const project of projects) {
+      const preview = projectPreviews[project.id];
+      const card = cards.find((html) =>
+        html.includes(`href="/work/${project.id}"`),
+      );
+      assert.ok(card, `Collection card for ${project.title}`);
+      assert.equal((card.match(/<h3\b/g) || []).length, 1);
+      assert.ok(plain(card).includes(project.title));
+      assert.ok(plain(card).includes(preview.summary));
+      assert.ok(
+        card.includes(
+          `href="${project.links[0].href.replaceAll("&", "&amp;")}"`,
+        ),
+      );
+      const images = [...card.matchAll(/<img\b[^>]*>/g)];
+      assert.equal(images.length, 1);
+      assert.ok(imageSources(card).includes(preview.image.src));
+      assert.ok(preview.image.alt.length > 10);
+      assert.ok(preview.image.width > 0 && preview.image.height > 0);
+      const file = readFileSync(
+        resolve(root, "public", preview.image.src.slice(1)),
+      );
+      assert.equal(file.subarray(8, 12).toString(), "WEBP");
+      if (preview.demo) {
+        assert.equal(new URL(preview.demo.href).hostname, "www.youtube.com");
+        assert.ok(new URL(preview.demo.href).searchParams.get("v"));
+        assert.ok(card.includes(`aria-controls="project-demo-${project.id}"`));
+        const demoRegion = card.match(
+          new RegExp(`<div\\b(?=[^>]*id="project-demo-${project.id}")[^>]*>`),
+        )?.[0];
+        assert.ok(demoRegion && /\bhidden=""/.test(demoRegion));
+      } else {
+        assert.ok(plain(card).includes(preview.label));
+      }
+    }
+    assert.ok(homepage.includes('aria-label="Filter projects"'));
+    assert.ok(homepage.includes('aria-pressed="true"'));
+    assert.ok(homepage.includes('aria-live="polite"'));
+    assert.ok(homepage.includes('id="project-results"'));
+  },
+);
+check("Recognition has an accessible standalone route", () => {
+  assert.equal((recognition.match(/<h1\b/g) || []).length, 1);
+  assert.ok(recognition.includes('id="main"'));
+  assert.ok(recognition.includes('aria-label="Breadcrumb"'));
+  assert.equal(
+    (recognition.match(/class="award-card(?: award-card-compact)?"/g) || [])
+      .length,
+    awards.length,
+  );
+  const dental = projects.find((p) => p.id === "mc-dental-station");
+  assert.equal(dental.links[0].href, "https://mc-dental.syntaxsurge.com/");
+  assert.ok(
+    read("work/mc-dental-station.html").includes(
+      "Clinic staff confirm the final appointment",
+    ),
+  );
+  assert.ok(
+    read("work/mc-dental-station.html").includes(
+      "AI-generated project artwork.",
+    ),
+  );
+});
+check(
+  "Collection address redirects permanently to the homepage work section",
+  () => {
+    assert.ok(!existsSync(resolve(root, "src/app/work/page.tsx")));
+    assert.ok(!existsSync(resolve(app, "work.html")));
+    const routes = JSON.parse(
+      readFileSync(resolve(root, ".next/routes-manifest.json"), "utf8"),
     );
+    const redirect = routes.redirects.find((route) => route.source === "/work");
+    assert.ok(redirect);
+    assert.equal(redirect.destination, "/#work");
+    assert.equal(redirect.statusCode, 308);
+  },
+);
+check(
+  "Hero serves its poster before motion without repeating the business logo",
+  () => {
+    const hero = homepage.match(
+      /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
+    )?.[1];
+    assert.ok(hero);
+    assert.ok(hero.includes('class="hero-motion"'));
+    const sources = imageSources(hero);
+    assert.ok(sources.includes(business.heroMotion.poster));
+    assert.ok(!sources.includes(business.logo.src));
+    assert.equal((hero.match(/<video\b/g) || []).length, 0);
+    const poster = readFileSync(
+      resolve(root, "public", business.heroMotion.poster.slice(1)),
+    );
+    assert.equal(poster.subarray(8, 12).toString(), "WEBP");
+    const video = readFileSync(
+      resolve(root, "public", business.heroMotion.src.slice(1)),
+    );
+    assert.equal(video.subarray(4, 8).toString(), "ftyp");
   },
 );
 check(
@@ -158,20 +267,18 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   );
   const expected = new Set([
     siteHref("/"),
-    siteHref("/work"),
     siteHref("/recognition"),
     ...projects.map((project) => siteHref(`/work/${project.id}`)),
     ...wrapItUpPaths.map((path) => siteHref(path)),
   ]);
   assert.equal(locations.length, expected.size);
+  assert.equal(locations.length, 23);
   assert.equal(new Set(locations).size, locations.length);
   assert.ok(!sitemap.includes("/apps/wrap-it-up"));
-  for (const path of ["work", "recognition"])
-    assert.ok(
-      read(`${path}.html`).includes(
-        `rel="canonical" href="${siteHref(`/${path}`)}"`,
-      ),
-    );
+  assert.ok(!locations.includes(siteHref("/work")));
+  assert.ok(
+    recognition.includes(`rel="canonical" href="${siteHref("/recognition")}"`),
+  );
   for (const project of projects) {
     const canonical = siteHref(`/work/${project.id}`);
     assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
@@ -275,11 +382,10 @@ for (const project of projects) {
     assert.ok(html.includes('aria-label="More projects"'));
     const header = html.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
     assert.ok(header);
-    for (const id of ["services", "team"])
+    for (const id of ["services", "work", "team"])
       assert.ok(header.includes(`href="/#${id}"`));
-    assert.ok(header.includes('href="/work"'));
     assert.ok(header.includes('href="#contact"'));
-    assert.ok(html.includes('href="/work"'));
+    assert.ok(html.includes('href="/#work"'));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));
   });
@@ -290,7 +396,7 @@ check("Project artwork is local and present", () => {
     "studysoda-cover.webp",
     "sipava-cover.webp",
     "kaldi-cover.webp",
-    "mc-dental-cover.webp",
+    "mc-dental-feature.webp",
     "syntaxsurge-logo.jpg",
     "jade-laurence-empleo.jpg",
     "syntax-surge-dti-certificate.png",

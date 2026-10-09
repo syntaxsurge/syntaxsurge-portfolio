@@ -1,4 +1,20 @@
 import type { SVGProps } from "react";
+export function PlayIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="m9 5 11 7-11 7V5Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
 export function Arrow({
   diagonal = false,
   ...props

@@ -2,23 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { awards, projects } from "@/data/portfolio";
 import { awardMedia } from "@/data/award-media";
-import { Arrow, Trophy } from "./icons";
-
-export function PlayIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
-      <path d="m9 5 11 7-11 7V5Z" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import { Arrow, Trophy, PlayIcon } from "./icons";
 export function AwardCard({
   award,
   compact = false,

@@ -10,12 +10,20 @@ export const business = {
   },
   founder: {
     name: "Jade Laurence Empleo",
+    fullName: "Jade Laurence Cabaruan Empleo",
     role: "Founder & Software Developer",
     portrait: {
       src: "/images/jade-laurence-empleo.jpg",
       width: 1254,
       height: 1254,
     },
+  },
+  resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
+  heroMotion: {
+    src: "/videos/hero-loop.mp4",
+    poster: "/images/hero-loop-poster.webp",
+    width: 1280,
+    height: 720,
   },
   certificate: {
     scope: "National",
@@ -30,21 +38,16 @@ export const business = {
   services: [
     {
       title: "Business websites",
-      description:
-        "Help customers understand your services, find you, and take the next step.",
-      examples: "Service pages · Inquiries · Appointment requests",
+      description: "A clear home for your services, customers and inquiries.",
     },
     {
       title: "Custom software",
-      description:
-        "Bring your day-to-day work together in a tool built around your business.",
-      examples: "Staff dashboards · Customer tools · Workflows",
+      description: "Tools that fit the way your business works.",
     },
     {
       title: "AI & automation",
       description:
-        "Make useful information easier to find and repetitive tasks easier to manage.",
-      examples: "FAQ assistants · Content tools · Integrations",
+        "Practical assistants and workflows that save repetitive work.",
     },
   ],
 };

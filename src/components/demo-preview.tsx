@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { awardMedia } from "@/data/award-media";
 import { projects } from "@/data/portfolio";
-import { Arrow } from "./icons";
-import { PlayIcon } from "./award-card";
+import { Arrow, PlayIcon } from "./icons";
 
 export function DemoPreview({
   projectId,

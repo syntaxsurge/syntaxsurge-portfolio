@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { business } from "@/data/business";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -7,7 +6,8 @@ export function Header() {
   return (
     <header className="site-header">
       <div className="header-inner shell">
-        <Link
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+        <a
           href="/#top"
           className="wordmark"
           aria-label={`${business.name} — home`}
@@ -23,14 +23,17 @@ export function Header() {
             />
           </span>
           <span>{business.name}</span>
-        </Link>
+        </a>
         <nav className="primary-navigation" aria-label="Main navigation">
-          <Link href="/#services">Services</Link>
-          <Link href="/work">Work</Link>
-          <Link href="/#team">Team</Link>
-          <Link className="header-contact" href="#contact">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+          <a href="/#services">Services</a>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+          <a href="/#work">Work</a>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+          <a href="/#team">Team</a>
+          <a className="header-contact" href="#contact">
             Contact
-          </Link>
+          </a>
         </nav>
         <div className="header-actions">
           <ThemeToggle />

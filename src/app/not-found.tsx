@@ -9,9 +9,11 @@ export default function NotFound() {
       <main id="main" tabIndex={-1} className="not-found shell">
         <span className="eyebrow">404 / PAGE NOT FOUND</span>
         <h1>This page couldn’t be found.</h1>
-        <p>Check the address or find what you need in the project collection.</p>
+        <p>
+          Check the address or find what you need in the project collection.
+        </p>
         <div className="project-links">
-          <Link className="button button-dark" href="/work">
+          <Link className="button button-dark" href="/#work">
             Browse all projects <Arrow />
           </Link>
           <Link className="button button-outline" href="/">

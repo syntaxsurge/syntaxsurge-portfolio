@@ -6,7 +6,7 @@ Kaldi is published separately at **https://kaldi-rewards.syntaxsurge.com/**, wit
 
 | Public route | Application | Private listener |
 | --- | --- | --- |
-| `/`, `/work`, `/recognition`, `/work/*`, `/_next/*`, `/images/*`, `/documents/*`, metadata routes; `/apps/wrap-it-up` redirect addresses | Business website | `127.0.0.1:3101` |
+| `/`, `/recognition`, `/work/*`, `/_next/*`, `/images/*`, `/videos/*`, `/documents/*`, metadata routes; `/work` and `/apps/wrap-it-up` redirects | Business website | `127.0.0.1:3101` |
 | `https://kaldi-rewards.syntaxsurge.com/` | Kaldi | Managed by its separate deployment |
 | `https://mc-dental.syntaxsurge.com/` | MC Dental Station | Managed by its separate deployment |
 
@@ -144,7 +144,7 @@ Verify these paths and contents again. Kaldi's and MC Dental Station's separate 
 
 The previous WordPress rewrite include contained a `location /` block with `try_files $uri $uri/ /index.php?$args`. **Remove that one catch-all, then include [nginx-portfolio.conf](../deploy/nginx-portfolio.conf) once inside the existing server; the snippet contains its replacement. Do not keep or add a second `location /`.** Keep the backup outside wildcard include directories so Nginx does not load it. Preserve the WordPress files/database, PHP settings, TLS certificate, HTTP-to-HTTPS behavior, ACME challenge rules, and existing security rules. Do not replace the entire vhost or add another website claiming the same domain.
 
-Install the business-site snippet only in the `syntaxsurge.com` server block; leave linked applications' vhosts and deployment configurations unchanged. The `^~ /_next/`, `^~ /work/`, `^~ /images/`, and `^~ /documents/` blocks prevent WordPress file-extension regexes from intercepting those routes. The catch-all also handles `/work` and `/recognition`; exact blocks handle the business icon, social preview, robots file, and sitemap. `/documents/syntax-surge-dti-certificate.pdf` serves the unchanged supplied registration certificate; its rendered preview uses `/images/syntax-surge-dti-certificate.png`. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
+Install the business-site snippet only in the `syntaxsurge.com` server block; leave linked applications' vhosts and deployment configurations unchanged. The `^~ /_next/`, `^~ /work/`, `^~ /images/`, `^~ /videos/`, and `^~ /documents/` blocks prevent WordPress file-extension regexes from intercepting those routes. The catch-all handles `/recognition` and the `/work` permanent redirect to `/#work`; exact blocks handle the business icon, social preview, robots file, and sitemap. `/documents/` serves the original registration certificate and professional resume; `/images/` serves the certificate preview and project/poster artwork, and `/videos/` serves the local hero loop. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
 
 The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Keep business-site proxy settings scoped to its own vhost. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
 
@@ -156,13 +156,14 @@ Check these privately first, then on HTTPS after the reload:
 
 ```sh
 curl -fsS http://127.0.0.1:3101/ -o /dev/null
-curl -fsS http://127.0.0.1:3101/work -o /dev/null
+curl -sS -D - http://127.0.0.1:3101/work -o /dev/null
 curl -fsS http://127.0.0.1:3101/recognition -o /dev/null
 curl -fsS http://127.0.0.1:3101/work/cliplore -o /dev/null
 curl -fsS http://127.0.0.1:3101/documents/syntax-surge-dti-certificate.pdf -o /dev/null
+curl -fsS http://127.0.0.1:3101/documents/jade-laurence-empleo-resume.pdf -o /dev/null
 curl -fsS http://127.0.0.1:3101/sitemap.xml
 curl -fsS https://syntaxsurge.com/ -o /dev/null
-curl -fsS https://syntaxsurge.com/work -o /dev/null
+curl -sS -D - https://syntaxsurge.com/work -o /dev/null
 curl -fsS https://syntaxsurge.com/recognition -o /dev/null
 curl -fsS https://syntaxsurge.com/work/mc-dental-station -o /dev/null
 curl -fsS https://syntaxsurge.com/work/cliplore -o /dev/null
@@ -173,16 +174,21 @@ curl -fsS https://syntaxsurge.com/opengraph-image -o /dev/null
 curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
 curl -fsS https://syntaxsurge.com/images/syntaxsurge-logo.jpg -o /dev/null
 curl -fsS https://syntaxsurge.com/images/jade-laurence-empleo.jpg -o /dev/null
-curl -fsS https://syntaxsurge.com/images/mc-dental-cover.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/images/mc-dental-feature.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/images/hero-loop-poster.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/videos/hero-loop.mp4 -o /dev/null
 curl -fsS https://syntaxsurge.com/documents/syntax-surge-dti-certificate.pdf -o /dev/null
 curl -fsS https://syntaxsurge.com/images/syntax-surge-dti-certificate.png -o /dev/null
+curl -fsS https://syntaxsurge.com/documents/jade-laurence-empleo-resume.pdf -o /dev/null
 curl -fsS https://kaldi-rewards.syntaxsurge.com/ -o /dev/null
 curl -fsS https://mc-dental.syntaxsurge.com/ -o /dev/null
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the business homepage, `/work`, `/recognition`, all 19 project pages, and the two Wrap It Up! support/privacy pages; also check both themes and persistence, mobile navigation, filters, award media, keyboard focus, and 200% zoom. Check that each page uses its own HTTPS canonical URL and that the sitemap has 24 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the homepage's 19 visual cards and filters, `/recognition`, all 19 project pages, and the two Wrap It Up! support/privacy pages. Confirm `/work` returns HTTP 308 and redirects to `/#work`; it has no separate page or sitemap entry. Check both themes and persistence, mobile section navigation, keyboard focus, and 200% zoom. Each canonical page uses its own HTTPS URL, and the sitemap has 23 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
 
 Verify the registration preview, PDF view, and download actions. The PDF response should have `application/pdf` content type and match the original SHA-256 recorded in `docs/ASSET-SOURCES.md`; the preview should be a local PNG rendering. The canonical legal name is **SyntaxSurge Software Development Services**, while the business brand remains **Syntax Surge**. The certificate assets do not add sitemap pages and require no external document service.
+
+Verify the team resume download returns the two-page PDF. The runtime serves this committed artifact directly; Python/ReportLab are needed only to rebuild it locally from canonical data. Confirm the hero MP4 and poster load locally, video responses support playback/range requests, the loop is muted, pause/resume works, motion stops outside the viewport or hidden tab, and reduced-motion preference retains the poster. Before any homepage demo is selected, no YouTube iframe should exist. Opening a demo should create one privacy-enhanced player; opening another replaces it, and closing restores keyboard focus. Demo and artwork provenance is in `docs/ASSET-SOURCES.md` and `docs/AWARD-MEDIA-SOURCES.md`.
 
 Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi loads at `https://kaldi-rewards.syntaxsurge.com/` with its own assets, wallet, and sign-in callback. Check MC Dental Station's public root independently; its booking, staff authentication, database, and FAQ integrations belong to that application. Inspect the business website's aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
 
@@ -242,4 +248,4 @@ After identifying a configuration mistake, privately back up the affected file o
 
 ## Wrap It Up! public pages
 
-The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 24 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.
+The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 23 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.

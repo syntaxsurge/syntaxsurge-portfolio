@@ -5,13 +5,16 @@ import { projects, awards } from "@/data/portfolio";
 import { business } from "@/data/business";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, Trophy } from "@/components/icons";
+import { Arrow, Trophy, PlayIcon } from "@/components/icons";
 import { ProjectVisual } from "@/components/project-visual";
 import { awardMedia } from "@/data/award-media";
 import { DemoPreview } from "@/components/demo-preview";
-import { PlayIcon } from "@/components/award-card";
 import { wrapItUp } from "@/data/wrap-it-up";
-import { WrapItUpBetaNote, WrapItUpDetails, WrapItUpNavigation } from "@/components/wrap-it-up-details";
+import {
+  WrapItUpBetaNote,
+  WrapItUpDetails,
+  WrapItUpNavigation,
+} from "@/components/wrap-it-up-details";
 export const dynamicParams = false;
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.id }));
@@ -34,7 +37,14 @@ export async function generateMetadata({
       title: `${p.title} — ${business.name}`,
       description: p.description,
       ...(p.id === "wrap-it-up" && {
-        images: [{ url: wrapItUp.artwork, width: 1024, height: 500, alt: "Wrap It Up! gift-wrapping shop artwork" }],
+        images: [
+          {
+            url: wrapItUp.artwork,
+            width: 1024,
+            height: 500,
+            alt: "Wrap It Up! gift-wrapping shop artwork",
+          },
+        ],
       }),
     },
   };
@@ -58,7 +68,7 @@ export default async function ProjectPage({
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/work">All projects</Link>
+          <Link href="/#work">All projects</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{p.title}</span>
         </nav>
@@ -110,15 +120,19 @@ export default async function ProjectPage({
           <DemoPreview projectId={p.id} priority />
         ) : (
           <div className="project-detail-visual">
-            <ProjectVisual
-              id={p.id}
-              priority
-              title={p.title}
-              subtitle={p.tags[0]}
-            />
+            <ProjectVisual id={p.id} priority />
           </div>
         )}
-        {p.id === "wrap-it-up" && <p className="project-artwork-caption">Official game artwork. Fold. Tape. Ribbon. Delight!</p>}
+        {p.id === "mc-dental-station" && (
+          <p className="project-artwork-caption">
+            AI-generated project artwork.
+          </p>
+        )}
+        {p.id === "wrap-it-up" && (
+          <p className="project-artwork-caption">
+            Official game artwork. Fold. Tape. Ribbon. Delight!
+          </p>
+        )}
         <div className="project-detail-grid">
           <section aria-labelledby="project-focus-title">
             <dl className="project-overview">
@@ -210,7 +224,7 @@ export default async function ProjectPage({
           </section>
         )}
         <nav className="project-navigation" aria-label="More projects">
-          <Link href="/work" className="button button-outline">
+          <Link href="/#work" className="button button-outline">
             All projects <Arrow />
           </Link>
           <Link href={`/work/${next.id}`} className="next-project">

@@ -1,23 +1,40 @@
 import Image from "next/image";
-import { business } from "@/data/business";
+import { projectPreviews } from "@/data/project-media";
 import { Spark } from "./icons";
 export function ProjectVisual({
   id,
   priority = false,
-  title,
-  subtitle,
+  variant = "artwork",
 }: {
   id: string;
   priority?: boolean;
-  title?: string;
-  subtitle?: string;
+  variant?: "artwork" | "preview";
 }) {
+  const preview = projectPreviews[id];
+  if (!preview) return null;
+  const artwork = preview.artwork ?? preview.image;
+  const previewVisual = (
+    <div className="project-visual project-preview">
+      <Image
+        src={preview.image.src}
+        alt={preview.image.alt}
+        fill
+        sizes={
+          variant === "preview"
+            ? "(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 420px"
+            : "(max-width: 700px) 100vw, 1100px"
+        }
+        preload={priority}
+      />
+    </div>
+  );
+  if (variant === "preview") return previewVisual;
   if (id === "mc-dental-station")
     return (
       <div className="project-visual visual-dental">
         <Image
-          src="/images/mc-dental-cover.webp"
-          alt="Four MC Dental Station team members in white coats"
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 1100px"
           preload={priority}
@@ -28,8 +45,8 @@ export function ProjectVisual({
     return (
       <div className="project-visual visual-wrap-it-up">
         <Image
-          src="/images/wrap-it-up-cover.webp"
-          alt="Wrap It Up! game artwork with paper, ribbon, scissors, and two wrapped gifts in a cozy shop"
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 1100px"
           preload={priority}
@@ -40,8 +57,8 @@ export function ProjectVisual({
     return (
       <div className="project-visual visual-cliplore">
         <Image
-          src="/images/cliplore-cover.webp"
-          alt=""
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 700px"
           preload={priority}
@@ -67,8 +84,8 @@ export function ProjectVisual({
     return (
       <div className="project-visual visual-study">
         <Image
-          src="/images/studysoda-cover.webp"
-          alt="StudySoda brand artwork with lavender flashcards, an open notebook, and a lime soda"
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 650px"
         />
@@ -86,8 +103,8 @@ export function ProjectVisual({
     return (
       <div className="project-visual visual-sipava">
         <Image
-          src="/images/sipava-cover.webp"
-          alt="Sipava campaign artwork showing its task, accountability feed, and streak screens with showcase data"
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 650px"
         />
@@ -97,8 +114,8 @@ export function ProjectVisual({
     return (
       <div className="project-visual visual-kaldi">
         <Image
-          src="/images/kaldi-cover.webp"
-          alt="Kaldi Coffee project artwork with iced coffee and a croissant"
+          src={artwork.src}
+          alt={artwork.alt}
           fill
           sizes="(max-width: 700px) 100vw, 650px"
         />
@@ -108,18 +125,5 @@ export function ProjectVisual({
         <span className="kaldi-chip">A little loyalty goes a long way. ↗</span>
       </div>
     );
-  return (
-    <div className={`project-visual visual-typographic tone-${id.length % 4}`}>
-      <div className="type-grid" />
-      <Spark className="project-large-spark" />
-      <span className="mono visual-mini">{business.name.toUpperCase()} / PROJECT COLLECTION</span>
-      <span className="abstract-orbit" aria-hidden="true" />
-      {title && (
-        <span className="detail-visual-title">
-          {title}
-          {subtitle && <small>{subtitle}</small>}
-        </span>
-      )}
-    </div>
-  );
+  return previewVisual;
 }

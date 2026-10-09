@@ -1,25 +1,41 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { projects } from "@/data/portfolio";
-import { Arrow, Trophy } from "./icons";
-const filters = [
-  "All projects",
-  "Products",
-  "AI & Web3",
-  "Tools",
-] as const;
+import { projectPreviews } from "@/data/project-media";
+import { Arrow, Trophy, PlayIcon } from "./icons";
+import { ProjectVisual } from "./project-visual";
+const filters = ["All projects", "Products", "AI & Web3", "Tools"] as const;
 export function ProjectArchive() {
-  const [filter, setFilter] = useState<(typeof filters)[number]>("All projects");
+  const [filter, setFilter] =
+    useState<(typeof filters)[number]>("All projects");
   const [query, setQuery] = useState("");
+  const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+  const demoTrigger = useRef<HTMLButtonElement>(null);
+  const closeDemoButton = useRef<HTMLButtonElement>(null);
+  const restoreDemoFocus = useRef(false);
   const search = query.trim().toLowerCase();
   const hasFilters = filter !== "All projects" || query.length > 0;
   function resetFilters() {
     setQuery("");
     setFilter("All projects");
+    setActiveDemo(null);
+    restoreDemoFocus.current = false;
     searchInput.current?.focus();
   }
+  function closeDemo() {
+    restoreDemoFocus.current = true;
+    setActiveDemo(null);
+  }
+  useEffect(() => {
+    if (activeDemo) {
+      closeDemoButton.current?.focus();
+    } else if (restoreDemoFocus.current) {
+      demoTrigger.current?.focus();
+      restoreDemoFocus.current = false;
+    }
+  }, [activeDemo]);
   const visible = useMemo(
     () =>
       projects.filter(
@@ -41,14 +57,19 @@ export function ProjectArchive() {
               type="button"
               aria-pressed={filter === f}
               aria-controls="project-results"
-              onClick={() => setFilter(f)}
+              onClick={() => {
+                restoreDemoFocus.current = false;
+                setActiveDemo(null);
+                setFilter(f);
+              }}
             >
               {f}
               <span>
-                {projects.filter(
-                  (p) =>
-                    f === "All projects" || p.category === f,
-                ).length}
+                {
+                  projects.filter(
+                    (p) => f === "All projects" || p.category === f,
+                  ).length
+                }
               </span>
             </button>
           ))}
@@ -72,7 +93,11 @@ export function ProjectArchive() {
             type="search"
             aria-controls="project-results"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              restoreDemoFocus.current = false;
+              setActiveDemo(null);
+              setQuery(e.target.value);
+            }}
             placeholder="Search projects"
           />
         </label>
@@ -90,50 +115,138 @@ export function ProjectArchive() {
         )}
       </div>
       <div className="archive-list" id="project-results">
-        {visible.map((p) => (
-          <article className="archive-row" key={p.id}>
-            <div className="archive-name">
-              <div className="archive-project-meta">
-                <span>{p.category}</span>
-                <span>{p.year}</span>
-                {p.award && (
-                  <span className="archive-award" title={p.award}>
-                    <Trophy /> Recognized
-                    <span className="sr-only">: {p.award}</span>
-                  </span>
+        {visible.map((p) => {
+          const preview = projectPreviews[p.id];
+          const isActive = activeDemo === p.id;
+          return (
+            <article className="archive-row" key={p.id}>
+              <div className="archive-preview-wrap">
+                {preview.demo ? (
+                  <button
+                    className="archive-preview"
+                    type="button"
+                    hidden={isActive}
+                    aria-expanded={isActive}
+                    aria-controls={`project-demo-${p.id}`}
+                    aria-label={`Play ${p.title} ${p.id === "cliplore" ? "hackathon " : ""}demo`}
+                    onClick={(event) => {
+                      demoTrigger.current = event.currentTarget;
+                      restoreDemoFocus.current = false;
+                      setActiveDemo(p.id);
+                    }}
+                  >
+                    <ProjectVisual id={p.id} variant="preview" />
+                    <span className="archive-preview-caption">
+                      <PlayIcon />
+                      {p.id === "cliplore"
+                        ? "Watch hackathon demo"
+                        : "Watch demo"}
+                    </span>
+                  </button>
+                ) : (
+                  <Link
+                    className="archive-preview"
+                    href={`/work/${p.id}`}
+                    aria-label={`View ${p.title} project details`}
+                  >
+                    <ProjectVisual id={p.id} variant="preview" />
+                    <span className="archive-preview-caption">
+                      {preview.label} <Arrow />
+                    </span>
+                  </Link>
+                )}
+                {preview.demo && (
+                  <div
+                    id={`project-demo-${p.id}`}
+                    className={isActive ? "archive-demo" : undefined}
+                    hidden={!isActive}
+                    role="region"
+                    aria-label={`${p.title} demo player`}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") {
+                        event.preventDefault();
+                        closeDemo();
+                      }
+                    }}
+                  >
+                    {isActive && (
+                      <>
+                        <iframe
+                          src={`https://www.youtube-nocookie.com/embed/${new URL(preview.demo.href).searchParams.get("v")}?autoplay=1&rel=0`}
+                          title={`${p.title} ${p.id === "cliplore" ? "hackathon " : ""}demo`}
+                          allow="autoplay; encrypted-media; picture-in-picture"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        />
+                        <div className="archive-demo-controls">
+                          <button
+                            ref={closeDemoButton}
+                            className="text-link"
+                            type="button"
+                            onClick={closeDemo}
+                          >
+                            Close demo
+                          </button>
+                          <a
+                            className="text-link"
+                            href={preview.demo.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Watch ${p.title} on YouTube (opens in a new tab)`}
+                          >
+                            Open on YouTube <Arrow diagonal />
+                          </a>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
-              <h2>
-                <Link href={`/work/${p.id}`}>{p.title}</Link>
-              </h2>
-              <p>{p.description}</p>
-            </div>
-            <div className="archive-actions">
-              <Link
-                className="text-link"
-                href={`/work/${p.id}`}
-                aria-label={`View ${p.title} project details`}
-              >
-                Project details <Arrow />
-              </Link>
-              {p.links[0] && (
-                <a
-                  className="text-link"
-                  href={p.links[0].href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
-                >
-                  {p.links[0].label} <Arrow diagonal />
-                </a>
-              )}
-            </div>
-          </article>
-        ))}
+              <div className="archive-card-body">
+                <div className="archive-name">
+                  <div className="archive-project-meta">
+                    <span>{p.category}</span>
+                    <span>{p.year}</span>
+                    {p.award && (
+                      <span className="archive-award" title={p.award}>
+                        <Trophy /> Recognized
+                        <span className="sr-only">: {p.award}</span>
+                      </span>
+                    )}
+                  </div>
+                  <h3>
+                    <Link href={`/work/${p.id}`}>{p.title}</Link>
+                  </h3>
+                  <p>{preview.summary}</p>
+                </div>
+                <div className="archive-actions">
+                  <Link
+                    className="text-link"
+                    href={`/work/${p.id}`}
+                    aria-label={`View ${p.title} project details`}
+                  >
+                    Project details <Arrow />
+                  </Link>
+                  {p.links[0] && (
+                    <a
+                      className="text-link"
+                      href={p.links[0].href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
+                    >
+                      {p.links[0].label} <Arrow diagonal />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
       {visible.length === 0 && (
         <div className="empty-results">
-          <h2>No projects found</h2>
+          <h3>No projects found</h3>
           <p>Try another search or browse the full collection.</p>
           <button
             className="button button-outline"

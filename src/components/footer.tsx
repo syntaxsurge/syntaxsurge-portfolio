@@ -13,14 +13,11 @@ export function Footer() {
           <span className="mono">LET’S MAKE IT REAL</span>
         </div>
         <h2 id="contact-title" className="contact-title">
-          Let’s build software
-          <br />
-          that works for you.
+          What’s your next idea?
         </h2>
         <div className="contact-actions">
           <p className="contact-copy">
-            Have a project in mind? Message our founder on LinkedIn to discuss
-            your goals and what you need.
+            Tell Jade what you have in mind. Let’s find the right next step.
           </p>
           <a
             className="button button-lime"
@@ -28,7 +25,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Discuss your project <Arrow diagonal />
+            Let’s talk on LinkedIn <Arrow diagonal />
             <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </div>
@@ -42,7 +39,8 @@ export function Footer() {
             <span>© {new Date().getFullYear()}</span>
           </Link>
           <div>
-            <Link href="/work">All projects</Link>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
+            <a href="/#work">All projects</a>
             <Link href="/recognition">Recognition</Link>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
             <a href="/#registration">DTI registration</a>
