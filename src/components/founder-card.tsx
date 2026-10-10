@@ -59,7 +59,7 @@ export function FounderCard() {
         <div className={styles.portrait}>
           <Image
             src={business.founder.portrait.src}
-            alt="Jade Laurence Empleo, founder of Syntax Surge"
+            alt={`${business.founder.name}, founder of ${business.legalName}`}
             width={business.founder.portrait.width}
             height={business.founder.portrait.height}
             sizes="(max-width: 700px) 100vw, 440px"
@@ -152,7 +152,7 @@ export function FounderCard() {
             href={business.links.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Meet Jade Laurence Empleo on LinkedIn (opens in a new tab)"
+            aria-label={`Meet ${business.founder.name} on LinkedIn (opens in a new tab)`}
           >
             <Arrow diagonal />
           </a>

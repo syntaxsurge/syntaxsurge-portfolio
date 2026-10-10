@@ -11,7 +11,7 @@ export const business = {
     github: "https://github.com/syntaxsurge",
   },
   founder: {
-    name: "Jade Laurence Empleo",
+    name: "Jade Laurence C. Empleo",
     fullName: "Jade Laurence Cabaruan Empleo",
     role: "Founder & Software Developer",
     portrait: {
@@ -26,13 +26,13 @@ export const business = {
       src: "/images/resume-page-1.webp",
       width: 1200,
       height: 1698,
-      alt: "Résumé page 1: Jade Laurence Cabaruan Empleo's profile, contact details, skills, and selected projects",
+      alt: "Résumé page 1: Jade Laurence C. Empleo's profile, contact details, skills, and selected projects",
     },
     {
       src: "/images/resume-page-2.webp",
       width: 1200,
       height: 1698,
-      alt: "Résumé page 2: Jade Laurence Cabaruan Empleo's 14 dated hackathon recognitions",
+      alt: "Résumé page 2: Jade Laurence C. Empleo's 14 dated hackathon recognitions and supplied prizes",
     },
   ],
   workspacePhoto: {

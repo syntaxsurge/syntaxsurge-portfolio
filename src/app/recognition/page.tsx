@@ -4,11 +4,11 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { AwardCard } from "@/components/award-card";
 import { awards } from "@/data/portfolio";
+import { business } from "@/data/business";
 
 export const metadata: Metadata = {
   title: "Recognition",
-  description:
-    "Explore 14 hackathon recognitions earned by Jade Laurence Empleo, founder of Syntax Surge, with project demos and details.",
+  description: `Explore ${awards.length} hackathon recognitions earned by ${business.founder.name}, founder of ${business.legalName}, with project demos and details.`,
   alternates: { canonical: "/recognition" },
 };
 
@@ -26,8 +26,8 @@ export default function RecognitionPage() {
           <span className="eyebrow section-label">A RECORD OF BUILDING</span>
           <h1>Recognition.</h1>
           <p>
-            {awards.length} hackathon recognitions earned by Jade Laurence
-            Empleo. Explore the projects and their demos.
+            {awards.length} hackathon recognitions earned by {business.founder.name}.
+            Explore the projects and their demos.
           </p>
         </div>
         <div className="awards-grid">

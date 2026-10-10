@@ -59,7 +59,11 @@ export function AwardCard({
               timeZone: "UTC",
             })}
           </time>
-          {award.prize && <span className="award-prize">{award.prize}</span>}
+          {award.prize && (
+            <span className="award-prize">
+              Prize: <strong>{award.prize}</strong>
+            </span>
+          )}
         </div>
         <h2>
           <Link href={`/work/${award.projectId}`}>{project.title}</Link>

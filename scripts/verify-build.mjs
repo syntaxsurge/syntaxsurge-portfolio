@@ -247,7 +247,7 @@ check(
       );
       assert.ok(page.src.startsWith("/images/") && page.src.endsWith(".webp"));
       assert.ok(page.width > 0 && page.height > page.width);
-      assert.ok(page.alt.includes(business.founder.fullName));
+      assert.ok(page.alt.includes(business.founder.name));
       const image = readFileSync(resolve(root, "public", page.src.slice(1)));
       assert.equal(image.subarray(8, 12).toString(), "WEBP");
       assert.ok(image.length > 1000);
@@ -440,6 +440,49 @@ check("Recognition has an accessible standalone route", () => {
   assert.ok(
     !plain(read("work/mc-dental-station.html")).includes("Project artwork."),
   );
+});
+check("Awards and their recorded prizes belong to the correct projects", () => {
+  const cards = [
+    ...recognition.matchAll(
+      /<article\b[^>]*class="award-card(?: award-card-compact)?"[^>]*>([\s\S]*?)<\/article>/g,
+    ),
+  ].map((match) => match[1]);
+  const prizeLabels = (html) => [
+    ...html.matchAll(
+      /<(span|p)\b[^>]*class="award-prize"[^>]*>([\s\S]*?)<\/\1>/g,
+    ),
+  ].map((match) => plain(match[2]).trim());
+  for (const project of projects) {
+    const expected = awards.filter((award) => award.projectId === project.id);
+    const detail = read(`work/${project.id}.html`);
+    const detailAwards = [
+      ...detail.matchAll(
+        /<div\b[^>]*class="detail-award"[^>]*>([\s\S]*?)<\/div>/g,
+      ),
+    ].map((match) => match[1]);
+    assert.equal(detailAwards.length, expected.length, project.title);
+    for (const award of expected) {
+      const matching = (html) =>
+        plain(html).includes(award.title) && plain(html).includes(award.event);
+      const card = cards.find((html) =>
+        html.includes(`href="/work/${project.id}"`) && matching(html),
+      );
+      const detailAward = detailAwards.find(matching);
+      assert.ok(card && detailAward, `${project.title}: ${award.event}`);
+      const expectedPrize = award.prize ? [`Prize: ${award.prize}`] : [];
+      assert.deepEqual(
+        prizeLabels(card), expectedPrize, `${project.title} recognition prize`,
+      );
+      assert.deepEqual(
+        prizeLabels(detailAward), expectedPrize, `${project.title} detail prize`,
+      );
+    }
+    assert.equal(
+      prizeLabels(detail).length,
+      expected.filter((award) => award.prize).length,
+      `${project.title} must not claim unrecorded prizes`,
+    );
+  }
 });
 check(
   "Collection address redirects permanently to the homepage work section",

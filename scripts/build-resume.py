@@ -25,7 +25,7 @@ from reportlab.platypus import Paragraph
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROLE = "Software Developer / Product Builder"
+ROLE = "Software Developer"
 WEBSITE = "https://syntaxsurge.com/"
 SELECTED_PROJECTS = ("mc-dental-station", "kaldi", "cliplore-ai")
 PAGE_WIDTH, PAGE_HEIGHT = A4
@@ -106,27 +106,27 @@ def section(pdf, label, y):
     return y - 18
 
 
-def footer(pdf, page, full_name):
+def footer(pdf, page, display_name):
     pdf.setStrokeColor(LINE)
     pdf.setLineWidth(0.65)
     pdf.line(MARGIN, 45, PAGE_WIDTH - MARGIN, 45)
     pdf.setFont("Helvetica", 8.5)
     pdf.setFillColor(MUTED)
-    pdf.drawString(MARGIN, 29, full_name)
+    pdf.drawString(MARGIN, 29, display_name)
     pdf.drawRightString(PAGE_WIDTH - MARGIN, 29, f"{page} / 2")
 
 
 def first_page(pdf, data):
     business = data["business"]
-    full_name = business["founder"]["fullName"]
+    display_name = business["founder"]["name"]
     projects = {project["id"]: project for project in data["projects"]}
     photo_size = 84
     header_width = CONTENT_WIDTH - photo_size - 20
     y = PAGE_HEIGHT - MARGIN
     name_size = 24
-    if stringWidth(full_name, "Helvetica-Bold", name_size) > header_width:
+    if stringWidth(display_name, "Helvetica-Bold", name_size) > header_width:
         name_size = 22
-    y = paragraph(pdf, plain(full_name), y, header_width, style(name_size, 29, True, NAVY))
+    y = paragraph(pdf, plain(display_name), y, header_width, style(name_size, 29, True, NAVY))
     y -= 5
     y = paragraph(pdf, ROLE, y, header_width, style(12.5, 17, color=NAVY))
     y -= 5
@@ -152,7 +152,7 @@ def first_page(pdf, data):
 
     y = section(pdf, "Profile", y)
     summary = (
-        f'Software developer and founder of {business["name"]}. Builds business '
+        f'Software developer and founder of {business["legalName"]}. Builds business '
         "websites, web applications and AI workflows, with "
         f'{len(data["projects"])} portfolio projects and '
         f'{len(data["awards"])} hackathon recognitions.'
@@ -191,16 +191,16 @@ def first_page(pdf, data):
         else:
             y = paragraph(pdf, f'<b>Focus:</b> {plain(", ".join(project["tags"]))}', y, text_style=style(10.5, 14.5, color=MUTED))
         y -= 20
-    footer(pdf, 1, full_name)
+    footer(pdf, 1, display_name)
     pdf.showPage()
 
 
 def recognition_page(pdf, data):
-    full_name = data["business"]["founder"]["fullName"]
+    display_name = data["business"]["founder"]["name"]
     projects = {project["id"]: project for project in data["projects"]}
     awards = sorted(data["awards"], key=lambda award: award["date"], reverse=True)
     y = PAGE_HEIGHT - MARGIN
-    y = paragraph(pdf, plain(full_name), y, text_style=style(14, 19, True, NAVY))
+    y = paragraph(pdf, plain(display_name), y, text_style=style(14, 19, True, NAVY))
     y = paragraph(pdf, ROLE, y - 3, text_style=style(10, 14, color=MUTED))
     y -= 21
     y = paragraph(pdf, "Recognition", y, text_style=style(21, 27, True, NAVY))
@@ -218,17 +218,20 @@ def recognition_page(pdf, data):
         pdf.drawRightString(PAGE_WIDTH - MARGIN, y - 11, f"{calendar.month_abbr[int(month)]} {year}")
         title = f'{project["title"]} - {award["title"]}'
         y = paragraph(pdf, plain(title), y, title_width, style(10.5, 14.5, True, NAVY))
-        y = paragraph(pdf, plain(award["event"]), y - 2, title_width, style(10.3, 14, color=MUTED))
+        event = award["event"]
+        if award.get("prize"):
+            event += f' | Prize: {award["prize"]}'
+        y = paragraph(pdf, plain(event), y - 2, CONTENT_WIDTH, style(10.3, 14, color=MUTED))
         y -= 13
-    footer(pdf, 2, full_name)
+    footer(pdf, 2, display_name)
     pdf.showPage()
 
 
 def write_pdf(path, data):
-    full_name = data["business"]["founder"]["fullName"]
+    display_name = data["business"]["founder"]["name"]
     pdf = canvas.Canvas(str(path), pagesize=A4, pageCompression=1, invariant=True)
-    pdf.setTitle(f"{full_name} - Resume")
-    pdf.setAuthor(full_name)
+    pdf.setTitle(f"{display_name} - Resume")
+    pdf.setAuthor(display_name)
     pdf.setSubject(ROLE)
     pdf.setKeywords("Software Developer, Product Builder, TypeScript, React, Next.js")
     first_page(pdf, data)

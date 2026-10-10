@@ -466,6 +466,7 @@ img {
 }
 .award-card-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
@@ -475,6 +476,10 @@ img {
 }
 .award-prize {
   color: var(--accent);
+  font-weight: 600;
+}
+.award-prize strong {
+  font-weight: 700;
 }
 .award-card h2 {
   font-size: 28px;
@@ -616,10 +621,8 @@ img {
 .detail-award .detail-award-meta {
   font-size: 16px;
 }
-.detail-award strong {
-  display: inline-block;
-  margin-top: 13px;
-  font-weight: 700;
+.detail-award .award-prize {
+  font-size: 18px;
   color: var(--accent);
 }
 .project-navigation {

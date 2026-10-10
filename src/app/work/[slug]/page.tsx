@@ -130,7 +130,11 @@ export default async function ProjectPage({
                       { month: "long", year: "numeric", timeZone: "UTC" },
                     )}
                   </p>
-                  {a.prize && <strong>{a.prize}</strong>}
+                  {a.prize && (
+                    <p className="award-prize">
+                      Prize: <strong>{a.prize}</strong>
+                    </p>
+                  )}
                 </div>
               ))
             ) : p.id === "wrap-it-up" ? (
