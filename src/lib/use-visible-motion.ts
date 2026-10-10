@@ -9,7 +9,7 @@ import {
   subscribeVisibility,
 } from "./motion";
 
-export function useVisibleMotion<T extends HTMLElement>() {
+export function useVisibleMotion<T extends HTMLElement>(threshold = 0.1) {
   const ref = useRef<T>(null);
   const enabled = useSyncExternalStore(
     subscribeMotion,
@@ -32,11 +32,11 @@ export function useVisibleMotion<T extends HTMLElement>() {
     if (!element || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.1 },
+      { threshold },
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
 
   return { ref, running: enabled && visible && inView };
 }

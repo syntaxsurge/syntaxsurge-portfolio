@@ -7,7 +7,7 @@ import { useVisibleMotion } from "@/lib/use-visible-motion";
 import styles from "./work-sculpture.module.css";
 
 export function WorkSculpture() {
-  const { ref: container, running: canRun } = useVisibleMotion<HTMLDivElement>();
+  const { ref: container, running: canRun } = useVisibleMotion<HTMLDivElement>(0);
   const video = useRef<HTMLVideoElement>(null);
   const mounted = useRef(false);
   const pending = useRef(false);
@@ -73,6 +73,11 @@ export function WorkSculpture() {
 
   return (
     <div className={styles.sculpture} ref={container}>
+      {playRejected && canRun && !errored && (
+        <button className={styles.control} type="button" onClick={retry}>
+          Play background video
+        </button>
+      )}
       <div className={styles.media} aria-hidden="true">
         <Image
           className={styles.poster}
@@ -80,7 +85,7 @@ export function WorkSculpture() {
           width={business.workMotion.width}
           height={business.workMotion.height}
           alt=""
-          sizes="(max-width: 700px) 100vw, 440px"
+          sizes="100vw"
           unoptimized
         />
         <video
@@ -114,11 +119,6 @@ export function WorkSculpture() {
           }}
         />
       </div>
-      {playRejected && canRun && !errored && (
-        <button className={styles.control} type="button" onClick={retry}>
-          Play video
-        </button>
-      )}
     </div>
   );
 }

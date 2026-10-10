@@ -343,8 +343,13 @@ check(
   },
 );
 check(
-  "Decorative work motion has a local poster without eager video loading",
+  "Work background has a local poster without eager video loading",
   () => {
+    const work = homepage.match(
+      /<section\b[^>]*id="work"[^>]*>([\s\S]*?)<\/section>/,
+    )?.[1];
+    assert.ok(work);
+    assert.ok(work.indexOf("<video") < work.indexOf('class="shell"'));
     const video = homepage.match(/<video\b[^>]*>/)?.[0];
     assert.ok(video);
     assert.ok(video.includes('aria-hidden="true"'));

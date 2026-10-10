@@ -69,12 +69,10 @@ export default function Home() {
           className="business-section work-section"
           aria-labelledby="work-title"
         >
+          <WorkSculpture />
           <div className="shell">
             <SectionReveal variant="slide" className="work-heading">
-              <div className="work-heading-copy">
-                <h2 id="work-title">Ideas made real.</h2>
-              </div>
-              <WorkSculpture />
+              <h2 id="work-title">Ideas made real.</h2>
             </SectionReveal>
             <ProjectArchive />
           </div>
