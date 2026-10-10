@@ -625,6 +625,32 @@ img {
   font-size: 18px;
   color: var(--accent);
 }
+.award-snapshot {
+  border-top: 1px solid var(--line);
+  padding-block: 32px 48px;
+}
+.award-snapshot-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.award-snapshot-heading h2 {
+  font-size: 30px;
+}
+.award-snapshot-heading .text-link {
+  min-height: 44px;
+}
+.award-snapshot-image {
+  display: block;
+  width: min(100%, 480px);
+  height: auto;
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
 .project-navigation {
   display: flex;
   justify-content: space-between;

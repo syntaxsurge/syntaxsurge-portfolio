@@ -14,6 +14,12 @@ export type AwardMedia = {
     href: string;
     label: string;
   };
+  recognitionScreenshot?: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
 };
 
 /** Videos demonstrate the projects; they are not substitutes for award certificates. */
@@ -33,6 +39,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/croignite",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/croignite.webp",
+      alt: "CroIgnite's Cronos x402 PayTech Hackathon announcement showing third place and a $2,000 prize.",
+      width: 1170,
+      height: 1230,
+    },
   },
   ping402: {
     image: {
@@ -48,6 +60,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/ping402",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/ping402.webp",
+      alt: "Ping402's Solana Winter Build Challenge winner dashboard and Best x402 announcement showing a $2,000 prize.",
+      width: 1200,
+      height: 1282,
     },
   },
   cliplore: {
@@ -65,6 +83,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/cliplore",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/cliplore.webp",
+      alt: "ClipLore's Surreal World Assets Buildathon 2 Creative Front-End winner slide showing a $5,000 prize.",
+      width: 1200,
+      height: 673,
+    },
   },
   field2fridge: {
     image: {
@@ -80,6 +104,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/Field2Fridge",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/field2fridge.webp",
+      alt: "Field2Fridge's UK AI Agent Hackathon bounty lists showing 1,200 USDT from Akedo and 1,400 USDT from SpaceAgri.",
+      width: 1200,
+      height: 1099,
     },
   },
   packtrace: {
@@ -97,6 +127,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/pack-trace",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/packtrace.webp",
+      alt: "PackTrace's 2025 supOS Global Hackathon winner announcement showing second place and a $2,000 prize.",
+      width: 1200,
+      height: 1882,
+    },
   },
   sentinelx: {
     image: {
@@ -112,6 +148,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/sentinelx-somnia",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/sentinelx.webp",
+      alt: "SentinelX's Somnia AI Hackathon highlight with the owner's caption recording third place and a $1,000 prize.",
+      width: 1200,
+      height: 1882,
     },
   },
   creatorbank: {
@@ -129,6 +171,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/creator-bank",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/creatorbank.webp",
+      alt: "CreatorBank's Mezo Hackathon winner slide showing a 2,000 MUSD award in Mass Adoption.",
+      width: 1200,
+      height: 1809,
+    },
   },
   lexlink: {
     image: {
@@ -144,6 +192,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/lexlink",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/lexlink.webp",
+      alt: "LexLink's LegalHack 2025 highlight with the owner's $2,000 Story Protocol bounty caption and finalist slide.",
+      width: 1200,
+      height: 1895,
     },
   },
   escrowzy: {
@@ -177,6 +231,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/viskify-cheqd",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/viskify.webp",
+      alt: "Viskify's Verifiable AI Hackathon winner post and owner's caption recording first place, the Verida bounty, and approximately $2,000.",
+      width: 1200,
+      height: 1882,
+    },
   },
   rivalidate: {
     image: {
@@ -192,6 +252,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/rivalidate-base",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/rivalidate.webp",
+      alt: "Rivalidate's Base Batch 001 APAC runner-up announcement and owner's caption recording 0.5 ETH, estimated at about $2,000.",
+      width: 1200,
+      height: 1759,
     },
   },
   polkastamp: {
@@ -209,6 +275,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/PolkaStamp",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/polkastamp.webp",
+      alt: "PolkaStamp's Polkadot Scalability Hackathon prize slides and owner's caption recording a $7,650 total.",
+      width: 1200,
+      height: 1227,
+    },
   },
   hirestamp: {
     image: {
@@ -225,6 +297,12 @@ export const awardMedia: Record<string, AwardMedia> = {
       href: "https://github.com/syntaxsurge/hirestamp-rootstock",
       label: "Project source",
     },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/hirestamp.webp",
+      alt: "HireStamp's AI BUIDL Lab winners graphic and owner's caption recording second place in Commerce and Gig Economy and a $1,000 prize.",
+      width: 1200,
+      height: 1882,
+    },
   },
   aipenguild: {
     image: {
@@ -240,6 +318,12 @@ export const awardMedia: Record<string, AwardMedia> = {
     source: {
       href: "https://github.com/syntaxsurge/AIPenGuild",
       label: "Project source",
+    },
+    recognitionScreenshot: {
+      src: "/images/recognition-screenshots/aipenguild.webp",
+      alt: "AIPenGuild's Polkadot Byaheng Pilipinas NFT winner graphic showing a $2,000 prize, with the winners' meetup photograph.",
+      width: 1200,
+      height: 1609,
     },
   },
 };

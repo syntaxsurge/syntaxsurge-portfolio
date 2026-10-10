@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects, awards } from "@/data/portfolio";
@@ -166,6 +167,34 @@ export default async function ProjectPage({
             )}
           </section>
         </div>
+        {media?.recognitionScreenshot && (
+          <section
+            className="award-snapshot"
+            aria-labelledby="award-snapshot-title"
+          >
+            <div className="award-snapshot-heading">
+              <h2 id="award-snapshot-title">Hackathon highlights</h2>
+              <a
+                className="text-link"
+                href={media.recognitionScreenshot.src}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${p.title} award snapshot (opens in a new tab)`}
+              >
+                Open full image <Arrow diagonal />
+              </a>
+            </div>
+            <Image
+              className="award-snapshot-image"
+              src={media.recognitionScreenshot.src}
+              alt={media.recognitionScreenshot.alt}
+              width={media.recognitionScreenshot.width}
+              height={media.recognitionScreenshot.height}
+              sizes="(max-width: 560px) calc(100vw - 40px), 480px"
+              loading="lazy"
+            />
+          </section>
+        )}
         {p.id === "wrap-it-up" && <WrapItUpDetails />}
         <nav className="project-navigation" aria-label="More projects">
           <Link href="/#work" className="button button-outline">

@@ -441,6 +441,24 @@ check("Recognition has an accessible standalone route", () => {
     !plain(read("work/mc-dental-station.html")).includes("Project artwork."),
   );
 });
+check("Screenshot prizes retain their denominations and estimate qualifiers", () => {
+  const recorded = Object.fromEntries(
+    awards.map((award) => [award.projectId, award.prize]),
+  );
+  assert.equal(awards.filter((award) => award.prize).length, 13);
+  assert.equal(recorded.escrowzy, undefined);
+  for (const [projectId, prize] of Object.entries({
+    viskify: "~US$2,000",
+    rivalidate: "0.5 ETH (~US$2,000)",
+    polkastamp: "US$7,650",
+    hirestamp: "US$1,000",
+    aipenguild: "US$2,000",
+    field2fridge: "2,600 USDT",
+    creatorbank: "2,000 MUSD",
+  })) {
+    assert.equal(recorded[projectId], prize, `${projectId} screenshot prize`);
+  }
+});
 check("Awards and their recorded prizes belong to the correct projects", () => {
   const cards = [
     ...recognition.matchAll(
@@ -692,6 +710,78 @@ check("Every recognition has local media and a direct YouTube link", () => {
         `href="${media.video.href}"`,
       ),
     );
+  }
+});
+check("Supplied award snapshots appear only on their matching project pages", () => {
+  const expectedIds = [
+    "aipenguild",
+    "cliplore",
+    "creatorbank",
+    "croignite",
+    "field2fridge",
+    "hirestamp",
+    "lexlink",
+    "packtrace",
+    "ping402",
+    "polkastamp",
+    "rivalidate",
+    "sentinelx",
+    "viskify",
+  ];
+  const screenshots = Object.entries(awardMedia)
+    .filter(([, media]) => media.recognitionScreenshot)
+    .map(([id, media]) => [id, media.recognitionScreenshot]);
+  assert.deepEqual(screenshots.map(([id]) => id).sort(), expectedIds);
+  const sources = screenshots.map(([, screenshot]) => screenshot.src);
+  assert.equal(new Set(sources).size, expectedIds.length);
+  for (const [id, screenshot] of screenshots) {
+    assert.equal(screenshot.src, `/images/recognition-screenshots/${id}.webp`);
+    assert.ok(screenshot.width > 0 && screenshot.height > 0);
+    assert.ok(screenshot.alt.length > 30);
+    const file = readFileSync(resolve(root, "public", screenshot.src.slice(1)));
+    assert.equal(file.subarray(8, 12).toString(), "WEBP");
+    assert.ok(file.length > 1000);
+    assert.ok(!imageSources(homepage).includes(screenshot.src));
+    assert.ok(!imageSources(recognition).includes(screenshot.src));
+  }
+  for (const project of projects) {
+    const detail = read(`work/${project.id}.html`);
+    const screenshot = awardMedia[project.id]?.recognitionScreenshot;
+    const snapshotSections = [
+      ...detail.matchAll(
+        /<section\b[^>]*class="award-snapshot"[^>]*>([\s\S]*?)<\/section>/g,
+      ),
+    ];
+    assert.equal(snapshotSections.length, screenshot ? 1 : 0, project.title);
+    assert.deepEqual(
+      imageSources(detail).filter((src) => sources.includes(src)),
+      screenshot ? [screenshot.src] : [],
+      `${project.title} snapshot attribution`,
+    );
+    if (!screenshot) continue;
+    const section = snapshotSections[0];
+    assert.ok(section[0].includes('aria-labelledby="award-snapshot-title"'));
+    assert.ok(section[1].includes('id="award-snapshot-title"'));
+    const image = section[1].match(/<img\b[^>]*>/)?.[0];
+    assert.ok(image);
+    assert.ok(image.includes('loading="lazy"'));
+    assert.ok(image.includes(`width="${screenshot.width}"`));
+    assert.ok(image.includes(`height="${screenshot.height}"`));
+    assert.equal(
+      plain(image.match(/\balt="([^"]+)"/)?.[1] ?? ""),
+      screenshot.alt,
+    );
+    const viewLink = [
+      ...section[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g),
+    ].find((link) => link[0].includes(`href="${screenshot.src}"`));
+    assert.ok(viewLink);
+    assert.ok(viewLink[0].includes('target="_blank"'));
+    assert.ok(viewLink[0].includes('rel="noopener noreferrer"'));
+    assert.equal(
+      plain(viewLink[0].match(/\baria-label="([^"]+)"/)?.[1] ?? ""),
+      `Open ${project.title} award snapshot (opens in a new tab)`,
+    );
+    assert.equal(plain(viewLink[1]).trim(), "Open full image");
   }
 });
 check("Domain metadata and sitemap use the portfolio origin", () => {

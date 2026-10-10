@@ -26,7 +26,7 @@ export type Award = {
   issuer: string;
   /** Month of recognition, as supplied by Jade. */
   date: string;
-  /** Original award currency. Do not combine USD and MUSD. */
+  /** Supplied award denomination and historical estimate; never a live conversion. */
   prize?: string;
 };
 
@@ -375,7 +375,7 @@ export const awards: Award[] = [
     event: "UK AI Agent Hackathon",
     issuer: "SpaceAgri · Akedo",
     date: "2025-12",
-    prize: "US$2,600",
+    prize: "2,600 USDT",
   },
   {
     projectId: "packtrace",
@@ -422,6 +422,7 @@ export const awards: Award[] = [
     event: "Verifiable AI Hackathon 2025",
     issuer: "Verida · cheqd · DoraHacks · SPRITE+",
     date: "2025-06",
+    prize: "~US$2,000",
   },
   {
     projectId: "rivalidate",
@@ -429,6 +430,7 @@ export const awards: Award[] = [
     event: "Base Batch 001 · APAC",
     issuer: "Base (Coinbase)",
     date: "2025-06",
+    prize: "0.5 ETH (~US$2,000)",
   },
   {
     projectId: "polkastamp",
@@ -436,6 +438,7 @@ export const awards: Award[] = [
     event: "Polkadot Scalability Hackathon 2025",
     issuer: "Polkadot",
     date: "2025-06",
+    prize: "US$7,650",
   },
   {
     projectId: "hirestamp",
@@ -443,6 +446,7 @@ export const awards: Award[] = [
     event: "(A)I BUIDL Lab Hackathon 2025",
     issuer: "RootstockLabs · thirdweb · Alchemy",
     date: "2025-05",
+    prize: "US$1,000",
   },
   {
     projectId: "aipenguild",
@@ -450,5 +454,6 @@ export const awards: Award[] = [
     event: "Polkadot Byaheng Pilipinas Hackathon 2025",
     issuer: "OpenGuild · Web3Bulacan",
     date: "2025-03",
+    prize: "US$2,000",
   },
 ];
