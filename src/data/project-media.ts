@@ -2,7 +2,6 @@ import { awardMedia, type AwardMedia } from "./award-media.ts";
 
 export type ProjectPreview = {
   image: AwardMedia["image"];
-  artwork?: AwardMedia["image"];
   summary: string;
   demo?: AwardMedia["video"];
 };
@@ -19,16 +18,15 @@ export const projectPreviews: Record<string, ProjectPreview> = {
     summary:
       "A clinic website with service information and appointment requests.",
   },
-  cliplore: {
-    image: awardMedia.cliplore.image,
-    artwork: {
-      src: "/images/cliplore-cover.webp",
-      alt: "ClipLore product cover with abstract blue and teal waves",
-      width: 480,
-      height: 270,
+  "cliplore-ai": {
+    image: {
+      src: "/images/cliplore-ai-preview.webp",
+      alt: "ClipLore.ai homepage preview with a video canvas and layered timeline",
+      width: 1070,
+      height: 561,
     },
-    demo: awardMedia.cliplore.video,
-    summary: "A video studio for scripts, scenes, captions, and editing.",
+    summary:
+      "A studio for AI generation, timeline editing, captions, and sound.",
   },
   studysoda: {
     image: {
@@ -78,6 +76,12 @@ export const projectPreviews: Record<string, ProjectPreview> = {
     image: awardMedia.ping402.image,
     demo: awardMedia.ping402.video,
     summary: "A creator inbox where paid messages get priority.",
+  },
+  cliplore: {
+    image: awardMedia.cliplore.image,
+    demo: awardMedia.cliplore.video,
+    summary:
+      "Video creation with licensing, remixing, and ownership tools on Story Protocol.",
   },
   field2fridge: {
     image: awardMedia.field2fridge.image,

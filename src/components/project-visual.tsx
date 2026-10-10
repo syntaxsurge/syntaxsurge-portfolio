@@ -4,19 +4,23 @@ import { projectPreviews } from "@/data/project-media";
 export function ProjectVisual({
   id,
   priority = false,
-  variant = "artwork",
+  variant = "detail",
 }: {
   id: string;
   priority?: boolean;
-  variant?: "artwork" | "preview";
+  variant?: "detail" | "preview";
 }) {
   const preview = projectPreviews[id];
   if (!preview) return null;
-  const image =
-    variant === "preview" ? preview.image : (preview.artwork ?? preview.image);
+  const image = preview.image;
   return (
     <div
-      className={`project-visual ${variant === "preview" ? "project-preview" : `visual-${id}`}`}
+      className="project-visual"
+      style={
+        variant === "detail"
+          ? { aspectRatio: `${image.width} / ${image.height}` }
+          : undefined
+      }
     >
       <Image
         src={image.src}

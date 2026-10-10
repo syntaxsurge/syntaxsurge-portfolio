@@ -1,12 +1,12 @@
 # Business and project content sources
 
-Project sourcing was recorded on 25 September 2026; business identity and MC Dental Station sources were reviewed on 10 October 2026. This is an editorial record for future updates, not public site copy.
+This document records the source facts used by the business website, project collection, and resume. It is an editorial reference, not public site copy.
 
 ## Attribution
 
 The owner supplied the Syntax Surge business identity, services brief, founder identity, logo, portrait, workspace hero photograph, business email, project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts. Awards are attributed to founder Jade Laurence Empleo's work; prize disbursements and official winner certificates were not independently authenticated. Project totals are examples of work, not a count of paid clients or business revenue.
 
-The site contains 19 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
+The site contains 20 named projects and 14 recognition entries. ClipLore.ai and ClipLore for Story Protocol are separate project records. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
 
 - [GitHub profile](https://github.com/syntaxsurge) confirms the name Jade Laurence Empleo and the SyntaxSurge handle.
 - [LinkedIn profile](https://www.linkedin.com/in/jade-laurence-empleo/) was supplied by the owner. No private LinkedIn content was collected.
@@ -22,9 +22,9 @@ The homepage presents the legal name and scope with a locally rendered certifica
 
 ## Resume and project presentation
 
-The downloadable two-page resume uses `business.founder.fullName`, the supplied portrait and business email, website/profile links, MC Dental Station/Kaldi/ClipLore examples, and every dated entry from the canonical awards array. It contains no invented education, employment chronology, or phone number. `scripts/build-resume.py` reads the site exports directly; `business.resumeHref` supplies its public download path. Header, hero, and team sections provide download access. Fact-by-fact sourcing and rebuild instructions are in `docs/RESUME-SOURCES.md`.
+The downloadable two-page resume uses `business.founder.fullName`, the supplied portrait and business email, website/profile links, MC Dental Station/Kaldi/ClipLore.ai examples, and every dated entry from the canonical awards array. The recognition page attributes the Story Protocol award to the separate ClipLore for Story Protocol project. The resume contains no invented education, employment chronology, or phone number. `scripts/build-resume.py` reads the site exports directly; `business.resumeHref` supplies its public download path. The hero and team sections provide downloads, and the team section also offers a PDF preview. Fact-by-fact sourcing and rebuild instructions are in `docs/RESUME-SOURCES.md`.
 
-All 19 projects appear as visual cards in the homepage work section. `src/data/project-media.ts` combines the established project-owned demo previews and original product/game artwork with concise summaries and neutral media labels. Fourteen homepage demos use their verified YouTube associations, loaded inline only on request. ClipLore's hackathon context remains distinct from its current product. MC Dental imagery is project artwork rather than captured application UI, clinic staff/facilities, or evidence of real clinical outcomes; its generation provenance is retained in `docs/ASSET-SOURCES.md`. The hero uses the supplied workspace photograph with decorative particles. Three original SVG service illustrations represent website, custom-software, and AI/automation concepts without asserting actual application interfaces.
+All 20 projects appear as visual cards in the homepage work section. `src/data/project-media.ts` combines project-owned previews and product/game artwork with concise summaries. Fourteen homepage demos use their verified YouTube associations, loaded inline only on request. The original Story Protocol demo and recognition are associated only with `cliplore`; `cliplore-ai` describes the current AI editor. Asset provenance and the distinction between project artwork and genuine application captures are recorded in `docs/ASSET-SOURCES.md`. The hero pairs the supplied workspace photograph with a local looping video background. Six original SVG service illustrations represent business websites, internal software, AI/automation, online stores, booking systems, and interactive experiences without asserting actual application interfaces.
 
 ## Current websites and products
 
@@ -32,17 +32,17 @@ All 19 projects appear as visual cards in the homepage work section. `src/data/p
 | --- | --- | --- |
 | MC Dental Station | [Clinic website](https://mc-dental.syntaxsurge.com/) and the owner's `mc-dental-station` repository (`README.md`, `AGENTS.md`, implementation and photo-source records) | Clinic service/contact information, appointment requests requiring final staff confirmation, approved English/Filipino FAQ assistance, and the staff workspace. A request is not a confirmed appointment; FAQ help is not medical diagnosis or independent treatment advice. |
 | StudySoda | [studysoda.com](https://studysoda.com/) | Public page title, description, and page text: AI reviewers, flashcards, practice exams, notebooks, and public study materials. |
-| ClipLore | [cliplore.ai](https://cliplore.ai/) | Public page: AI video generation, editable timeline, captions, audio, and exports. |
+| ClipLore.ai | [cliplore.ai](https://cliplore.ai/) and the owner's `cliplore-production` repository | Current AI creation and video editing product: generation workflows, editable timelines, captions, audio, and export. |
 | Sipava | [sipava.com](https://sipava.com/) | Public page: plans and routines, alarms, proof, and buddy accountability. No native-app availability is claimed; the site says mobile apps are coming soon. |
 | Kaldi Circle | [Kaldi Rewards](https://kaldi-rewards.syntaxsurge.com/) | Public page title/metadata plus the owner's application brief and work in this conversation: NFC, reviews, loyalty points, and vouchers. No approved merchant partnership or live POS integration is asserted. |
 
 The products use “Current” rather than an invented launch year. Copyright dates do not establish launch dates. Descriptions are concise original summaries, not marketing copy copied verbatim from those sites. Primary pages were read through public web tools or ordinary unauthenticated HTTP requests when the web reader could not open them.
 
-### ClipLore's two contexts
+### Distinct ClipLore projects
 
-The owner's historical award names ClipLore and links `cliplore.com`. That domain currently redirects to `cliplore.ai`. The verified public [ClipLore repository](https://github.com/syntaxsurge/cliplore) describes the Story Protocol hackathon project: a browser video studio with programmable IP and licensing. The current product page describes an AI video-editing workspace. The business website therefore has one ClipLore project with the current product link and separately labelled historical “Award-winning demo” and “Hackathon source” links. It does not claim the current product exposes every feature of the older hackathon entry.
+`cliplore-ai` is the Products entry at `/work/cliplore-ai`, titled **ClipLore.ai**. Its current product destination is `https://cliplore.ai/`. Its description is supported by the product site and the owner's `cliplore-production` codebase. This record has no Story Protocol recognition, source link, or hackathon demo.
 
-The older [pitch deck link](https://cliplore.com/pitch-deck) was supplied by the owner but is not included in the site's current link list because the product domain has changed. The [award demo](https://www.youtube.com/watch?v=WRJlQDFcxVI) is preserved as supplied.
+`cliplore` is the AI & Web3 entry at `/work/cliplore`, titled **ClipLore for Story Protocol**. The verified public [ClipLore repository](https://github.com/syntaxsurge/cliplore) and the supplied [hackathon demo](https://www.youtube.com/watch?v=WRJlQDFcxVI) describe AI video creation and editing with IP registration, licensing, remixing, and ownership enforcement. The December 2025 Creative Front-End / UI / UX recognition at Surreal World Assets Buildathon 2 belongs to this project. Its source/demo links and award media remain separate from the current ClipLore.ai product.
 
 ## Hackathon projects
 
@@ -52,6 +52,7 @@ The descriptions and awards below are based on the owner's supplied text. The li
 | --- | --- | --- |
 | CroIgnite | [Repository](https://github.com/syntaxsurge/croignite) · [Demo](https://croignite.vercel.app/) | Cronos x402 PayTech Hackathon, 3rd place, February 2026, US$2,000. |
 | Ping402 | [Repository](https://github.com/syntaxsurge/ping402) · [Demo](https://pingx402.vercel.app/) | Solana Winter Build Challenge, Best x402 App, January 2026, US$2,000. The public demo identifies itself as devnet. |
+| ClipLore for Story Protocol | [Repository](https://github.com/syntaxsurge/cliplore) · [Hackathon demo](https://www.youtube.com/watch?v=WRJlQDFcxVI) | Creative Front-End / UI / UX winner, Surreal World Assets Buildathon 2, Encode Club · Story Protocol, December 2025, US$5,000. |
 | Field2Fridge | [Repository](https://github.com/syntaxsurge/Field2Fridge) · [Demo](https://field2-fridge.vercel.app/) | UK AI Agent Hackathon, SpaceAgri 2nd place (US$1,400), Akedo 6th place (US$1,200), December 2025; combined US$2,600 as supplied. |
 | PackTrace | [Repository](https://github.com/syntaxsurge/pack-trace) | supOS Global Hackathon, 2nd place, November 2025, US$2,000. |
 | SentinelX | [Repository](https://github.com/syntaxsurge/sentinelx-somnia) | Somnia AI Hackathon, Open Track 3rd place, November 2025, US$1,000. This exact repository was discovered in the public GitHub inventory; it was not guessed. |
@@ -64,7 +65,7 @@ The descriptions and awards below are based on the owner's supplied text. The li
 | HireStamp | [Rootstock repository](https://github.com/syntaxsurge/hirestamp-rootstock) | Commerce & Gig Economy 2nd place, (A)I BUIDL Lab, May 2025. No prize amount supplied. |
 | AIPenGuild | [Repository](https://github.com/syntaxsurge/AIPenGuild) | NFT Category 1st place, Polkadot Byaheng Pilipinas, March 2025. No prize amount supplied. |
 
-Project years in the archive use the associated award year, not a claimed first launch date. Categories and short tags are editorial groupings, not assertions of an exhaustive technology stack. The public-site links identify products or demos; their inclusion does not assert that external services are continuously available. No user counts, revenue, clients, uptime figures, performance claims, or missing award amounts were invented.
+Project year fields use the associated award year, not a claimed first launch date. Categories and short tags are editorial groupings, not assertions of an exhaustive technology stack. The public-site links identify products or demos; their inclusion does not assert that external services are continuously available. No user counts, revenue, clients, uptime figures, performance claims, or missing award amounts were invented.
 
 ## Wrap It Up!
 

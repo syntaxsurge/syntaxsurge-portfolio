@@ -142,7 +142,7 @@ export function ProjectArchive() {
                     hidden={isActive}
                     aria-expanded={isActive}
                     aria-controls={`project-demo-${p.id}`}
-                    aria-label={`Play ${p.title} ${p.id === "cliplore" ? "hackathon " : ""}demo`}
+                    aria-label={`Play ${p.title} demo`}
                     onClick={(event) => {
                       demoTrigger.current = event.currentTarget;
                       restoreDemoFocus.current = false;
@@ -181,7 +181,7 @@ export function ProjectArchive() {
                       <>
                         <iframe
                           src={`https://www.youtube-nocookie.com/embed/${new URL(preview.demo.href).searchParams.get("v")}?autoplay=1&rel=0`}
-                          title={`${p.title} ${p.id === "cliplore" ? "hackathon " : ""}demo`}
+                          title={`${p.title} demo`}
                           allow="autoplay; encrypted-media; picture-in-picture"
                           referrerPolicy="strict-origin-when-cross-origin"
                           allowFullScreen

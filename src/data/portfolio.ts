@@ -62,25 +62,14 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "cliplore",
-    title: "ClipLore",
+    id: "cliplore-ai",
+    title: "ClipLore.ai",
     description:
-      "An AI video studio that takes an idea from script to an editable timeline, with control over every scene, caption, and sound.",
+      "An AI creation and video editing product with generation workflows, editable timelines, captions, audio, and export.",
     category: "Products",
     year: "Current",
     tags: ["AI video", "Creator tools", "Timeline editor"],
-    links: [
-      { label: "Visit product", href: "https://cliplore.ai/" },
-      {
-        label: "Award-winning demo",
-        href: "https://www.youtube.com/watch?v=WRJlQDFcxVI",
-      },
-      {
-        label: "Hackathon source",
-        href: "https://github.com/syntaxsurge/cliplore",
-      },
-    ],
-    award: "Creative Front-End / UI / UX winner · Story Protocol",
+    links: [{ label: "Visit product", href: "https://cliplore.ai/" }],
   },
   {
     id: "studysoda",
@@ -160,6 +149,23 @@ export const projects: Project[] = [
       { label: "GitHub", href: "https://github.com/syntaxsurge/ping402" },
     ],
     award: "Best x402 App · Solana Winter Build Challenge",
+  },
+  {
+    id: "cliplore",
+    title: "ClipLore for Story Protocol",
+    description:
+      "An AI video creation and editing project for Story Protocol, with IP registration, licensing, remixing, and ownership enforcement.",
+    category: "AI & Web3",
+    year: "2025",
+    tags: ["Story Protocol", "IP licensing", "Remixing & enforcement"],
+    links: [
+      { label: "GitHub", href: "https://github.com/syntaxsurge/cliplore" },
+      {
+        label: "Watch demo",
+        href: "https://www.youtube.com/watch?v=WRJlQDFcxVI",
+      },
+    ],
+    award: "Creative Front-End / UI / UX winner · Story Protocol",
   },
   {
     id: "field2fridge",

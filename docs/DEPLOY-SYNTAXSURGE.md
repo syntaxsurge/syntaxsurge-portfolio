@@ -171,7 +171,7 @@ curl -fsS https://syntaxsurge.com/robots.txt
 curl -fsS https://syntaxsurge.com/sitemap.xml
 curl -fsS https://syntaxsurge.com/icon.svg -o /dev/null
 curl -fsS https://syntaxsurge.com/opengraph-image -o /dev/null
-curl -fsS https://syntaxsurge.com/images/cliplore-cover.webp -o /dev/null
+curl -fsS https://syntaxsurge.com/images/cliplore-ai-preview.webp -o /dev/null
 curl -fsS https://syntaxsurge.com/images/syntaxsurge-logo.jpg -o /dev/null
 curl -fsS https://syntaxsurge.com/images/jade-laurence-empleo.jpg -o /dev/null
 curl -fsS https://syntaxsurge.com/images/mc-dental-feature.webp -o /dev/null
@@ -188,7 +188,7 @@ curl -fsS https://kaldi-rewards.syntaxsurge.com/ -o /dev/null
 curl -fsS https://mc-dental.syntaxsurge.com/ -o /dev/null
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the homepage's 19 visual cards and filters, `/recognition`, all 19 project pages, and the two Wrap It Up! support/privacy pages. Confirm `/work` returns HTTP 308 and redirects to `/#work`; it has no separate page or sitemap entry. Check both themes and persistence, mobile section navigation, keyboard focus, and 200% zoom. Each canonical page uses its own HTTPS URL, and the sitemap has 23 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
+Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the homepage's 20 visual cards and filters, `/recognition`, all 20 project pages, and the two Wrap It Up! support/privacy pages. Confirm `/work` returns HTTP 308 and redirects to `/#work`; it has no separate page or sitemap entry. Check both themes and persistence, mobile section navigation, keyboard focus, and 200% zoom. Each canonical page uses its own HTTPS URL, and the sitemap has 24 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
 
 Verify the registration preview, PDF view, and download actions. The PDF response should have `application/pdf` content type and match the original SHA-256 recorded in `docs/ASSET-SOURCES.md`; the preview should be a local PNG rendering. The canonical legal name is **SyntaxSurge Software Development Services**, while the business brand remains **Syntax Surge**. The certificate assets do not add sitemap pages and require no external document service.
 
@@ -252,4 +252,4 @@ After identifying a configuration mistake, privately back up the affected file o
 
 ## Wrap It Up! public pages
 
-The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 23 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.
+The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 24 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.

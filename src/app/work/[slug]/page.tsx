@@ -95,7 +95,7 @@ export default async function ProjectPage({
             ))}
           </div>
         </div>
-        {media && p.id !== "cliplore" ? (
+        {media ? (
           <DemoPreview projectId={p.id} priority />
         ) : (
           <div className="project-detail-visual">
@@ -163,12 +163,6 @@ export default async function ProjectPage({
           </section>
         </div>
         {p.id === "wrap-it-up" && <WrapItUpDetails />}
-        {media && p.id === "cliplore" && (
-          <section className="project-demo-extra">
-            <h2>The award-winning demo.</h2>
-            <DemoPreview projectId={p.id} />
-          </section>
-        )}
         <nav className="project-navigation" aria-label="More projects">
           <Link href="/#work" className="button button-outline">
             All projects <Arrow />

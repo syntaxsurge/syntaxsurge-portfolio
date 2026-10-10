@@ -31,8 +31,8 @@ function check(label, run) {
   console.log(`PASS ${label}`);
 }
 check("Complete, unique project and award collection", () => {
-  assert.equal(projects.length, 19);
-  assert.equal(new Set(projects.map((p) => p.id)).size, 19);
+  assert.equal(projects.length, 20);
+  assert.equal(new Set(projects.map((p) => p.id)).size, 20);
   assert.equal(awards.length, 14);
   for (const p of projects) {
     assert.match(p.id, /^[a-z0-9-]+$/);
@@ -46,8 +46,114 @@ check("Complete, unique project and award collection", () => {
   }
   assert.ok(awards.some((a) => a.prize?.includes("MUSD")));
 });
+check(
+  "ClipLore products have separate identities, destinations, and attribution",
+  () => {
+    const original = projects.find((project) => project.id === "cliplore");
+    const current = projects.find((project) => project.id === "cliplore-ai");
+    assert.ok(original && current);
+    assert.equal(original.title, "ClipLore for Story Protocol");
+    assert.equal(original.category, "AI & Web3");
+    assert.equal(original.year, "2025");
+    assert.match(original.description, /Story Protocol/);
+    for (const feature of [/licens/i, /remix/i, /enforce/i])
+      assert.match(original.description, feature);
+    assert.deepEqual(
+      new Set(original.links.map((link) => link.href)),
+      new Set([
+        "https://github.com/syntaxsurge/cliplore",
+        "https://www.youtube.com/watch?v=WRJlQDFcxVI",
+      ]),
+    );
+    assert.match(original.award, /Story Protocol/);
+    assert.equal(current.title, "ClipLore.ai");
+    assert.equal(current.category, "Products");
+    assert.equal(current.year, "Current");
+    assert.deepEqual(
+      current.links.map((link) => link.href),
+      ["https://cliplore.ai/"],
+    );
+    assert.equal(current.award, undefined);
+    const originalAwards = awards.filter(
+      (award) => award.projectId === original.id,
+    );
+    assert.equal(originalAwards.length, 1);
+    assert.equal(originalAwards[0].event, "Surreal World Assets Buildathon 2");
+    assert.equal(
+      awards.filter((award) => award.projectId === current.id).length,
+      0,
+    );
+    assert.equal(awardMedia[current.id], undefined);
+    assert.equal(
+      projectPreviews[original.id].demo.href,
+      awardMedia[original.id].video.href,
+    );
+    assert.equal(projectPreviews[current.id].demo, undefined);
+    assert.equal(
+      projectPreviews[original.id].image.src,
+      "/images/awards/cliplore.webp",
+    );
+    assert.equal(
+      projectPreviews[current.id].image.src,
+      "/images/cliplore-ai-preview.webp",
+    );
+    assert.notEqual(
+      projectPreviews[current.id].image.src,
+      projectPreviews[original.id].image.src,
+    );
+  },
+);
 const homepage = read("index.html");
 const recognition = read("recognition.html");
+check(
+  "ClipLore pages and collection cards show each project's own cover and links",
+  () => {
+    const original = read("work/cliplore.html");
+    const current = read("work/cliplore-ai.html");
+    const originalCover = projectPreviews.cliplore.image.src;
+    const currentCover = projectPreviews["cliplore-ai"].image.src;
+    const originalDemo = awardMedia.cliplore.video.href;
+    const originalSource = awardMedia.cliplore.source.href;
+    const currentWebsite = "https://cliplore.ai/";
+    assert.ok(imageSources(original).includes(originalCover));
+    assert.ok(!imageSources(original).includes(currentCover));
+    assert.ok(original.includes(`href="${originalDemo}"`));
+    assert.ok(original.includes(`href="${originalSource}"`));
+    assert.ok(original.includes("Surreal World Assets Buildathon 2"));
+    assert.ok(!original.includes(`href="${currentWebsite}"`));
+    assert.ok(imageSources(current).includes(currentCover));
+    assert.ok(!imageSources(current).includes(originalCover));
+    assert.ok(current.includes(`href="${currentWebsite}"`));
+    assert.ok(!current.includes(`href="${originalDemo}"`));
+    assert.ok(!current.includes(`href="${originalSource}"`));
+    assert.ok(!current.includes("Surreal World Assets Buildathon 2"));
+    assert.ok(!recognition.includes(`href="/work/cliplore-ai"`));
+    assert.ok(recognition.includes('href="/work/cliplore"'));
+    const cards = [
+      ...homepage.matchAll(
+        /<article\b[^>]*class="archive-row"[^>]*>([\s\S]*?)<\/article>/g,
+      ),
+    ].map((match) => match[1]);
+    const originalCard = cards.find((html) =>
+      html.includes('href="/work/cliplore"'),
+    );
+    const currentCard = cards.find((html) =>
+      html.includes('href="/work/cliplore-ai"'),
+    );
+    assert.ok(originalCard && currentCard);
+    assert.ok(imageSources(originalCard).includes(originalCover));
+    assert.ok(imageSources(currentCard).includes(currentCover));
+    assert.ok(
+      originalCard.includes(
+        'aria-label="Play ClipLore for Story Protocol demo"',
+      ),
+    );
+    assert.ok(!currentCard.includes('class="archive-preview-play"'));
+    assert.ok(currentCard.includes(`href="${currentWebsite}"`));
+    for (const html of [original, current, originalCard, currentCard])
+      assert.ok(!html.includes("cliplore-cover.webp"));
+  },
+);
 check(
   "Business homepage has direct navigation, registration, and founder résumé",
   () => {
@@ -227,11 +333,7 @@ check(
         assert.equal(new URL(preview.demo.href).hostname, "www.youtube.com");
         assert.ok(new URL(preview.demo.href).searchParams.get("v"));
         assert.ok(card.includes(`aria-controls="project-demo-${project.id}"`));
-        assert.ok(
-          card.includes(
-            `aria-label="Play ${project.title} ${project.id === "cliplore" ? "hackathon " : ""}demo"`,
-          ),
-        );
+        assert.ok(card.includes(`aria-label="Play ${project.title} demo"`));
         const playIcon = card.match(
           /<span\b[^>]*class="archive-preview-play"[^>]*>([\s\S]*?)<\/span>/,
         );
@@ -249,9 +351,9 @@ check(
     assert.ok(homepage.includes('aria-live="polite"'));
     assert.ok(homepage.includes('id="project-results"'));
     for (const [label, count] of [
-      ["All projects", 19],
+      ["All projects", 20],
       ["Websites & apps", 6],
-      ["Experiments", 10],
+      ["Experiments", 11],
       ["Tools", 3],
     ]) {
       const filter = [
@@ -522,7 +624,7 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
     ...wrapItUpPaths.map((path) => siteHref(path)),
   ]);
   assert.equal(locations.length, expected.size);
-  assert.equal(locations.length, 23);
+  assert.equal(locations.length, 24);
   assert.equal(new Set(locations).size, locations.length);
   assert.ok(!sitemap.includes("/apps/wrap-it-up"));
   assert.ok(!locations.includes(siteHref("/work")));
@@ -666,7 +768,7 @@ for (const project of projects) {
 }
 check("Project artwork is local and present", () => {
   for (const filename of [
-    "cliplore-cover.webp",
+    "cliplore-ai-preview.webp",
     "studysoda-cover.webp",
     "sipava-cover.webp",
     "kaldi-cover.webp",

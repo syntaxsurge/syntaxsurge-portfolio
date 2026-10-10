@@ -563,10 +563,6 @@ img {
 }
 .project-detail-visual .project-visual {
   height: auto;
-  aspect-ratio: 16 / 9;
-}
-.project-detail-visual .visual-mc-dental-station {
-  aspect-ratio: 1600 / 905;
 }
 
 .project-detail-grid {
@@ -665,14 +661,6 @@ img {
 .award-preview:focus-visible,
 .project-demo-preview:focus-visible {
   outline-offset: -5px;
-}
-.project-demo-extra {
-  margin-bottom: 50px;
-}
-.project-demo-extra h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 22px;
 }
 .app-navigation,
 .app-page-footer {
@@ -782,13 +770,6 @@ img {
   padding-top: 24px;
   margin-top: 45px;
   color: var(--muted);
-}
-.visual-wrap-it-up img {
-  object-fit: cover;
-}
-.project-detail-visual .project-visual.visual-wrap-it-up {
-  height: auto;
-  aspect-ratio: 1024 / 500;
 }
 .not-found {
   padding-block: 80px;
@@ -1173,9 +1154,6 @@ img {
   aspect-ratio: 16 / 9;
   border-radius: inherit;
   background: #e9edf5;
-}
-.project-preview img {
-  object-fit: cover;
 }
 .archive-preview img {
   transition: transform 0.35s;

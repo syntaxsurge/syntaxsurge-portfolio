@@ -11,15 +11,15 @@ Product covers were collected and visually checked on 25 September 2026; supplie
 | `studysoda-cover.webp` | Existing `studyroom/public/media/studysoda-hero.webp`; [StudySoda](https://studysoda.com/) | 1400 × 792. Existing brand artwork: lavender flashcards, a notebook, and a lime soda. Use as a brand cover, not as a screenshot or a claim about product UI. |
 | `kaldi-cover.webp` | Existing `kaldi-rewards/public/images/kaldi-hero.jpg`; [Kaldi project](https://kaldi-rewards.syntaxsurge.com/) | 1400 × 792. Existing generated campaign artwork used by the Kaldi project. It is a stylized project cover, not a documentary photograph of the venue or a claim of merchant endorsement. |
 | `sipava-cover.webp` | [Sipava official campaign artwork](https://sipava.com/store/campaign/google-play-feature.webp), linked by the [Sipava homepage](https://sipava.com/) | 1536 × 750. Official promotional artwork with app screenshots. Sipava describes its showcased tasks and people as fictional showcase data captured in the real product. |
-| `cliplore-cover.webp` | Existing `cliplore-production/public/images/home/video-posters/aurora-liquid-waves-hero.jpg`; [ClipLore.ai](https://cliplore.ai/) | 480 × 270. Abstract blue/teal video-poster artwork from the existing homepage. Suitable as a decorative background; not a UI screenshot. No upscaling applied. |
+| `cliplore-ai-preview.webp` | Native browser capture of the public workflow preview at [ClipLore.ai](https://cliplore.ai/#showcase), 10 October 2026 | 1070 × 561, 58,842 bytes. The homepage's official product illustration shows its video canvas and four timeline tracks. Cropped from the visible page and converted to WebP at quality 86 without upscaling or redrawing. It is a public product presentation, not a capture of a private project or the native editor. |
 
-The StudySoda, Kaldi, Sipava, and ClipLore cover preparation preserves source proportions and uses WebP quality 86. Originals in neighboring project directories were read only. Public downloads used for those imports are staging material under `.local/asset-source`; they are not needed to serve the business website.
+The StudySoda, Kaldi, and Sipava cover preparation preserves source proportions and uses WebP quality 86. Originals in neighboring project directories were read only. Public downloads used for those imports are staging material under `.local/asset-source`; they are not needed to serve the business website. The ClipLore.ai source capture is staged under `.local/cliplore-split/` and is not required at runtime.
 
 The supplied logo has SHA-256 `e0c615c276f97ff1a6cef7f7283d2971ea36655a4fc4474f764652256abd87a0`, the founder portrait has SHA-256 `9efc402e86751453f163e346a8e38c9c31912d4a9da0f086464f550256a1b3ad`. The favicon embeds the same logo bytes; the generated social card places that logo beside business copy without altering the source image.
 
 ## Complete project previews
 
-`src/data/project-media.ts` maps all 19 project cards to local media, plain-language summaries, and optional demonstrations. Fourteen entries reuse the authentic project-owned images and matching YouTube demos documented in `docs/AWARD-MEDIA-SOURCES.md`; the other entries use the supplied product/game campaign covers or MC Dental concept artwork. ClipLore's play control identifies its historical hackathon demo in its accessible name. Project cards and detail covers use images without repeated media captions; descriptive alt text and this source record preserve their context.
+`src/data/project-media.ts` maps all 20 project cards to local media, plain-language summaries, and optional demonstrations. Fourteen entries reuse the authentic project-owned images and matching YouTube demos documented in `docs/AWARD-MEDIA-SOURCES.md`; the other entries use official product previews, supplied product/game campaign covers, or MC Dental concept artwork. ClipLore for Story Protocol uses its own authentic preview and demo at `/images/awards/cliplore.webp`; ClipLore.ai uses the public workflow preview and its live product link. Project cards and detail covers share the same canonical image without repeated media captions; descriptive alt text and this source record preserve their context.
 
 The 14 homepage demo buttons create a privacy-enhanced `youtube-nocookie.com` iframe only after the visitor selects a demo. Only one demo is active; closing it removes the player and restores focus. Static local previews do not load a third-party video player.
 
@@ -28,7 +28,8 @@ Suggested image descriptions:
 - StudySoda: “StudySoda brand artwork with lavender flashcards, an open notebook, and a lime soda.”
 - Kaldi: “Kaldi Coffee project artwork with iced coffee and a croissant.”
 - Sipava: “Sipava campaign artwork showing its tasks, social feed, and leaderboard screens.”
-- ClipLore background: use empty alt text when a nearby project title already identifies the card.
+- ClipLore.ai: “ClipLore.ai homepage preview with a video canvas and layered timeline.”
+- ClipLore for Story Protocol: “ClipLore video IP studio homepage in the hackathon demo.”
 - Business logo: “Syntax Surge blue lightning bolt and black code brackets logo”; use empty alt text when the neighboring business name already identifies the navigation link.
 - Founder: “Jade Laurence Empleo, founder of Syntax Surge.”
 - MC Dental Station: “MC Dental Station project artwork with a porcelain tooth and abstract appointment, chat, and service cards.”
