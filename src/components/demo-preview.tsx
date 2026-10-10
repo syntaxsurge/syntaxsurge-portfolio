@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { awardMedia } from "@/data/award-media";
 import { projects } from "@/data/portfolio";
-import { Arrow, PlayIcon } from "./icons";
+import { PlayIcon } from "./icons";
 
 export function DemoPreview({
   projectId,
@@ -30,16 +30,10 @@ export function DemoPreview({
           sizes="(max-width: 700px) 100vw, 1200px"
           preload={priority}
         />
-        <span className="award-play">
-          <PlayIcon /> Watch the demo
+        <span className="project-demo-play" aria-hidden="true">
+          <PlayIcon />
         </span>
       </a>
-      <figcaption>
-        <span>{project.title} · Project demo</span>
-        <a href={media.video.href} target="_blank" rel="noopener noreferrer">
-          Watch on YouTube <Arrow diagonal />
-        </a>
-      </figcaption>
     </figure>
   );
 }

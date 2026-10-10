@@ -5,9 +5,10 @@ import { projects, awards } from "@/data/portfolio";
 import { business } from "@/data/business";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, Trophy, PlayIcon } from "@/components/icons";
+import { Arrow, Trophy } from "@/components/icons";
 import { ProjectVisual } from "@/components/project-visual";
 import { awardMedia } from "@/data/award-media";
+import { projectPreviews } from "@/data/project-media";
 import { DemoPreview } from "@/components/demo-preview";
 import { wrapItUp } from "@/data/wrap-it-up";
 import {
@@ -74,11 +75,8 @@ export default async function ProjectPage({
         </nav>
         {p.id === "wrap-it-up" && <WrapItUpNavigation current="game" />}
         <div className="project-page-header">
-          <span className="eyebrow section-label">
-            {p.category.toUpperCase()} / {p.year}
-          </span>
           <h1>{p.title}</h1>
-          <p>{p.description}</p>
+          <p>{projectPreviews[p.id].summary}</p>
           <div className="project-links">
             {p.links.map((l, i) => (
               <a
@@ -95,26 +93,7 @@ export default async function ProjectPage({
                 <Arrow diagonal />
               </a>
             ))}
-            {media &&
-              !p.links.some((l) =>
-                /watch demo|award-winning demo/i.test(l.label),
-              ) && (
-                <a
-                  className="button button-outline"
-                  href={media.video.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Watch ${p.title} demo (opens in a new tab)`}
-                >
-                  <PlayIcon />
-                  Watch demo
-                  <Arrow diagonal />
-                </a>
-              )}
           </div>
-          <p className="project-action-note">
-            Product, demo, and source links open in a new tab.
-          </p>
         </div>
         {media && p.id !== "cliplore" ? (
           <DemoPreview projectId={p.id} priority />
@@ -123,53 +102,20 @@ export default async function ProjectPage({
             <ProjectVisual id={p.id} priority />
           </div>
         )}
-        {p.id === "mc-dental-station" && (
-          <p className="project-artwork-caption">
-            Project artwork.
-          </p>
-        )}
-        {p.id === "wrap-it-up" && (
-          <p className="project-artwork-caption">
-            Official game artwork. Fold. Tape. Ribbon. Delight!
-          </p>
-        )}
         <div className="project-detail-grid">
           <section aria-labelledby="project-focus-title">
-            <dl className="project-overview">
-              <div>
-                <dt>Category</dt>
-                <dd>{p.category}</dd>
-              </div>
-              <div>
-                <dt>Year</dt>
-                <dd>{p.year}</dd>
-              </div>
-            </dl>
-            <h2 className="eyebrow" id="project-focus-title">
-              PROJECT FOCUS
-            </h2>
-            <div className="detail-tags">
-              {p.tags.map((t) => (
-                <span key={t}>{t}</span>
-              ))}
+            <h2 id="project-focus-title">About the project</h2>
+            <div className="detail-note">
+              <p>{p.description}</p>
             </div>
-            <a
-              className="text-link"
-              href={business.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit ${business.name} on GitHub (opens in a new tab)`}
-            >
-              GitHub profile <Arrow diagonal />
-            </a>
           </section>
           <section aria-labelledby="project-recognition-title">
-            <h2 className="eyebrow" id="project-recognition-title">
+            <h2 id="project-recognition-title">
               {recognition.length
-                ? "RECOGNITION"
+                ? "Recognition"
                 : p.focus
-                  ? "WHAT THE WEBSITE DOES"
-                  : "EXPLORE THE PRODUCT"}
+                  ? "What it does"
+                  : "Explore the product"}
             </h2>
             {recognition.length ? (
               recognition.map((a) => (

@@ -76,13 +76,14 @@ check(
     const resumeLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
       .map((match) => match[0])
       .filter((link) => link.includes(`href="${business.resumeHref}"`));
-    assert.equal(resumeLinks.length, 4);
+    assert.equal(resumeLinks.length, 3);
     assert.equal(
       resumeLinks.filter((link) => /\bdownload=/.test(link)).length,
-      3,
+      2,
     );
     assert.ok(resumeLinks.some((link) => link.includes('target="_blank"')));
-    assert.ok(header.includes(`href="${business.resumeHref}"`));
+    assert.ok(!header.includes(`href="${business.resumeHref}"`));
+    assert.ok(!plain(header).includes("Download résumé"));
     const hero = homepage.match(
       /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
     )?.[1];
@@ -105,21 +106,51 @@ check("Business contact uses the owner-supplied email", () => {
   assert.ok(footer && footer.includes(`href="${business.links.email}"`));
   assert.ok(plain(footer).includes(business.email));
 });
-check("All services have local SVG illustrations", () => {
-  const cards = [
-    ...homepage.matchAll(
-      /<article\b[^>]*class="service-card"[^>]*>([\s\S]*?)<\/article>/g,
-    ),
-  ].map((match) => match[1]);
+check("Service tabs expose one illustrated panel with direct contact", () => {
+  const tabs = [
+    ...homepage.matchAll(/<button\b[^>]*role="tab"[^>]*>([\s\S]*?)<\/button>/g),
+  ];
+  const panels = [...homepage.matchAll(/<div\b[^>]*role="tabpanel"[^>]*>/g)];
   assert.equal(business.services.length, 3);
-  assert.equal(cards.length, business.services.length);
+  assert.equal(tabs.length, business.services.length);
+  assert.equal(panels.length, business.services.length);
+  assert.ok(homepage.includes('role="tablist"'));
+  assert.ok(homepage.includes('aria-label="What can we build for you?"'));
+  assert.equal(
+    tabs.filter((tab) => tab[0].includes('aria-selected="true"')).length,
+    1,
+  );
+  assert.ok(tabs[0][0].includes('aria-selected="true"'));
+  assert.equal(
+    panels.filter((panel) => /\bhidden=""/.test(panel[0])).length,
+    2,
+  );
+  assert.ok(!/\bhidden=""/.test(panels[0][0]));
+  for (const [index, service] of business.services.entries()) {
+    const tab = tabs[index];
+    const panel = panels[index];
+    assert.ok(plain(tab[1]).includes(service.title));
+    const tabId = tab[0].match(/\bid="([^"]+)"/)?.[1];
+    const panelId = panel[0].match(/\bid="([^"]+)"/)?.[1];
+    assert.ok(tabId && panelId);
+    assert.ok(tab[0].includes(`aria-controls="${panelId}"`));
+    assert.ok(panel[0].includes(`aria-labelledby="${tabId}"`));
+    assert.ok(tab[0].includes(`tabindex="${index === 0 ? "0" : "-1"}"`));
+  }
+  const sources = imageSources(homepage);
+  assert.ok(sources.includes(business.services[0].image));
+  assert.ok(!sources.includes(business.services[1].image));
+  assert.ok(!sources.includes(business.services[2].image));
+  assert.ok(
+    homepage.includes(
+      `${business.links.email}?subject=${encodeURIComponent(`Let's talk about ${business.services[0].title.toLowerCase()}`).replaceAll("'", "&#x27;")}`,
+    ),
+  );
   assert.equal(
     new Set(business.services.map((service) => service.image)).size,
     3,
   );
   for (const service of business.services) {
-    const card = cards.find((html) => plain(html).includes(service.title));
-    assert.ok(card && imageSources(card).includes(service.image));
     assert.ok(service.image.startsWith("/images/"));
     assert.ok(service.image.endsWith(".svg"));
     const illustration = readFileSync(
@@ -163,11 +194,18 @@ check(
       assert.equal((card.match(/<h3\b/g) || []).length, 1);
       assert.ok(plain(card).includes(project.title));
       assert.ok(plain(card).includes(preview.summary));
+      const destination =
+        project.links.find(
+          (link) => !/watch demo|award-winning demo/i.test(link.label),
+        ) ?? project.links[0];
       assert.ok(
-        card.includes(
-          `href="${project.links[0].href.replaceAll("&", "&amp;")}"`,
-        ),
+        card.includes(`href="${destination.href.replaceAll("&", "&amp;")}"`),
       );
+      assert.ok(!card.includes('class="archive-project-meta"'));
+      assert.ok(!card.includes('class="archive-preview-caption"'));
+      assert.ok(!plain(card).includes("Watch demo"));
+      assert.ok(!plain(card).includes("Project artwork"));
+      assert.ok(!plain(card).includes("Brand artwork"));
       const images = [...card.matchAll(/<img\b[^>]*>/g)];
       assert.equal(images.length, 1);
       assert.ok(imageSources(card).includes(preview.image.src));
@@ -181,18 +219,43 @@ check(
         assert.equal(new URL(preview.demo.href).hostname, "www.youtube.com");
         assert.ok(new URL(preview.demo.href).searchParams.get("v"));
         assert.ok(card.includes(`aria-controls="project-demo-${project.id}"`));
+        assert.ok(
+          card.includes(
+            `aria-label="Play ${project.title} ${project.id === "cliplore" ? "hackathon " : ""}demo"`,
+          ),
+        );
+        const playIcon = card.match(
+          /<span\b[^>]*class="archive-preview-play"[^>]*>([\s\S]*?)<\/span>/,
+        );
+        assert.ok(playIcon && playIcon[0].includes('aria-hidden="true"'));
+        assert.ok(playIcon[1].includes("<svg"));
+        assert.equal(plain(playIcon[1]).trim(), "");
         const demoRegion = card.match(
           new RegExp(`<div\\b(?=[^>]*id="project-demo-${project.id}")[^>]*>`),
         )?.[0];
         assert.ok(demoRegion && /\bhidden=""/.test(demoRegion));
-      } else {
-        assert.ok(plain(card).includes(preview.label));
       }
     }
     assert.ok(homepage.includes('aria-label="Filter projects"'));
     assert.ok(homepage.includes('aria-pressed="true"'));
     assert.ok(homepage.includes('aria-live="polite"'));
     assert.ok(homepage.includes('id="project-results"'));
+    for (const [label, count] of [
+      ["All projects", 19],
+      ["Websites & apps", 6],
+      ["Experiments", 10],
+      ["Tools", 3],
+    ]) {
+      const filter = [
+        ...homepage.matchAll(
+          /<button\b[^>]*aria-pressed="(?:true|false)"[^>]*>([\s\S]*?)<\/button>/g,
+        ),
+      ].find((match) => plain(match[1]).startsWith(label));
+      assert.ok(
+        filter && plain(filter[1]).endsWith(String(count)),
+        `${label} filter count`,
+      );
+    }
   },
 );
 check("Recognition has an accessible standalone route", () => {
@@ -211,7 +274,9 @@ check("Recognition has an accessible standalone route", () => {
       "Clinic staff confirm the final appointment",
     ),
   );
-  assert.ok(read("work/mc-dental-station.html").includes("Project artwork."));
+  assert.ok(
+    !plain(read("work/mc-dental-station.html")).includes("Project artwork."),
+  );
 });
 check(
   "Collection address redirects permanently to the homepage work section",
@@ -349,7 +414,7 @@ check(
     const support = read("work/wrap-it-up/support.html");
     const privacy = read("work/wrap-it-up/privacy.html");
     assert.ok(game.includes("Your own cozy wrapping shop."));
-    assert.ok(game.includes("PROJECT FOCUS"));
+    assert.ok(game.includes("About the project"));
     assert.ok(game.includes('aria-label="More projects"'));
     assert.ok(game.includes(`href="${wrapItUp.playTestingUrl}"`));
     assert.ok(game.includes(`href="${wrapItUp.testFlightUrl}"`));
@@ -422,7 +487,16 @@ for (const project of projects) {
     for (const id of ["services", "work", "team"])
       assert.ok(header.includes(`href="/#${id}"`));
     assert.ok(header.includes('href="#contact"'));
-    assert.ok(header.includes(`href="${business.resumeHref}"`));
+    assert.ok(!header.includes(`href="${business.resumeHref}"`));
+    const pageHeader = html.match(
+      /<div\b[^>]*class="project-page-header"[^>]*>([\s\S]*?)<\/div>/,
+    )?.[1];
+    assert.ok(
+      pageHeader && !pageHeader.includes('class="eyebrow section-label"'),
+    );
+    assert.ok(!html.includes('class="detail-tags"'));
+    assert.ok(!html.includes('class="project-artwork-caption"'));
+    assert.ok(html.includes("About the project"));
     assert.ok(html.includes('href="/#work"'));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));

@@ -58,22 +58,6 @@ export function Arrow({
     </svg>
   );
 }
-export function Spark(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      width="26"
-      height="26"
-      viewBox="0 0 32 32"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M16 1v30M1 16h30M5.4 5.4l21.2 21.2M5.4 26.6 26.6 5.4" />
-    </svg>
-  );
-}
 export function Trophy(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

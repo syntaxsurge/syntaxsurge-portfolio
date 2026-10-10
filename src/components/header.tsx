@@ -37,14 +37,6 @@ export function Header() {
         </nav>
         <div className="header-actions">
           <ThemeToggle />
-          <a
-            className="button button-dark header-resume"
-            href={business.resumeHref}
-            download
-            aria-label={`Download ${business.founder.fullName}'s résumé (PDF)`}
-          >
-            Download résumé <span className="resume-format">PDF</span>
-          </a>
         </div>
       </div>
     </header>

@@ -6,12 +6,6 @@ export function Footer() {
   return (
     <footer id="contact" className="footer" aria-labelledby="contact-title">
       <div className="shell">
-        <div className="contact-top">
-          <span className="eyebrow">
-            <span className="status-dot" /> GET IN TOUCH
-          </span>
-          <span className="mono">LET’S MAKE IT REAL</span>
-        </div>
         <h2 id="contact-title" className="contact-title">
           What’s your next idea?
         </h2>

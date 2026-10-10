@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, Trophy, DownloadIcon } from "@/components/icons";
+import { Arrow, DownloadIcon } from "@/components/icons";
 import { HeroPortrait } from "@/components/hero-portrait";
 import { ProjectArchive } from "@/components/project-archive";
-import { awards } from "@/data/portfolio";
+import { PortfolioFacts } from "@/components/portfolio-facts";
+import { ServiceShowcase } from "@/components/service-showcase";
 import { business } from "@/data/business";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -18,16 +18,13 @@ export default function Home() {
       <main id="main" tabIndex={-1}>
         <section className="business-hero shell" aria-labelledby="hero-title">
           <div className="hero-copy">
-            <span className="eyebrow">
-              <span className="status-dot" /> SOFTWARE FOR YOUR NEXT MOVE
-            </span>
             <h1 id="hero-title">
-              Your idea.
+              Built around
               <br />
-              <span>Built right.</span>
+              <span>your business.</span>
             </h1>
             <p className="hero-description">
-              Websites, apps and smart tools. Built around your business.
+              Websites, apps and automation. From first idea to launch.
             </p>
             <div className="hero-actions">
               <a className="button button-dark" href={business.links.email}>
@@ -45,17 +42,11 @@ export default function Home() {
               <DownloadIcon /> Download résumé{" "}
               <span className="resume-format">PDF</span>
             </a>
-            <div className="hero-trust">
-              <a href="#registration">
-                <span aria-hidden="true">✓</span> DTI registered
-              </a>
-              <Link href="/recognition">
-                <Trophy /> {awards.length} hackathon recognitions <Arrow />
-              </Link>
-            </div>
           </div>
           <HeroPortrait />
         </section>
+
+        <PortfolioFacts />
 
         <section
           id="services"
@@ -64,30 +55,10 @@ export default function Home() {
         >
           <div className="section-heading">
             <div>
-              <span className="eyebrow section-label">WHAT WE BUILD</span>
-              <h2 id="services-title">Made for your business.</h2>
+              <h2 id="services-title">What do you want to build?</h2>
             </div>
           </div>
-          <div className="services-grid">
-            {business.services.map((service) => (
-              <article className="service-card" key={service.title}>
-                <div className="service-visual">
-                  <Image
-                    src={service.image}
-                    alt=""
-                    width={400}
-                    height={250}
-                    sizes="(max-width: 700px) 100vw, 400px"
-                    unoptimized
-                  />
-                </div>
-                <div className="service-copy">
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+          <ServiceShowcase />
         </section>
 
         <section
@@ -98,8 +69,7 @@ export default function Home() {
           <div className="shell">
             <div className="section-heading">
               <div>
-                <span className="eyebrow section-label">IDEAS IN ACTION</span>
-                <h2 id="work-title">Explore the work.</h2>
+                <h2 id="work-title">Ideas made real.</h2>
               </div>
             </div>
             <ProjectArchive />
@@ -113,9 +83,10 @@ export default function Home() {
         >
           <div className="team-grid">
             <div className="team-intro">
-              <span className="eyebrow section-label">MEET THE FOUNDER</span>
-              <h2 id="team-title">Meet your builder.</h2>
-              <p>One point of contact. Design, development and delivery.</p>
+              <h2 id="team-title">Hi, I’m Jade.</h2>
+              <p>
+                I’ll work with you from the first sketch to the final build.
+              </p>
               <div className="team-links">
                 <a
                   className="button button-outline"
@@ -135,6 +106,9 @@ export default function Home() {
                   <span className="sr-only"> (PDF, opens in a new tab)</span>
                 </a>
               </div>
+              <a className="text-link team-recognition" href="/recognition">
+                Explore my hackathon recognitions <Arrow />
+              </a>
             </div>
             <article className="team-card">
               <div className="team-portrait">
@@ -171,9 +145,6 @@ export default function Home() {
         >
           <div className="registration-card">
             <div className="registration-copy">
-              <span className="eyebrow section-label">
-                REGISTERED IN THE PHILIPPINES
-              </span>
               <h2 id="registration-title">Registered business.</h2>
               <p className="registration-name">{business.legalName}</p>
               <p className="registration-scope">

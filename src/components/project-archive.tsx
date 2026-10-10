@@ -3,12 +3,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { projects } from "@/data/portfolio";
 import { projectPreviews } from "@/data/project-media";
-import { Arrow, Trophy, PlayIcon } from "./icons";
+import { Arrow, PlayIcon } from "./icons";
 import { ProjectVisual } from "./project-visual";
-const filters = ["All projects", "Products", "AI & Web3", "Tools"] as const;
+const filters = [
+  { label: "All projects", category: null },
+  { label: "Websites & apps", category: "Products" },
+  { label: "Experiments", category: "AI & Web3" },
+  { label: "Tools", category: "Tools" },
+] as const;
 export function ProjectArchive() {
-  const [filter, setFilter] =
-    useState<(typeof filters)[number]>("All projects");
+  const [filter, setFilter] = useState<(typeof filters)[number]>(filters[0]);
   const [query, setQuery] = useState("");
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -16,10 +20,10 @@ export function ProjectArchive() {
   const closeDemoButton = useRef<HTMLButtonElement>(null);
   const restoreDemoFocus = useRef(false);
   const search = query.trim().toLowerCase();
-  const hasFilters = filter !== "All projects" || query.length > 0;
+  const hasFilters = filter.category !== null || query.length > 0;
   function resetFilters() {
     setQuery("");
-    setFilter("All projects");
+    setFilter(filters[0]);
     setActiveDemo(null);
     restoreDemoFocus.current = false;
     searchInput.current?.focus();
@@ -40,7 +44,7 @@ export function ProjectArchive() {
     () =>
       projects.filter(
         (p) =>
-          (filter === "All projects" || p.category === filter) &&
+          (filter.category === null || p.category === filter.category) &&
           `${p.title} ${p.description} ${p.category} ${p.year} ${p.tags.join(" ")} ${p.award ?? ""}`
             .toLowerCase()
             .includes(search),
@@ -53,7 +57,7 @@ export function ProjectArchive() {
         <div className="filter-group" role="group" aria-label="Filter projects">
           {filters.map((f) => (
             <button
-              key={f}
+              key={f.label}
               type="button"
               aria-pressed={filter === f}
               aria-controls="project-results"
@@ -63,11 +67,11 @@ export function ProjectArchive() {
                 setFilter(f);
               }}
             >
-              {f}
+              {f.label}
               <span>
                 {
                   projects.filter(
-                    (p) => f === "All projects" || p.category === f,
+                    (p) => f.category === null || p.category === f.category,
                   ).length
                 }
               </span>
@@ -105,7 +109,7 @@ export function ProjectArchive() {
       <div className="archive-results-summary">
         <p role="status" aria-live="polite" aria-atomic="true">
           {visible.length} of {projects.length} projects
-          {filter !== "All projects" && ` · ${filter}`}
+          {filter.category !== null && ` · ${filter.label}`}
           {search && ` matching “${query.trim()}”`}
         </p>
         {hasFilters && (
@@ -118,6 +122,16 @@ export function ProjectArchive() {
         {visible.map((p) => {
           const preview = projectPreviews[p.id];
           const isActive = activeDemo === p.id;
+          const destination =
+            p.links.find(
+              (link) => !/watch demo|award-winning demo/i.test(link.label),
+            ) ?? p.links[0];
+          const destinationLabel =
+            destination.label === "GitHub"
+              ? "View code"
+              : /visit website|visit product/i.test(destination.label)
+                ? "Open website"
+                : destination.label;
           return (
             <article className="archive-row" key={p.id}>
               <div className="archive-preview-wrap">
@@ -136,11 +150,8 @@ export function ProjectArchive() {
                     }}
                   >
                     <ProjectVisual id={p.id} variant="preview" />
-                    <span className="archive-preview-caption">
+                    <span className="archive-preview-play" aria-hidden="true">
                       <PlayIcon />
-                      {p.id === "cliplore"
-                        ? "Watch hackathon demo"
-                        : "Watch demo"}
                     </span>
                   </button>
                 ) : (
@@ -150,9 +161,6 @@ export function ProjectArchive() {
                     aria-label={`View ${p.title} project details`}
                   >
                     <ProjectVisual id={p.id} variant="preview" />
-                    <span className="archive-preview-caption">
-                      {preview.label} <Arrow />
-                    </span>
                   </Link>
                 )}
                 {preview.demo && (
@@ -204,16 +212,6 @@ export function ProjectArchive() {
               </div>
               <div className="archive-card-body">
                 <div className="archive-name">
-                  <div className="archive-project-meta">
-                    <span>{p.category}</span>
-                    <span>{p.year}</span>
-                    {p.award && (
-                      <span className="archive-award" title={p.award}>
-                        <Trophy /> Recognized
-                        <span className="sr-only">: {p.award}</span>
-                      </span>
-                    )}
-                  </div>
                   <h3>
                     <Link href={`/work/${p.id}`}>{p.title}</Link>
                   </h3>
@@ -225,17 +223,17 @@ export function ProjectArchive() {
                     href={`/work/${p.id}`}
                     aria-label={`View ${p.title} project details`}
                   >
-                    Project details <Arrow />
+                    Details <Arrow />
                   </Link>
-                  {p.links[0] && (
+                  {destination && (
                     <a
                       className="text-link"
-                      href={p.links[0].href}
+                      href={destination.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`${p.links[0].label}: ${p.title} (opens in a new tab)`}
+                      aria-label={`${destinationLabel}: ${p.title} (opens in a new tab)`}
                     >
-                      {p.links[0].label} <Arrow diagonal />
+                      {destinationLabel} <Arrow diagonal />
                     </a>
                   )}
                 </div>
