@@ -47,6 +47,17 @@ export default function Home() {
                 <span className="resume-format">PDF</span>
               </a>
             </div>
+            <div className="hero-workspace">
+              <Image
+                src={business.workspacePhoto.src}
+                alt={business.workspacePhoto.alt}
+                width={business.workspacePhoto.width}
+                height={business.workspacePhoto.height}
+                sizes="(max-width: 700px) 100vw, 540px"
+                preload
+                unoptimized
+              />
+            </div>
           </div>
         </section>
 

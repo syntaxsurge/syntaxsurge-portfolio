@@ -21,6 +21,12 @@ export const business = {
     },
   },
   resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
+  workspacePhoto: {
+    src: "/images/syntax-surge-workspace.webp",
+    alt: "A software planning session with a whiteboard and laptops",
+    width: 1200,
+    height: 1600,
+  },
   heroMotion: {
     poster: "/images/hero-systems.webp",
     video: "/videos/hero-systems.mp4",

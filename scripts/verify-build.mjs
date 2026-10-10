@@ -300,7 +300,7 @@ check(
     assert.equal(redirect.statusCode, 308);
   },
 );
-check("Hero presents a local, lazy looping background behind direct actions", () => {
+check("Hero pairs the supplied workspace photo with a lazy looping background", () => {
   const hero = homepage.match(
     /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
   )?.[1];
@@ -318,6 +318,12 @@ check("Hero presents a local, lazy looping background behind direct actions", ()
   assert.ok(video.includes('aria-hidden="true"'));
   assert.ok(video.includes('tabindex="-1"'));
   assert.ok(imageSources(hero).includes(business.heroMotion.poster));
+  assert.ok(imageSources(hero).includes(business.workspacePhoto.src));
+  assert.ok(hero.includes(business.workspacePhoto.alt));
+  const workspace = readFileSync(
+    resolve(root, "public", business.workspacePhoto.src.slice(1)),
+  );
+  assert.equal(workspace.subarray(8, 12).toString(), "WEBP");
   assert.ok(!imageSources(hero).includes(business.logo.src));
   const poster = readFileSync(resolve(root, "public", business.heroMotion.poster.slice(1)));
   const clip = readFileSync(resolve(root, "public", business.heroMotion.video.slice(1)));

@@ -6,6 +6,7 @@ Product covers were collected and visually checked on 25 September 2026; supplie
 | --- | --- | --- |
 | `syntaxsurge-logo.jpg` | Original logo supplied by the owner | 640 × 640. Blue lightning bolt and black code brackets on a white background. Copied unchanged; used for business navigation, homepage identity, the social preview, and the self-contained SVG favicon. No redraw, recoloring, or background removal. |
 | `jade-laurence-empleo.jpg` | Original founder photograph supplied by the owner | 1254 × 1254. Jade Laurence Empleo, founder of Syntax Surge. Copied unchanged; displayed in the team section. |
+| `syntax-surge-workspace.webp` | Working-session photograph supplied by the owner | 1200 × 1600, 277,516 bytes. The unchanged local WebP derivative shows the whiteboard, laptops and two people working together. Displayed beside the hero copy on desktop and beneath it on phones, above the video background. A 4:3 crop at 50% 25% retains both people and the desk. |
 | `mc-dental-feature.webp` | Higgsfield GPT Image 2.5 job `80363250-5439-4665-a3ed-cedb538e9c88` | 1600 × 905, 27,420 bytes. Generated clinic concept artwork with a porcelain tooth and abstract appointment/chat/service cards, optimized from the 2688 × 1520 source PNG. It is not a clinic photograph, staff portrait, screenshot, or clinical outcome claim. |
 | `studysoda-cover.webp` | Existing `studyroom/public/media/studysoda-hero.webp`; [StudySoda](https://studysoda.com/) | 1400 × 792. Existing brand artwork: lavender flashcards, a notebook, and a lime soda. Use as a brand cover, not as a screenshot or a claim about product UI. |
 | `kaldi-cover.webp` | Existing `kaldi-rewards/public/images/kaldi-hero.jpg`; [Kaldi project](https://kaldi-rewards.syntaxsurge.com/) | 1400 × 792. Existing generated campaign artwork used by the Kaldi project. It is a stylized project cover, not a documentary photograph of the venue or a claim of merchant endorsement. |
@@ -32,7 +33,9 @@ Suggested image descriptions:
 - Founder: “Jade Laurence Empleo, founder of Syntax Surge.”
 - MC Dental Station: “MC Dental Station project artwork with a porcelain tooth and abstract appointment, chat, and service cards.”
 
-## Hero loop and service illustrations
+## Hero photograph, loop and service illustrations
+
+`business.workspacePhoto` supplies the original working-session image and intrinsic dimensions. Its preserved WebP has SHA-256 `13eac44bf977c51acb620117050b6bc4d6aada56863f8af6047346ef7e1ad34e`. The hero uses natural content height, with compact phone padding beneath the photograph.
 
 `business.heroMotion` selects `public/images/hero-systems.webp` and `public/videos/hero-systems.mp4`. The blue-glass ribbon and connected modules are decorative software-inspired artwork generated with Higgsfield GPT Image 2.5 job `89fd0ddf-a009-4c66-8e63-c85c109b75b8`. Seedance 2.5 job `6261216a-a07f-4ec8-b55c-3ec285cb5d79` uses that exact completed image for both its `start_image` and `end_image` references, with a locked camera, gentle floating/light-flow motion and no generated audio. No staff, customer product screens, client work or logo are depicted.
 
