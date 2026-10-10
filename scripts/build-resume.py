@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Build the public resume from canonical site data. Requires Python/reportlab and Node.
+"""Build the public resume and matching preview pages from canonical site data.
 
 Run: python3 scripts/build-resume.py
-Set RESUME_NODE when the intended Node executable is not the shell default.
+Requires ReportLab, Pillow, pypdf, Node, and Poppler's pdftoppm.
+RESUME_NODE and RESUME_PDFTOPPM select non-default authoring executables.
 """
 
 import calendar
@@ -11,7 +12,10 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import tempfile
 
+from PIL import Image
+from pypdf import PdfReader
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -21,7 +25,6 @@ from reportlab.platypus import Paragraph
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "public/documents/jade-laurence-empleo-resume.pdf"
 ROLE = "Software Developer / Product Builder"
 WEBSITE = "https://syntaxsurge.com/"
 SELECTED_PROJECTS = ("mc-dental-station", "kaldi", "cliplore-ai")
@@ -149,10 +152,10 @@ def first_page(pdf, data):
 
     y = section(pdf, "Profile", y)
     summary = (
-        "Software developer and product builder focused on business websites, web "
-        "applications, and practical AI experiences. Founder of Syntax Surge, with "
-        "project work spanning clinic appointment workflows, customer loyalty tools, "
-        "and an editable AI video studio."
+        f'Software developer and founder of {business["name"]}. Builds business '
+        "websites, web applications and AI workflows, with "
+        f'{len(data["projects"])} portfolio projects and '
+        f'{len(data["awards"])} hackathon recognitions.'
     )
     y = paragraph(pdf, plain(summary), y)
     y -= 22
@@ -161,7 +164,7 @@ def first_page(pdf, data):
     skills = (
         "<b>Languages & frameworks:</b> TypeScript, JavaScript, React, Next.js, Tailwind CSS.",
         "<b>Development:</b> Web applications, responsive interfaces, API integrations, and staff workflows.",
-        "<b>Product focus:</b> AI experiences, interaction design, and customer-facing tools.",
+        f'<b>Services:</b> {plain(", ".join(service["title"] for service in business["services"]))}.',
     )
     for entry in skills:
         y = paragraph(pdf, entry, y, text_style=style(10.5, 14.5))
@@ -221,11 +224,9 @@ def recognition_page(pdf, data):
     pdf.showPage()
 
 
-def main():
-    data = canonical_data()
+def write_pdf(path, data):
     full_name = data["business"]["founder"]["fullName"]
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    pdf = canvas.Canvas(str(OUTPUT), pagesize=A4, pageCompression=1, invariant=True)
+    pdf = canvas.Canvas(str(path), pagesize=A4, pageCompression=1, invariant=True)
     pdf.setTitle(f"{full_name} - Resume")
     pdf.setAuthor(full_name)
     pdf.setSubject(ROLE)
@@ -233,7 +234,61 @@ def main():
     first_page(pdf, data)
     recognition_page(pdf, data)
     pdf.save()
-    print(f"Created {OUTPUT}: 2 pages, {len(data['awards'])} recognitions")
+
+
+def render_previews(pdf_path, staging, metadata):
+    reader = PdfReader(str(pdf_path))
+    if len(reader.pages) != 2 or len(metadata) != 2:
+        raise ValueError("The resume and its preview require exactly two pages.")
+    prefix = staging / "resume-page"
+    subprocess.run(
+        [
+            os.environ.get("RESUME_PDFTOPPM", "pdftoppm"),
+            "-f", "1", "-l", "2",
+            "-scale-to-x", str(metadata[0]["width"]), "-scale-to-y", "-1",
+            "-png", str(pdf_path), str(prefix),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=120,
+    )
+    previews = []
+    for page in (1, 2):
+        output = staging / f"resume-page-{page}.webp"
+        with Image.open(staging / f"resume-page-{page}.png") as source:
+            expected = metadata[page - 1]
+            if source.size != (expected["width"], expected["height"]):
+                raise ValueError("The rendered preview does not have the expected page dimensions.")
+            source.convert("RGB").save(output, "WEBP", quality=88, method=6)
+        with Image.open(output) as preview:
+            preview.verify()
+        previews.append(output)
+    return previews
+
+
+def main():
+    data = canonical_data()
+    business = data["business"]
+    output = ROOT / "public" / business["resumeHref"].lstrip("/")
+    preview_outputs = [ROOT / "public" / page["src"].lstrip("/") for page in business["resumePreview"]]
+    staging_root = ROOT / ".local"
+    staging_root.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="resume-build-", dir=staging_root) as temporary:
+        staging = Path(temporary)
+        staged_pdf = staging / output.name
+        write_pdf(staged_pdf, data)
+        previews = render_previews(staged_pdf, staging, business["resumePreview"])
+        replacements = [(staged_pdf, output), *zip(previews, preview_outputs)]
+        for _, destination in replacements:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+        # Publish only a successfully rendered set; each replacement is atomic.
+        for source, destination in replacements:
+            os.replace(source, destination)
+    print(f"Created {output}: 2 pages, {len(data['awards'])} recognitions")
+    for path in preview_outputs:
+        with Image.open(path) as preview:
+            print(f"Created {path}: {preview.width} x {preview.height}, {path.stat().st_size} bytes")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,12 @@
 # Resume sources and generation
 
-`public/documents/jade-laurence-empleo-resume.pdf` is a two-page A4 resume for job applications. It uses a white/navy layout, selectable text, the supplied profile photograph, three selected projects, and all 14 dated hackathon recognitions. The supplied business email, website, GitHub, LinkedIn, and selected project websites have clickable links.
+`public/documents/jade-laurence-empleo-resume.pdf` is a two-page A4 resume for job applications. It uses a white/navy layout, selectable text, the supplied profile photograph, three selected projects, and all 14 dated hackathon recognitions. The supplied business email, website, GitHub, LinkedIn, and selected project websites have clickable links. `public/images/resume-page-1.webp` and `resume-page-2.webp` are local raster previews rendered from the same PDF for the website's View resume dialog.
 
 ## Verified source facts
 
 - **Full name:** Jade Laurence Cabaruan Empleo, transcribed from the proprietor name in the supplied original DTI certificate at `public/documents/syntax-surge-dti-certificate.pdf` and stored in `business.founder.fullName`. The professional site profile uses `business.founder.name`, Jade Laurence Empleo.
 - **Role/business:** Software Developer / Product Builder; founder of SyntaxSurge Software Development Services. The founder role and business legal name come from `src/data/business.ts`, with the product-building summary supported by the project record.
+- **Profile and services:** the concise profile reads the business name and the canonical totals of 20 portfolio projects and 14 hackathon recognitions. The service line reads the six titles in `business.services`: business websites, custom software, AI/automation, online stores, booking systems, and interactive experiences. Project totals represent portfolio work, not paid clients.
 - **Photograph:** the unchanged owner-supplied `public/images/jade-laurence-empleo.jpg`, selected through `business.founder.portrait.src`. The complete square image is scaled into a small header photograph; no retouching or replacement image is used.
 - **Contact links:** the owner supplied `syntaxsurge@gmail.com` as the public business email; it is read from `business.email` with its `business.links.email` mailto destination. Existing LinkedIn/GitHub URLs come from `business.links`, plus the public business website `https://syntaxsurge.com/`. No phone number or private address is included, and no message is sent by generating or serving the resume.
 - **Selected projects:** MC Dental Station, Kaldi Circle, and ClipLore.ai (`cliplore-ai`). Their titles, summaries, primary website links, and tags are read from `src/data/portfolio.ts`. ClipLore.ai is the current AI creation and video editing product at `https://cliplore.ai/`; the separate Story Protocol project is not one of these selected product examples. MC Dental's additional note preserves staff confirmation for appointments and approved English/Filipino FAQ assistance.
@@ -16,14 +17,16 @@ No education, qualifications, employment history, employment dates, client stati
 
 ## Rebuild
 
-The editable source is `scripts/build-resume.py`. It reads canonical business/project/award exports through Node's TypeScript stripping support and generates the public PDF with ReportLab. There is no separate permanent resume JSON file to synchronize. The concise editorial summary/skills live in the generator; the full name, project/contact/recognition facts, and portrait path come from site data. `business.resumeHref` links to the generated public PDF.
+The editable source is `scripts/build-resume.py`. It reads canonical business/project/award exports through Node's TypeScript stripping support, generates the public PDF with ReportLab, and renders both pages with Poppler before encoding WebP previews with Pillow. There is no separate permanent resume JSON file to synchronize. The concise editorial summary/skills live in the generator; the full name, project/contact/recognition facts, service titles, totals, and portrait path come from site data. `business.resumeHref` supplies the generated PDF path, and `business.resumePreview` supplies each page image path and expected intrinsic dimensions. The generator requires its rendered pages to match those dimensions before publishing.
 
-Use the project's supported Node version, Python 3.9 or later, and the `reportlab` Python package:
+Use the project's supported Node version, Python with `reportlab`, `Pillow`, and `pypdf`, and Poppler's `pdftoppm`:
 
 ```sh
 python3 scripts/build-resume.py
 ```
 
-If a different Node executable is required, set `RESUME_NODE` to its verified path. ReportLab is an authoring dependency only; the website serves the committed PDF and does not run the generator or require Python when deployed.
+If non-default tools are required, set `RESUME_NODE` and `RESUME_PDFTOPPM` to their verified executable paths. Bundled Poppler can also require `FONTCONFIG_FILE` pointing to its supplied font configuration. The generator stages the PDF and both previews under ignored `.local`, requires exactly two PDF pages and valid preview images, and publishes assets through atomic file replacements only after rendering succeeds. A rendering failure leaves the published PDF and previews unchanged; temporary files are removed automatically.
 
-Before publishing a regenerated file, render both pages with Poppler and inspect spacing, text, the photograph, page numbers, and link targets. Verify that all canonical award titles/events and all three selected projects remain present. The generator fails if content exceeds its page bounds rather than shrinking text to an unreadable size. This source record and local artifact do not imply that a website update has been deployed.
+Preview pages are 1200 pixels wide, preserve the A4 page ratio, and use WebP quality 88. The PDF uses invariant ReportLab metadata; repeated builds with the same canonical data, authoring dependencies, and font configuration produce identical assets. ReportLab, Pillow, pypdf, Node-based extraction, and Poppler are authoring dependencies only. Deployment serves the committed PDF and images without running Python or rendering a document at request time.
+
+Before publishing a regenerated set, inspect both preview images for spacing, text, the photograph, page numbers, and legibility. Verify the PDF's contact/project link targets and that all canonical award titles/events and all three selected projects remain present. The generator fails if content exceeds its page bounds rather than shrinking text to an unreadable size. This source record and local artifact do not imply that a website update has been deployed.

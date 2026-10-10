@@ -21,6 +21,20 @@ export const business = {
     },
   },
   resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
+  resumePreview: [
+    {
+      src: "/images/resume-page-1.webp",
+      width: 1200,
+      height: 1698,
+      alt: "Résumé page 1: Jade Laurence Cabaruan Empleo's profile, contact details, skills, and selected projects",
+    },
+    {
+      src: "/images/resume-page-2.webp",
+      width: 1200,
+      height: 1698,
+      alt: "Résumé page 2: Jade Laurence Cabaruan Empleo's 14 dated hackathon recognitions",
+    },
+  ],
   workspacePhoto: {
     src: "/images/syntax-surge-workspace.webp",
     alt: "A software planning session with a whiteboard and laptops",

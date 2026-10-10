@@ -2,20 +2,21 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, DownloadIcon } from "@/components/icons";
+import { Arrow } from "@/components/icons";
 import { ProjectArchive } from "@/components/project-archive";
 import { PortfolioFacts } from "@/components/portfolio-facts";
 import { ServiceShowcase } from "@/components/service-showcase";
 import { FounderCard } from "@/components/founder-card";
 import { SectionReveal } from "@/components/section-reveal";
 import { BackgroundVideo } from "@/components/background-video";
+import { ResumeButton, ResumePreview } from "@/components/resume-preview";
 import { business } from "@/data/business";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (
-    <>
+    <ResumePreview>
       <Header />
       <main id="main" tabIndex={-1}>
         <section className="business-hero" aria-labelledby="hero-title">
@@ -38,14 +39,7 @@ export default function Home() {
                   See the work <Arrow />
                 </a>
               </div>
-              <a
-                className="hero-resume text-link"
-                href={business.resumeHref}
-                download
-              >
-                <DownloadIcon /> Download résumé{" "}
-                <span className="resume-format">PDF</span>
-              </a>
+              <ResumeButton className="hero-resume text-link" />
             </div>
             <div className="hero-workspace">
               <Image
@@ -102,23 +96,7 @@ export default function Home() {
                 I’ll work with you from the first sketch to the final build.
               </p>
               <div className="team-links">
-                <a
-                  className="button button-outline"
-                  href={business.resumeHref}
-                  download
-                >
-                  Download résumé <DownloadIcon />
-                  <span className="sr-only"> (PDF)</span>
-                </a>
-                <a
-                  className="text-link"
-                  href={business.resumeHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Preview résumé <Arrow diagonal />
-                  <span className="sr-only"> (PDF, opens in a new tab)</span>
-                </a>
+                <ResumeButton className="button button-outline" />
               </div>
               <a className="text-link team-recognition" href="/recognition">
                 Explore my hackathon recognitions <Arrow />
@@ -191,6 +169,6 @@ export default function Home() {
         </section>
       </main>
       <Footer />
-    </>
+    </ResumePreview>
   );
 }

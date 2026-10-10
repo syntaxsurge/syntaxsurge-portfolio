@@ -180,29 +180,82 @@ check(
       resolve(root, "public", business.certificate.href.slice(1)),
     );
     assert.equal(certificate.subarray(0, 5).toString(), "%PDF-");
-    const resumeLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
-      .map((match) => match[0])
-      .filter((link) => link.includes(`href="${business.resumeHref}"`));
-    assert.equal(resumeLinks.length, 3);
-    assert.equal(
-      resumeLinks.filter((link) => /\bdownload=/.test(link)).length,
-      2,
-    );
-    assert.ok(resumeLinks.some((link) => link.includes('target="_blank"')));
     assert.ok(!header.includes(`href="${business.resumeHref}"`));
     assert.ok(!plain(header).includes("Download résumé"));
     const hero = homepage.match(
       /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
     )?.[1];
-    assert.ok(hero && hero.includes(`href="${business.resumeHref}"`));
-    const resume = readFileSync(
-      resolve(root, "public", business.resumeHref.slice(1)),
-    );
-    assert.equal(resume.subarray(0, 5).toString(), "%PDF-");
+    assert.ok(hero && hero.includes('aria-haspopup="dialog"'));
+    assert.ok(plain(hero).includes("View résumé"));
     assert.ok(!homepage.includes('href="/work"'));
     assert.ok(homepage.includes('href="/recognition"'));
     assert.ok(!homepage.includes("<details"));
     assert.ok(!homepage.includes("Create Next App"));
+  },
+);
+check(
+  "Résumé preview has two accessible triggers and one closed download dialog",
+  () => {
+    const triggers = [
+      ...homepage.matchAll(
+        /<button\b[^>]*aria-haspopup="dialog"[^>]*>([\s\S]*?)<\/button>/g,
+      ),
+    ];
+    assert.equal(triggers.length, 2);
+    const dialogs = [
+      ...homepage.matchAll(/<dialog\b[^>]*>([\s\S]*?)<\/dialog>/g),
+    ];
+    assert.equal(dialogs.length, 1);
+    const dialog = dialogs[0];
+    const dialogTag = dialog[0].slice(0, dialog[0].indexOf(">") + 1);
+    assert.ok(!/\sopen(?:\s|=|>)/.test(dialogTag));
+    const dialogId = dialogTag.match(/\bid="([^"]+)"/)?.[1];
+    const titleId = dialogTag.match(/\baria-labelledby="([^"]+)"/)?.[1];
+    const descriptionId = dialogTag.match(/\baria-describedby="([^"]+)"/)?.[1];
+    assert.ok(dialogId && titleId && descriptionId);
+    for (const trigger of triggers) {
+      assert.equal(plain(trigger[1]).trim(), "View résumé");
+      assert.ok(trigger[0].includes(`aria-controls="${dialogId}"`));
+      assert.ok(trigger[0].includes('aria-expanded="false"'));
+    }
+    const title = dialog[1].match(
+      new RegExp(`<h2\\b[^>]*id="${titleId}"[^>]*>([\\s\\S]*?)<\\/h2>`),
+    )?.[1];
+    assert.equal(plain(title ?? "").trim(), "Résumé");
+    assert.ok(dialog[1].includes(`id="${descriptionId}"`));
+    assert.ok(dialog[1].includes('aria-label="Close résumé preview"'));
+    assert.ok(dialog[1].includes('aria-label="Résumé pages"'));
+    const downloads = [
+      ...dialog[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g),
+    ].filter((link) => link[0].includes(`href="${business.resumeHref}"`));
+    assert.equal(downloads.length, 1);
+    assert.ok(/\bdownload=/.test(downloads[0][0]));
+    assert.ok(downloads[0][1].includes("<svg"));
+    assert.ok(plain(downloads[0][1]).includes("Download PDF"));
+    assert.ok(!downloads[0][0].includes('target="_blank"'));
+    assert.equal((dialog[1].match(/<iframe\b/g) || []).length, 0);
+    assert.equal(business.resumePreview.length, 2);
+    assert.equal(
+      new Set(business.resumePreview.map((page) => page.src)).size,
+      2,
+    );
+    const sources = imageSources(homepage);
+    for (const page of business.resumePreview) {
+      assert.ok(
+        !sources.includes(page.src),
+        "Closed preview must not render page images",
+      );
+      assert.ok(page.src.startsWith("/images/") && page.src.endsWith(".webp"));
+      assert.ok(page.width > 0 && page.height > page.width);
+      assert.ok(page.alt.includes(business.founder.fullName));
+      const image = readFileSync(resolve(root, "public", page.src.slice(1)));
+      assert.equal(image.subarray(8, 12).toString(), "WEBP");
+      assert.ok(image.length > 1000);
+    }
+    const resume = readFileSync(
+      resolve(root, "public", business.resumeHref.slice(1)),
+    );
+    assert.equal(resume.subarray(0, 5).toString(), "%PDF-");
   },
 );
 check("Business contact uses the owner-supplied email", () => {
