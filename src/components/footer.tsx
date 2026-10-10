@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { business } from "@/data/business";
 import { Arrow, Github } from "./icons";
+import { SectionReveal } from "./section-reveal";
+import { LaunchSpark } from "./launch-spark";
 
 export function Footer() {
   return (
     <footer id="contact" className="footer" aria-labelledby="contact-title">
       <div className="shell">
-        <h2 id="contact-title" className="contact-title">
-          What’s your next idea?
-        </h2>
+        <SectionReveal variant="rise" className="contact-heading">
+          <h2 id="contact-title" className="contact-title">
+            What’s your next idea?
+          </h2>
+          <LaunchSpark />
+        </SectionReveal>
         <div className="contact-actions">
           <p className="contact-copy">Have a project in mind? Email Jade.</p>
           <div className="contact-links">

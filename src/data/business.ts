@@ -27,6 +27,12 @@ export const business = {
     width: 1200,
     height: 1600,
   },
+  workMotion: {
+    poster: "/images/work-sculpture.webp",
+    video: "/videos/work-sculpture.mp4",
+    width: 1344,
+    height: 752,
+  },
   certificate: {
     scope: "National",
     number: "8161608",

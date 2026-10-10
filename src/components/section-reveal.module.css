@@ -1,0 +1,73 @@
+.reveal {
+  min-width: 0;
+}
+
+.rise[data-reveal-state="active"] {
+  animation: rise 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.slide[data-reveal-state="active"] {
+  animation: slide 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.orbit[data-reveal-state="active"] {
+  animation: orbit 860ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transform-origin: 50% 60%;
+}
+
+.stamp[data-reveal-state="active"] {
+  animation: stamp 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: 65% 55%;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(24px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(var(--slide-distance, 24px));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .slide {
+    --slide-distance: 12px;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: perspective(1000px) rotateY(-7deg) rotateX(3deg) translateY(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes stamp {
+  0% {
+    transform: scale(0.96) rotate(-1.5deg);
+  }
+  70% {
+    transform: scale(1.005) rotate(0.2deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal-state="active"] {
+    animation: none;
+    transform: none;
+  }
+}

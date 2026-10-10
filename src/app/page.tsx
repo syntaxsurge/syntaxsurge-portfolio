@@ -7,6 +7,9 @@ import { HeroPortrait } from "@/components/hero-portrait";
 import { ProjectArchive } from "@/components/project-archive";
 import { PortfolioFacts } from "@/components/portfolio-facts";
 import { ServiceShowcase } from "@/components/service-showcase";
+import { FounderCard } from "@/components/founder-card";
+import { SectionReveal } from "@/components/section-reveal";
+import { WorkSculpture } from "@/components/work-sculpture";
 import { business } from "@/data/business";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -53,11 +56,11 @@ export default function Home() {
           className="business-section services-section shell"
           aria-labelledby="services-title"
         >
-          <div className="section-heading">
+          <SectionReveal variant="rise" className="section-heading">
             <div>
               <h2 id="services-title">What do you want to build?</h2>
             </div>
-          </div>
+          </SectionReveal>
           <ServiceShowcase />
         </section>
 
@@ -67,11 +70,12 @@ export default function Home() {
           aria-labelledby="work-title"
         >
           <div className="shell">
-            <div className="section-heading">
-              <div>
+            <SectionReveal variant="slide" className="work-heading">
+              <div className="work-heading-copy">
                 <h2 id="work-title">Ideas made real.</h2>
               </div>
-            </div>
+              <WorkSculpture />
+            </SectionReveal>
             <ProjectArchive />
           </div>
         </section>
@@ -81,7 +85,7 @@ export default function Home() {
           className="business-section shell"
           aria-labelledby="team-title"
         >
-          <div className="team-grid">
+          <SectionReveal variant="orbit" className="team-grid">
             <div className="team-intro">
               <h2 id="team-title">Hi, I’m Jade.</h2>
               <p>
@@ -110,32 +114,8 @@ export default function Home() {
                 Explore my hackathon recognitions <Arrow />
               </a>
             </div>
-            <article className="team-card">
-              <div className="team-portrait">
-                <Image
-                  src={business.founder.portrait.src}
-                  alt="Jade Laurence Empleo, founder of Syntax Surge"
-                  width={business.founder.portrait.width}
-                  height={business.founder.portrait.height}
-                  sizes="(max-width: 700px) 100vw, 420px"
-                />
-              </div>
-              <div className="team-card-info">
-                <div>
-                  <h3>{business.founder.name}</h3>
-                  <p>{business.founder.role}</p>
-                </div>
-                <a
-                  href={business.links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Meet Jade Laurence Empleo on LinkedIn (opens in a new tab)"
-                >
-                  <Arrow diagonal />
-                </a>
-              </div>
-            </article>
-          </div>
+            <FounderCard />
+          </SectionReveal>
         </section>
 
         <section
@@ -143,8 +123,17 @@ export default function Home() {
           className="registration-section shell"
           aria-labelledby="registration-title"
         >
-          <div className="registration-card">
+          <SectionReveal variant="stamp" className="registration-card">
             <div className="registration-copy">
+              <svg
+                className="registration-seal"
+                viewBox="0 0 80 80"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path d="M40 6 68 17v23c0 16-13 28-28 34C25 68 12 56 12 40V17L40 6Z" />
+                <path d="m27 39 9 9 18-19" />
+              </svg>
               <h2 id="registration-title">Registered business.</h2>
               <p className="registration-name">{business.legalName}</p>
               <p className="registration-scope">
@@ -188,7 +177,7 @@ export default function Home() {
                 DTI CERTIFICATE <Arrow diagonal />
               </span>
             </a>
-          </div>
+          </SectionReveal>
         </section>
       </main>
       <Footer />

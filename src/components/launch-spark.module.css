@@ -1,0 +1,159 @@
+.launch {
+  position: relative;
+  display: inline-grid;
+  justify-items: start;
+  gap: 8px;
+  max-width: 100%;
+  isolation: isolate;
+}
+
+.button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  max-width: 100%;
+  padding: 9px 16px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-display), sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  transition: transform 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button[aria-disabled="true"] {
+  cursor: default;
+}
+
+.status {
+  min-height: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.field {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 65px;
+  height: 160px;
+  overflow: hidden;
+  pointer-events: none;
+  color: inherit;
+}
+
+.rocket {
+  position: absolute;
+  bottom: 1px;
+  left: calc(50% - 12px);
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  animation: flight 1.6s cubic-bezier(0.22, 0.8, 0.3, 1) both;
+}
+
+.rocket svg {
+  width: 24px;
+  height: 24px;
+  transform: rotate(-45deg);
+}
+
+.trail {
+  position: absolute;
+  bottom: 2px;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 62px;
+  border-radius: 999px;
+  background: linear-gradient(transparent, currentColor);
+  transform-origin: bottom;
+  animation: trail 1.2s ease-out both;
+}
+
+.spark {
+  position: absolute;
+  bottom: 18px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: spark 1.38s cubic-bezier(0.2, 0.65, 0.25, 1) var(--spark-delay)
+    both;
+}
+
+@keyframes flight {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-140px) scale(0.6);
+  }
+}
+
+@keyframes trail {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  20% {
+    opacity: 0.8;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) scaleY(0.4);
+  }
+}
+
+@keyframes spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, -45px) rotate(var(--spark-turn)) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--spark-x), var(--spark-y))
+      rotate(var(--spark-turn)) scale(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+  .button:hover {
+    transform: none;
+  }
+  .field {
+    display: none;
+  }
+  .rocket,
+  .trail,
+  .spark {
+    animation: none;
+  }
+}

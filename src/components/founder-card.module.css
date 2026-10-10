@@ -1,0 +1,208 @@
+.card {
+  width: 100%;
+  max-width: 440px;
+  min-width: 0;
+  perspective: 900px;
+}
+
+.surface {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--elevated);
+  box-shadow: 0 20px 56px #1720380c;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 200ms ease-out;
+}
+
+.portrait {
+  position: relative;
+  aspect-ratio: 1.12;
+  border-radius: 23px 23px 0 0;
+  background: var(--surface);
+}
+
+.portrait > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 37%;
+  border-radius: inherit;
+}
+
+.waveButton {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #ffffff;
+  border-radius: 30px;
+  background: #ffffffed;
+  color: #172038;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  box-shadow: 0 3px 18px #1017271a;
+}
+
+.waveButton:hover {
+  background: #ffffff;
+}
+
+.waveButton:focus-visible {
+  outline-color: #214fd4;
+}
+
+.companion {
+  position: absolute;
+  right: 10px;
+  bottom: -14px;
+  width: 126px;
+  height: 126px;
+  color: var(--brand);
+  filter: drop-shadow(0 9px 10px #17203826);
+  pointer-events: none;
+}
+
+.companion svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.orb {
+  fill: #f0f5ff;
+  stroke: #d4e1ff;
+  stroke-width: 2;
+}
+
+.face {
+  fill: #ffffff;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.signal {
+  fill: #91d9ff;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.code {
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hand {
+  transform-box: fill-box;
+  transform-origin: 8% 92%;
+}
+
+.waving .hand {
+  animation: wave 1.1s ease-in-out both;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 30px 24px 24px;
+}
+
+.info > div {
+  min-width: 0;
+}
+
+.info h3 {
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.info p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.profileLink {
+  display: grid;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--accent);
+}
+
+.profileLink:hover {
+  border-color: var(--accent);
+}
+
+.profileLink svg {
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  60% {
+    transform: rotate(-18deg);
+  }
+  40%,
+  80% {
+    transform: rotate(16deg);
+  }
+}
+
+@media (max-width: 400px) {
+  .info {
+    padding: 28px 20px 20px;
+    gap: 12px;
+  }
+  .info h3 {
+    font-size: 21px;
+  }
+  .companion {
+    width: 110px;
+    height: 110px;
+    right: 8px;
+  }
+  .waveButton {
+    left: 14px;
+    bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface {
+    transform: none;
+    transition: none;
+  }
+  .waving .hand {
+    animation: none;
+    transform: rotate(-18deg);
+  }
+}

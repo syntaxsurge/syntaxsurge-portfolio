@@ -9,9 +9,14 @@ import {
   useSyncExternalStore,
 } from "react";
 import { business } from "@/data/business";
+import {
+  getReducedMotion,
+  getVisibility,
+  subscribeMotionPreference,
+  subscribeVisibility,
+} from "@/lib/motion";
 import { PlayIcon } from "./icons";
 
-const motionQuery = "(prefers-reduced-motion: reduce)";
 const particles = Array.from({ length: 20 }, (_, index) => ({
   "--particle-x": `${8 + ((index * 37) % 84)}%`,
   "--particle-y": `${8 + ((index * 23) % 83)}%`,
@@ -22,29 +27,6 @@ const particles = Array.from({ length: 20 }, (_, index) => ({
   "--particle-dy": `${-8 - (index % 5) * 3}px`,
   "--particle-opacity": 0.25 + (index % 4) * 0.08,
 }));
-
-function subscribeMotionPreference(onChange: () => void) {
-  if (typeof window.matchMedia !== "function") return () => {};
-  const preference = window.matchMedia(motionQuery);
-  preference.addEventListener("change", onChange);
-  return () => preference.removeEventListener("change", onChange);
-}
-
-function getReducedMotion() {
-  return (
-    typeof window.matchMedia !== "function" ||
-    window.matchMedia(motionQuery).matches
-  );
-}
-
-function subscribeVisibility(onChange: () => void) {
-  document.addEventListener("visibilitychange", onChange);
-  return () => document.removeEventListener("visibilitychange", onChange);
-}
-
-function getVisibility() {
-  return document.visibilityState === "visible";
-}
 
 export function HeroPortrait() {
   const reducedMotion = useSyncExternalStore(

@@ -316,7 +316,7 @@ check(
   },
 );
 check(
-  "Theme is initialized before content and both controls are available",
+  "Theme initializes before content with one accessible icon toggle",
   () => {
     const bodyStart = homepage.indexOf("<body");
     const initializer = homepage.indexOf('<script id="syntaxsurge-theme-init"');
@@ -324,9 +324,89 @@ check(
     assert.ok(initializer < homepage.indexOf('class="skip-link"'));
     const head = homepage.match(/<head>([\s\S]*?)<\/head>/)?.[1] ?? "";
     assert.ok(!head.includes("syntaxsurge-theme"));
-    assert.ok(homepage.includes('aria-label="Color theme"'));
-    assert.ok(homepage.includes('data-mode="light"'));
-    assert.ok(homepage.includes('data-mode="dark"'));
+    const header = homepage.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
+    assert.ok(header);
+    const buttons = [
+      ...header.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g),
+    ];
+    assert.equal(buttons.length, 2);
+    const toggle = buttons.find((button) =>
+      button[0].includes('aria-label="Toggle color theme"'),
+    );
+    assert.ok(toggle);
+    assert.equal((toggle[1].match(/<svg\b/g) || []).length, 2);
+    assert.equal(plain(toggle[1]).trim(), "");
+    assert.ok(!header.includes('aria-label="Color theme"'));
+    assert.ok(!header.includes('data-mode="light"'));
+    assert.ok(!header.includes('data-mode="dark"'));
+  },
+);
+check(
+  "Decorative work motion has a local poster without eager video loading",
+  () => {
+    const video = homepage.match(/<video\b[^>]*>/)?.[0];
+    assert.ok(video);
+    assert.ok(video.includes('aria-hidden="true"'));
+    assert.ok(video.includes('preload="none"'));
+    assert.ok(video.includes(`poster="${business.workMotion.poster}"`));
+    assert.ok(/\bmuted=""/.test(video));
+    assert.ok(/\bloop=""/.test(video));
+    assert.ok(/\bplaysInline=""/i.test(video));
+    assert.ok(!/\bsrc=/.test(video));
+    assert.ok(!/\bautoplay=/i.test(video));
+    assert.ok(imageSources(homepage).includes(business.workMotion.poster));
+    const poster = readFileSync(
+      resolve(root, "public", business.workMotion.poster.slice(1)),
+    );
+    const clip = readFileSync(
+      resolve(root, "public", business.workMotion.video.slice(1)),
+    );
+    assert.equal(poster.subarray(8, 12).toString(), "WEBP");
+    assert.equal(clip.subarray(4, 8).toString(), "ftyp");
+    assert.ok(clip.length < 2_000_000);
+  },
+);
+check(
+  "Header has native icon links and a controlled navigation disclosure",
+  () => {
+    const htmlPages = [
+      homepage,
+      recognition,
+      ...projects.map((project) => read(`work/${project.id}.html`)),
+      ...wrapItUpPaths
+        .filter((path) => path !== wrapItUp.path)
+        .map((path) => read(`${path.slice(1)}.html`)),
+    ];
+    for (const html of htmlPages) {
+      const header = html.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
+      assert.ok(header);
+      const navigation = header.match(
+        /<nav\b[^>]*aria-label="Main navigation"[^>]*>([\s\S]*?)<\/nav>/,
+      );
+      const menu = header.match(
+        /<button\b[^>]*aria-label="Open navigation"[^>]*>/,
+      )?.[0];
+      assert.ok(navigation && menu);
+      const navigationId = navigation[0].match(/\bid="([^"]+)"/)?.[1];
+      assert.ok(navigationId);
+      assert.ok(menu.includes(`aria-controls="${navigationId}"`));
+      assert.ok(menu.includes('aria-expanded="false"'));
+      assert.ok(navigation[0].includes('data-open="false"'));
+      assert.ok(!/\shidden=/.test(navigation[0].split(">")[0]));
+      const links = [...navigation[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)];
+      assert.equal(links.length, 4);
+      for (const [index, href] of [
+        "/#services",
+        "/#work",
+        "/#team",
+        "#contact",
+      ].entries()) {
+        assert.ok(links[index][0].includes(`href="${href}"`));
+        assert.ok(links[index][1].includes("<svg"));
+        assert.ok(links[index][1].includes('aria-hidden="true"'));
+      }
+      assert.ok(!header.includes(business.resumeHref));
+    }
   },
 );
 check("Every recognition has local media and a direct YouTube link", () => {

@@ -39,6 +39,14 @@ Suggested image descriptions:
 
 The three original, code-native SVG illustrations are `public/images/service-websites.svg`, `public/images/service-software.svg`, and `public/images/service-automation.svg`. `business.services[].image` selects each local asset. These are illustrations of service concepts, not screenshots of customer applications or evidence of measured business outcomes.
 
+## Work sculpture and section interactions
+
+`business.workMotion` selects `public/images/work-sculpture.webp` and `public/videos/work-sculpture.mp4`. The 1344 × 752 still was generated with Higgsfield GPT Image 2.5, job `10be034f-a0e5-4d6b-9a3b-35737afe6993`. Seedance 2.5 job `11cda3e5-c60d-4543-af10-a43a31e5a0ea` uses that same completed image as both `start_image` and `end_image`, with a locked camera, gentle orbital motion, eight-second duration, and no generated audio. The sculpture is decorative abstract artwork, not a product screen, logo, or evidence of customer work.
+
+The local WebP poster is 39,422 bytes. The eight-second loop is optimized to a 960 × 540 H.264 MP4 at 24fps, 180,815 bytes, with no audio and fast-start metadata. It is delivered locally, with no Higgsfield request at runtime. Sampled first/last frame mean absolute RGB difference is 1.4/255 after optimization; the contact sheet was visually inspected. The poster remains visible until native video playback starts. The video source is assigned only after the container enters view while motion is permitted; offscreen/hidden/reduced-motion states pause playback. Visitors can pause playback, and a rejected autoplay attempt leaves a manual retry.
+
+The founder's bracket companion, registration shield, section entrances, and contact spark are original code-native SVG/CSS artwork. They are decorative, with finite animations and reduced-motion alternatives. The supplied founder photograph and original certificate remain unchanged. The contact spark is a visual interaction; project inquiries use the visible email or LinkedIn links.
+
 ## Fonts
 
 The heading font is [Space Grotesk from its official source repository](https://github.com/floriankarsten/space-grotesk), stored locally as `public/fonts/space-grotesk-variable.woff2` with its SIL Open Font License in `public/fonts/OFL.txt`. Next's local-font loader includes the font in the site's generated static assets. Geist body text and Geist Mono use Next's self-hosted font delivery; the visitor does not fetch a third-party font stylesheet. Typography settings live in the layout and shared stylesheet.
