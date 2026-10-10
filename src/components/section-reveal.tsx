@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { getMotionEnabledSnapshot, subscribeMotion } from "@/lib/motion";
 import styles from "./section-reveal.module.css";
 
 type RevealVariant = "rise" | "slide" | "orbit" | "stamp";
@@ -19,20 +20,14 @@ export function SectionReveal({
 
   useEffect(() => {
     const element = container.current;
-    if (
-      !element ||
-      typeof IntersectionObserver === "undefined" ||
-      typeof window.matchMedia !== "function"
-    )
-      return;
+    if (!element || typeof IntersectionObserver === "undefined") return;
 
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let started = false;
     const finish = () => {
       if (started) setState("finished");
     };
     const handlePreference = () => {
-      if (preference.matches) finish();
+      if (!getMotionEnabledSnapshot()) finish();
     };
     const handleVisibility = () => {
       if (document.hidden) finish();
@@ -42,17 +37,21 @@ export function SectionReveal({
         if (started || !entry.isIntersecting) return;
         started = true;
         observer.disconnect();
-        setState(preference.matches || document.hidden ? "finished" : "active");
+        setState(
+          !getMotionEnabledSnapshot() || document.hidden
+            ? "finished"
+            : "active",
+        );
       },
       { threshold: 0.12 },
     );
 
     observer.observe(element);
-    preference.addEventListener("change", handlePreference);
+    const unsubscribeMotion = subscribeMotion(handlePreference);
     document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       observer.disconnect();
-      preference.removeEventListener("change", handlePreference);
+      unsubscribeMotion();
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);

@@ -1,45 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { business } from "@/data/business";
-import {
-  getReducedMotion,
-  getVisibility,
-  subscribeMotionPreference,
-  subscribeVisibility,
-} from "@/lib/motion";
+import { useVisibleMotion } from "@/lib/use-visible-motion";
 import styles from "./work-sculpture.module.css";
 
 export function WorkSculpture() {
-  const reducedMotion = useSyncExternalStore(
-    subscribeMotionPreference,
-    getReducedMotion,
-    () => true,
-  );
-  const visible = useSyncExternalStore(
-    subscribeVisibility,
-    getVisibility,
-    () => false,
-  );
-  const container = useRef<HTMLDivElement>(null);
+  const { ref: container, running: canRun } = useVisibleMotion<HTMLDivElement>();
   const video = useRef<HTMLVideoElement>(null);
   const mounted = useRef(false);
   const pending = useRef(false);
   const blocked = useRef(false);
   const generation = useRef(0);
-  const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [userPaused, setUserPaused] = useState(false);
+  const [playRejected, setPlayRejected] = useState(false);
   const [errored, setErrored] = useState(false);
-  const canRun = !reducedMotion && visible && inView && !userPaused;
 
   const pause = useCallback(() => {
     generation.current += 1;
@@ -59,6 +36,7 @@ export function WorkSculpture() {
       blocked.current = true;
       element.pause();
       setPlaying(false);
+      setPlayRejected(true);
     };
 
     try {
@@ -83,38 +61,14 @@ export function WorkSculpture() {
   }, []);
 
   useEffect(() => {
-    const element = container.current;
-    if (!element || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.15 },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
     if (canRun && !errored) play();
     else pause();
   }, [canRun, errored, pause, play]);
 
-  function toggle() {
-    if (playing) {
-      setUserPaused(true);
-      pause();
-      return;
-    }
-
-    setUserPaused(false);
+  function retry() {
+    if (!canRun || errored || !video.current?.getAttribute("src")) return;
     blocked.current = false;
-    if (
-      !reducedMotion &&
-      visible &&
-      inView &&
-      !errored &&
-      video.current?.getAttribute("src")
-    )
-      play();
+    play();
   }
 
   return (
@@ -135,12 +89,13 @@ export function WorkSculpture() {
           src={loaded || canRun ? business.workMotion.video : undefined}
           poster={business.workMotion.poster}
           muted
+          autoPlay
           loop
           playsInline
           preload="none"
           tabIndex={-1}
           aria-hidden="true"
-          data-playing={playing && !reducedMotion}
+          data-playing={playing && canRun}
           onLoadStart={() => setLoaded(true)}
           onPlaying={() => {
             if (!canRun || errored) {
@@ -148,6 +103,7 @@ export function WorkSculpture() {
               return;
             }
             blocked.current = false;
+            setPlayRejected(false);
             setPlaying(true);
           }}
           onPause={() => setPlaying(false)}
@@ -158,9 +114,9 @@ export function WorkSculpture() {
           }}
         />
       </div>
-      {!reducedMotion && !errored && (
-        <button className={styles.control} type="button" onClick={toggle}>
-          {playing ? "Pause sculpture" : "Play sculpture"}
+      {playRejected && canRun && !errored && (
+        <button className={styles.control} type="button" onClick={retry}>
+          Play video
         </button>
       )}
     </div>

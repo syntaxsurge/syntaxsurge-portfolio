@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { type KeyboardEvent, useId, useRef, useState } from "react";
 import { business } from "@/data/business";
+import { useVisibleMotion } from "@/lib/use-visible-motion";
 import { Arrow } from "./icons";
 import styles from "./service-showcase.module.css";
 
 export function ServiceShowcase() {
+  const { ref: container, running } = useVisibleMotion<HTMLDivElement>();
   const [selected, setSelected] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const id = useId();
@@ -41,7 +43,7 @@ export function ServiceShowcase() {
   }
 
   return (
-    <div className={styles.showcase}>
+    <div className={styles.showcase} ref={container} data-running={running}>
       <div
         className={styles.tabs}
         role="tablist"

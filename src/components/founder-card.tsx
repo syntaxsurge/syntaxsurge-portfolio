@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { type PointerEvent, useEffect, useRef, useState } from "react";
+import { type PointerEvent, useEffect, useRef } from "react";
 import { business } from "@/data/business";
+import { getMotionEnabledSnapshot } from "@/lib/motion";
+import { useVisibleMotion } from "@/lib/use-visible-motion";
 import { Arrow } from "./icons";
 import styles from "./founder-card.module.css";
 
 export function FounderCard() {
+  const { ref, running } = useVisibleMotion<HTMLElement>();
   const surface = useRef<HTMLDivElement>(null);
-  const [wave, setWave] = useState(0);
-  const [waving, setWaving] = useState(false);
 
   function resetTilt() {
     surface.current?.style.setProperty("--tilt-x", "0deg");
@@ -19,8 +20,8 @@ export function FounderCard() {
   function tilt(event: PointerEvent<HTMLElement>) {
     if (
       event.pointerType !== "mouse" ||
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !running ||
+      !getMotionEnabledSnapshot() ||
       event.currentTarget.contains(document.activeElement)
     ) {
       return;
@@ -41,25 +42,13 @@ export function FounderCard() {
   }
 
   useEffect(() => {
-    if (typeof window.matchMedia !== "function") return;
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handlePreference = () => {
-      if (preference.matches) resetTilt();
-    };
-    const handleVisibility = () => {
-      if (document.hidden) resetTilt();
-    };
-    preference.addEventListener("change", handlePreference);
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => {
-      preference.removeEventListener("change", handlePreference);
-      document.removeEventListener("visibilitychange", handleVisibility);
-    };
-  }, []);
+    if (!running) resetTilt();
+  }, [running]);
 
   return (
     <article
       className={styles.card}
+      ref={ref}
       onPointerMove={tilt}
       onPointerLeave={resetTilt}
       onPointerCancel={resetTilt}
@@ -75,24 +64,12 @@ export function FounderCard() {
             height={business.founder.portrait.height}
             sizes="(max-width: 700px) 100vw, 440px"
           />
-          <button
-            className={styles.waveButton}
-            type="button"
-            aria-label="Make the code companion wave"
-            onClick={() => {
-              setWave((current) => current + 1);
-              setWaving(true);
-            }}
+          <div
+            className={styles.companion}
+            data-running={running}
+            aria-hidden="true"
           >
-            Wave <span aria-hidden="true">↗</span>
-          </button>
-          <div className={styles.companion} aria-hidden="true">
-            <svg
-              viewBox="0 0 144 144"
-              fill="none"
-              className={waving ? styles.waving : undefined}
-              key={wave}
-            >
+            <svg viewBox="0 0 144 144" fill="none">
               <ellipse
                 cx="72"
                 cy="133"
@@ -149,12 +126,7 @@ export function FounderCard() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <g
-                className={styles.hand}
-                onAnimationEnd={(event) => {
-                  if (event.target === event.currentTarget) setWaving(false);
-                }}
-              >
+              <g className={styles.hand}>
                 <path
                   d="M100 97L117 82L120 69"
                   stroke="currentColor"

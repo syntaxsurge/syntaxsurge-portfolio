@@ -54,10 +54,3 @@
 .control:hover {
   border-color: var(--ink);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .video {
-    opacity: 0;
-    transition: none;
-  }
-}

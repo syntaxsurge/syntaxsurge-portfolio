@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { themeInitScript } from "@/lib/theme";
+import { motionInitScript } from "@/lib/motion";
 import { siteUrl } from "@/lib/site";
 import { business } from "@/data/business";
 const sans = Geist({
@@ -62,6 +63,10 @@ export default function RootLayout({
         <script
           id="syntaxsurge-theme-init"
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
+        <script
+          id="syntaxsurge-motion-init"
+          dangerouslySetInnerHTML={{ __html: motionInitScript }}
         />
         <a className="skip-link" href="#main">
           Skip to content

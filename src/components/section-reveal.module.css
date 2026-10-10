@@ -64,10 +64,3 @@
     transform: none;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .reveal[data-reveal-state="active"] {
-    animation: none;
-    transform: none;
-  }
-}

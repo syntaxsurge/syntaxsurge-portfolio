@@ -1549,34 +1549,6 @@ img {
   animation: particle-drift var(--particle-duration) ease-in-out
     var(--particle-delay) infinite alternate;
 }
-.hero-portrait-control {
-  position: absolute;
-  z-index: 2;
-  left: 16px;
-  bottom: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  min-height: 44px;
-  border: 1px solid #dce2ef;
-  border-radius: 30px;
-  background: #fffffff2;
-  color: #172038;
-  font-size: 16px;
-  font-weight: 700;
-  box-shadow: 0 3px 15px #1720380c;
-}
-.hero-portrait-control svg {
-  width: 16px;
-  height: 16px;
-}
-.hero-portrait-control:hover {
-  background: #fff;
-}
-.hero-portrait-control:focus-visible {
-  outline-color: #214fd4;
-}
 
 .contact-links {
   display: flex;
@@ -1617,10 +1589,6 @@ img {
   }
   .hero-portrait > img {
     object-position: 55% 45%;
-  }
-  .hero-portrait-control {
-    left: 12px;
-    bottom: 12px;
   }
 
   .contact-email {
@@ -1709,22 +1677,35 @@ img {
   height: 20px;
 }
 .fact-sculpture {
+  --cube-size: 78px;
+  --cube-depth: 39px;
   height: 150px;
   display: grid;
   place-items: center;
   perspective: 600px;
 }
 .wire-cube {
-  width: 78px;
-  height: 78px;
+  width: var(--cube-size);
+  height: var(--cube-size);
   position: relative;
   transform-style: preserve-3d;
   transform: rotateX(-24deg) rotateY(35deg);
-  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: cube-orbit 16s linear infinite;
+  animation-play-state: paused;
 }
-.portfolio-facts:hover .wire-cube,
-.portfolio-facts:focus-within .wire-cube {
-  transform: rotateX(-40deg) rotateY(125deg);
+.portfolio-facts[data-running="true"] .wire-cube {
+  animation-play-state: running;
+}
+@keyframes cube-orbit {
+  0% {
+    transform: rotateX(-24deg) rotateY(35deg);
+  }
+  50% {
+    transform: rotateX(-34deg) rotateY(215deg);
+  }
+  100% {
+    transform: rotateX(-24deg) rotateY(395deg);
+  }
 }
 .wire-cube i {
   position: absolute;
@@ -1733,22 +1714,22 @@ img {
   background: color-mix(in srgb, var(--brand) 6%, transparent);
 }
 .wire-cube i:nth-child(1) {
-  transform: translateZ(39px);
+  transform: translateZ(var(--cube-depth));
 }
 .wire-cube i:nth-child(2) {
-  transform: rotateY(180deg) translateZ(39px);
+  transform: rotateY(180deg) translateZ(var(--cube-depth));
 }
 .wire-cube i:nth-child(3) {
-  transform: rotateY(90deg) translateZ(39px);
+  transform: rotateY(90deg) translateZ(var(--cube-depth));
 }
 .wire-cube i:nth-child(4) {
-  transform: rotateY(-90deg) translateZ(39px);
+  transform: rotateY(-90deg) translateZ(var(--cube-depth));
 }
 .wire-cube i:nth-child(5) {
-  transform: rotateX(90deg) translateZ(39px);
+  transform: rotateX(90deg) translateZ(var(--cube-depth));
 }
 .wire-cube i:nth-child(6) {
-  transform: rotateX(-90deg) translateZ(39px);
+  transform: rotateX(-90deg) translateZ(var(--cube-depth));
 }
 .team-recognition {
   margin-top: 12px;
@@ -1775,7 +1756,10 @@ img {
     margin-bottom: 44px;
   }
   .fact-sculpture {
-    display: none;
+    --cube-size: 48px;
+    --cube-depth: 24px;
+    grid-column: 1 / -1;
+    height: 96px;
   }
   .fact-count {
     font-size: 64px;
@@ -1803,14 +1787,50 @@ img {
   html {
     scroll-behavior: auto;
   }
-  .certificate-preview:hover,
-  .certificate-preview:focus-visible {
-    transform: none;
-  }
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion="playing"]) *,
+  :root:not([data-motion="playing"]) *::before,
+  :root:not([data-motion="playing"]) *::after {
     transition: none !important;
     animation: none !important;
   }
+}
+:root[data-motion="paused"] *,
+:root[data-motion="paused"] *::before,
+:root[data-motion="paused"] *::after {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  font-weight: 700;
+}
+.motion-toggle:hover {
+  color: #ffffff;
+}
+.footer button:focus-visible {
+  outline-color: #a9c3ff;
+}
+.support-contact-link {
+  max-width: 100%;
+  margin-top: 24px;
+  padding: 14px 18px;
+  text-align: left;
+}
+.support-contact-link > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.support-contact-link > span > span {
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  font-weight: 600;
 }

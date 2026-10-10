@@ -1,21 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import {
-  type CSSProperties,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { type CSSProperties } from "react";
 import { business } from "@/data/business";
-import {
-  getReducedMotion,
-  getVisibility,
-  subscribeMotionPreference,
-  subscribeVisibility,
-} from "@/lib/motion";
-import { PlayIcon } from "./icons";
+import { useVisibleMotion } from "@/lib/use-visible-motion";
 
 const particles = Array.from({ length: 20 }, (_, index) => ({
   "--particle-x": `${8 + ((index * 37) % 84)}%`,
@@ -29,31 +17,7 @@ const particles = Array.from({ length: 20 }, (_, index) => ({
 }));
 
 export function HeroPortrait() {
-  const reducedMotion = useSyncExternalStore(
-    subscribeMotionPreference,
-    getReducedMotion,
-    () => true,
-  );
-  const visible = useSyncExternalStore(
-    subscribeVisibility,
-    getVisibility,
-    () => false,
-  );
-  const container = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  const [userPaused, setUserPaused] = useState(false);
-  const running = !reducedMotion && visible && inView && !userPaused;
-
-  useEffect(() => {
-    const element = container.current;
-    if (!element || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.1 },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
+  const { ref: container, running } = useVisibleMotion<HTMLDivElement>();
 
   return (
     <div className="hero-portrait" ref={container}>
@@ -66,51 +30,20 @@ export function HeroPortrait() {
         preload
         unoptimized
       />
-      {!reducedMotion && (
-        <>
-          <div
-            className="hero-particles"
-            aria-hidden="true"
-            data-running={running}
-          >
-            {particles.map((properties, index) => (
-              <span
-                className="hero-particle"
-                key={index}
-                style={
-                  {
-                    ...properties,
-                    animationPlayState: running ? "running" : "paused",
-                  } as CSSProperties
-                }
-              />
-            ))}
-          </div>
-          <button
-            className="hero-portrait-control"
-            type="button"
-            onClick={() => setUserPaused((paused) => !paused)}
-          >
-            {userPaused ? (
-              <PlayIcon />
-            ) : (
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                aria-hidden="true"
-              >
-                <path d="M8 5v14m8-14v14" />
-              </svg>
-            )}
-            {userPaused ? "Play animation" : "Pause animation"}
-          </button>
-        </>
-      )}
+      <div className="hero-particles" aria-hidden="true" data-running={running}>
+        {particles.map((properties, index) => (
+          <span
+            className="hero-particle"
+            key={index}
+            style={
+              {
+                ...properties,
+                animationPlayState: running ? "running" : "paused",
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
     </div>
   );
 }

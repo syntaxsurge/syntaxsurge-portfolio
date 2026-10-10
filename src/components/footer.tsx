@@ -2,7 +2,7 @@ import Link from "next/link";
 import { business } from "@/data/business";
 import { Arrow, Github } from "./icons";
 import { SectionReveal } from "./section-reveal";
-import { LaunchSpark } from "./launch-spark";
+import { MotionToggle } from "./motion-toggle";
 
 export function Footer() {
   return (
@@ -12,7 +12,6 @@ export function Footer() {
           <h2 id="contact-title" className="contact-title">
             What’s your next idea?
           </h2>
-          <LaunchSpark />
         </SectionReveal>
         <div className="contact-actions">
           <p className="contact-copy">Have a project in mind? Email Jade.</p>
@@ -44,6 +43,7 @@ export function Footer() {
             <span>© {new Date().getFullYear()}</span>
           </Link>
           <div>
+            <MotionToggle />
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
             <a href="/#work">All projects</a>
             <Link href="/recognition">Recognition</Link>

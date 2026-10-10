@@ -7,6 +7,7 @@ import { awardMedia } from "../src/data/award-media.ts";
 import { projectPreviews } from "../src/data/project-media.ts";
 import { parseSiteOrigin, siteHref } from "../src/lib/site.ts";
 import { wrapItUp, wrapItUpPaths } from "../src/data/wrap-it-up.ts";
+import { motionInitScript } from "../src/lib/motion.ts";
 const root = process.cwd();
 const app = resolve(root, ".next/server/app");
 const read = (file) => readFileSync(resolve(app, file), "utf8");
@@ -353,7 +354,7 @@ check(
     assert.ok(/\bloop=""/.test(video));
     assert.ok(/\bplaysInline=""/i.test(video));
     assert.ok(!/\bsrc=/.test(video));
-    assert.ok(!/\bautoplay=/i.test(video));
+    assert.ok(/\bautoplay=""/i.test(video));
     assert.ok(imageSources(homepage).includes(business.workMotion.poster));
     const poster = readFileSync(
       resolve(root, "public", business.workMotion.poster.slice(1)),
@@ -364,6 +365,50 @@ check(
     assert.equal(poster.subarray(8, 12).toString(), "WEBP");
     assert.equal(clip.subarray(4, 8).toString(), "ftyp");
     assert.ok(clip.length < 2_000_000);
+  },
+);
+check(
+  "Automatic site motion has one persistent pause action and no launch or wave buttons",
+  () => {
+    const bodyStart = homepage.indexOf("<body");
+    const initializer = homepage.indexOf(
+      '<script id="syntaxsurge-motion-init"',
+    );
+    assert.ok(initializer > bodyStart);
+    assert.ok(initializer < homepage.indexOf('class="skip-link"'));
+    const script = homepage.match(
+      /<script\b[^>]*id="syntaxsurge-motion-init"[^>]*>([\s\S]*?)<\/script>/,
+    )?.[1];
+    assert.equal(script, motionInitScript);
+    const htmlPages = [
+      homepage,
+      recognition,
+      ...projects.map((project) => read(`work/${project.id}.html`)),
+      ...wrapItUpPaths
+        .filter((path) => path !== wrapItUp.path)
+        .map((path) => read(`${path.slice(1)}.html`)),
+    ];
+    for (const html of htmlPages) {
+      const footer = html.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/)?.[1];
+      assert.ok(footer);
+      const controls = [
+        ...footer.matchAll(
+          /<button\b[^>]*class="motion-toggle"[^>]*>([\s\S]*?)<\/button>/g,
+        ),
+      ];
+      assert.equal(controls.length, 1);
+      assert.equal(plain(controls[0][1]).trim(), "Pause animations");
+      assert.ok(!/\bLaunch (?:a spark|an idea)\b/.test(plain(footer)));
+    }
+    const homepageButtons = [
+      ...homepage.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g),
+    ];
+    assert.ok(
+      !homepageButtons.some((button) =>
+        plain(button[1]).trim().startsWith("Wave"),
+      ),
+    );
+    assert.ok(!homepage.includes('aria-label="Make the code companion wave"'));
   },
 );
 check(
@@ -503,6 +548,20 @@ check(
       game.includes("not yet a public App Store or Google Play release"),
     );
     assert.ok(support.includes(wrapItUp.supportEmail));
+    const supportContact = support.match(
+      /<section\b[^>]*aria-labelledby="support-contact"[^>]*>([\s\S]*?)<\/section>/,
+    )?.[1];
+    assert.ok(supportContact);
+    const supportLinks = [
+      ...supportContact.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g),
+    ];
+    assert.equal(supportLinks.length, 1);
+    assert.ok(supportLinks[0][0].includes(`href="${wrapItUp.contactUrl}"`));
+    assert.ok(plain(supportLinks[0][1]).includes(wrapItUp.contactLabel));
+    assert.ok(plain(supportLinks[0][1]).includes(wrapItUp.supportEmail));
+    assert.ok(!supportLinks[0][0].includes(business.email));
+    assert.ok(plain(supportContact).includes(wrapItUp.version));
+    assert.ok(plain(supportContact).includes("TestFlight"));
     assert.ok(support.includes("<details"));
     assert.ok(support.includes("cannot restore a local save from a server"));
     for (const html of [game, support, privacy]) {

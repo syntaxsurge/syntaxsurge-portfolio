@@ -1,25 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { awards, projects } from "@/data/portfolio";
 import { Arrow } from "./icons";
+import { getMotionEnabledSnapshot, subscribeMotion } from "@/lib/motion";
+import { useVisibleMotion } from "@/lib/use-visible-motion";
 
 const totals = [projects.length, awards.length];
 
 export function PortfolioFacts() {
-  const container = useRef<HTMLDivElement>(null);
+  const { ref: container, running } = useVisibleMotion<HTMLDivElement>();
   const [counts, setCounts] = useState(totals);
 
   useEffect(() => {
     const element = container.current;
-    if (
-      !element ||
-      typeof IntersectionObserver === "undefined" ||
-      typeof window.matchMedia !== "function"
-    )
-      return;
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!element || typeof IntersectionObserver === "undefined") return;
     let frame = 0;
     let started = false;
     const finish = () => {
@@ -27,7 +23,7 @@ export function PortfolioFacts() {
       setCounts(totals);
     };
     const handlePreference = () => {
-      if (preference.matches) finish();
+      if (!getMotionEnabledSnapshot()) finish();
     };
     const handleVisibility = () => {
       if (document.hidden) finish();
@@ -40,7 +36,7 @@ export function PortfolioFacts() {
         }
         if (started) return;
         started = true;
-        if (preference.matches || document.hidden) return;
+        if (!getMotionEnabledSnapshot() || document.hidden) return;
         const start = performance.now();
         const tick = (now: number) => {
           const progress = Math.min((now - start) / 900, 1);
@@ -53,18 +49,22 @@ export function PortfolioFacts() {
       { threshold: 0.35 },
     );
     observer.observe(element);
-    preference.addEventListener("change", handlePreference);
+    const unsubscribeMotion = subscribeMotion(handlePreference);
     document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       observer.disconnect();
       cancelAnimationFrame(frame);
-      preference.removeEventListener("change", handlePreference);
+      unsubscribeMotion();
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, []);
+  }, [container]);
 
   return (
-    <div className="portfolio-facts shell" ref={container}>
+    <div
+      className="portfolio-facts shell"
+      ref={container}
+      data-running={running}
+    >
       <a className="portfolio-fact" href="#work">
         <span className="sr-only">{totals[0]} projects. Explore the work.</span>
         <span className="fact-count" aria-hidden="true">
