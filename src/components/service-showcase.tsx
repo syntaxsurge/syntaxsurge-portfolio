@@ -9,30 +9,25 @@ import styles from "./service-showcase.module.css";
 
 export function ServiceShowcase() {
   const container = useRef<HTMLDivElement>(null);
-  const navigation = useRef<HTMLElement>(null);
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
     const element = container.current;
-    const nav = navigation.current;
-    if (!element || !nav) return;
+    if (!element) return;
     const panels = Array.from(element.querySelectorAll<HTMLElement>("article"));
     let frame = 0;
 
     function update() {
       frame = 0;
       const bounds = panels.map((panel) => panel.getBoundingClientRect());
-      const navBounds = nav!.getBoundingClientRect();
-      // On phones the sticky service links sit above, rather than beside, the cards.
-      const overlaps =
-        getComputedStyle(nav!).position === "sticky" &&
-        navBounds.right > bounds[0].left;
+      const topPadding =
+        Number.parseFloat(
+          getComputedStyle(document.documentElement).scrollPaddingTop,
+        ) || 0;
       const readingLine = Math.min(
         window.innerHeight - 24,
-        Math.max(
-          window.innerHeight * 0.45,
-          overlaps ? navBounds.bottom + 24 : 0,
-        ),
+        topPadding +
+          Math.min(120, Math.max(0, window.innerHeight - topPadding) * 0.2),
       );
       let current = 0;
       for (const [index, boundsOfPanel] of bounds.entries()) {
@@ -64,7 +59,7 @@ export function ServiceShowcase() {
 
   return (
     <div className={styles.showcase} ref={container}>
-      <nav className={styles.navigation} ref={navigation} aria-label="Services">
+      <nav className={styles.navigation} aria-label="Services">
         {business.services.map((service, index) => (
           <a
             className={styles.serviceLink}
@@ -125,7 +120,7 @@ function ServiceCard({
             width={400}
             height={250}
             alt=""
-            sizes="(max-width: 700px) 80vw, 520px"
+            sizes="(max-width: 700px) 40vw, 360px"
             unoptimized
           />
         </div>
@@ -136,11 +131,11 @@ function ServiceCard({
           <p>{service.description}</p>
         </div>
         <a
-          className={`button button-dark ${styles.action}`}
+          className={styles.action}
           href={`${business.links.email}?subject=${encodeURIComponent(`Let's talk about ${service.title.toLowerCase()}`)}`}
-          aria-label={`Let’s build ${service.title.toLowerCase()}`}
+          aria-label={`Let’s talk about ${service.title.toLowerCase()}`}
         >
-          Let’s build it <Arrow diagonal />
+          Let’s talk <Arrow diagonal />
         </a>
       </div>
     </article>

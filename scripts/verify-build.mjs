@@ -86,7 +86,7 @@ check(
     assert.ok(!header.includes(`href="${business.resumeHref}"`));
     assert.ok(!plain(header).includes("Download résumé"));
     const hero = homepage.match(
-      /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
+      /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
     )?.[1];
     assert.ok(hero && hero.includes(`href="${business.resumeHref}"`));
     const resume = readFileSync(
@@ -118,7 +118,7 @@ check(
         /<article\b[^>]*id="service-[^"]+"[^>]*>([\s\S]*?)<\/article>/g,
       ),
     ];
-    assert.equal(business.services.length, 3);
+    assert.equal(business.services.length, 6);
     assert.ok(nav);
     const links = [...nav.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)];
     assert.equal(links.length, business.services.length);
@@ -131,7 +131,7 @@ check(
     assert.ok(links[0][0].includes('aria-current="location"'));
     assert.equal(
       new Set(business.services.map((service) => service.id)).size,
-      3,
+      business.services.length,
     );
     const sources = imageSources(homepage);
     for (const [index, service] of business.services.entries()) {
@@ -155,7 +155,7 @@ check(
     }
     assert.equal(
       new Set(business.services.map((service) => service.image)).size,
-      3,
+      business.services.length,
     );
     for (const service of business.services) {
       assert.ok(service.image.startsWith("/images/"));
@@ -300,29 +300,34 @@ check(
     assert.equal(redirect.statusCode, 308);
   },
 );
-check(
-  "Hero presents the supplied workspace photograph without a runtime video",
-  () => {
-    const hero = homepage.match(
-      /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
-    )?.[1];
-    assert.ok(hero);
-    assert.ok(hero.includes('class="hero-portrait"'));
-    const sources = imageSources(hero);
-    assert.ok(sources.includes(business.heroPortrait.src));
-    assert.ok(hero.includes(business.heroPortrait.alt));
-    assert.ok(!sources.includes(business.logo.src));
-    assert.equal((hero.match(/<video\b/g) || []).length, 0);
-    const photograph = readFileSync(
-      resolve(root, "public", business.heroPortrait.src.slice(1)),
-    );
-    assert.equal(photograph.subarray(8, 12).toString(), "WEBP");
-    assert.ok(!existsSync(resolve(root, "public/videos/hero-loop.mp4")));
-    assert.ok(
-      !existsSync(resolve(root, "public/images/hero-loop-poster.webp")),
-    );
-  },
-);
+check("Hero presents a local, lazy looping background behind direct actions", () => {
+  const hero = homepage.match(
+    /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
+  )?.[1];
+  assert.ok(hero);
+  assert.ok(hero.includes('data-background="hero"'));
+  assert.ok(hero.indexOf("<video") < hero.indexOf('class="hero-layout shell"'));
+  const video = hero.match(/<video\b[^>]*>/)?.[0];
+  assert.ok(video);
+  assert.ok(video.includes(`poster="${business.heroMotion.poster}"`));
+  assert.ok(!/\bsrc=/.test(video));
+  for (const property of ["muted", "loop", "autoPlay", "playsInline"]) {
+    assert.ok(new RegExp(`\\b${property}=""`, "i").test(video));
+  }
+  assert.ok(video.includes('preload="none"'));
+  assert.ok(video.includes('aria-hidden="true"'));
+  assert.ok(video.includes('tabindex="-1"'));
+  assert.ok(imageSources(hero).includes(business.heroMotion.poster));
+  assert.ok(!imageSources(hero).includes(business.logo.src));
+  const poster = readFileSync(resolve(root, "public", business.heroMotion.poster.slice(1)));
+  const clip = readFileSync(resolve(root, "public", business.heroMotion.video.slice(1)));
+  assert.equal(poster.subarray(8, 12).toString(), "WEBP");
+  assert.equal(clip.subarray(4, 8).toString(), "ftyp");
+  assert.ok(clip.length < 2_000_000);
+  assert.ok(hero.includes(`href="${business.links.email}"`));
+  assert.ok(hero.includes('href="#work"'));
+  assert.equal((homepage.match(/<video\b/g) || []).length, 2);
+});
 check(
   "Theme initializes before content with one accessible icon toggle",
   () => {
@@ -357,7 +362,7 @@ check(
     )?.[1];
     assert.ok(work);
     assert.ok(work.indexOf("<video") < work.indexOf('class="shell"'));
-    const video = homepage.match(/<video\b[^>]*>/)?.[0];
+    const video = work.match(/<video\b[^>]*>/)?.[0];
     assert.ok(video);
     assert.ok(video.includes('aria-hidden="true"'));
     assert.ok(video.includes('preload="none"'));

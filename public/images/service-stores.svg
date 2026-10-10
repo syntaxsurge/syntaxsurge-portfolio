@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250" fill="none">
+  <title>Online store catalog, cart and checkout illustration</title>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="400" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF1E7"/><stop offset="1" stop-color="#E5E9FF"/></linearGradient></defs>
+  <rect width="400" height="250" rx="18" fill="url(#bg)"/>
+  <circle cx="202" cy="128" r="101" stroke="#D5C8DA" stroke-dasharray="4 7"/>
+  <rect x="54" y="43" width="271" height="177" rx="14" fill="#C8BDD5" opacity=".5"/>
+  <rect x="48" y="35" width="271" height="177" rx="14" fill="#FFF" stroke="#D6C4D4"/>
+  <path d="M48 69h271" stroke="#E9DFE9"/>
+  <circle cx="65" cy="52" r="4" fill="#D56B38"/><circle cx="79" cy="52" r="4" fill="#EAA685"/><circle cx="93" cy="52" r="4" fill="#F5D4C3"/>
+  <rect x="112" y="47" width="155" height="10" rx="5" fill="#EDE8F4"/>
+  <path d="M66 85h92l-6 24H72l-6-24Z" fill="#D56B38"/><path d="M81 85v24m20-24v24m21-24v24m20-24v24" stroke="#FFF1E7" stroke-width="7"/>
+  <rect x="66" y="122" width="66" height="67" rx="9" fill="#FFF1E7"/>
+  <path d="M83 146h31v29H83v-29Zm7 0v-7a8 8 0 0 1 16 0v7" stroke="#D56B38" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="144" y="122" width="66" height="67" rx="9" fill="#F0EDFF"/>
+  <path d="m160 151 17-12 17 12-17 12-17-12Zm0 0v20l17 12 17-12v-20m-17 12v20" stroke="#5145C9" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="226" y="91" width="72" height="98" rx="10" fill="#EEF2FF"/>
+  <path d="M239 110h46M239 127h29" stroke="#C0CDED" stroke-width="5" stroke-linecap="round"/>
+  <rect x="236" y="151" width="52" height="23" rx="6" fill="#285CFF"/>
+  <path d="m255 162 5 5 11-11" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="291" y="29" width="70" height="65" rx="14" fill="#183777"/>
+  <path d="M305 44h7l5 26h25l5-19h-34m9 27h1m14 0h1" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

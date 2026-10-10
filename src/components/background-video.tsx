@@ -2,12 +2,25 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { business } from "@/data/business";
 import { useVisibleMotion } from "@/lib/use-visible-motion";
-import styles from "./work-sculpture.module.css";
+import styles from "./background-video.module.css";
 
-export function WorkSculpture() {
-  const { ref: container, running: canRun } = useVisibleMotion<HTMLDivElement>(0);
+type BackgroundMedia = {
+  poster: string;
+  video: string;
+  width: number;
+  height: number;
+};
+
+export function BackgroundVideo({
+  media,
+  variant,
+}: {
+  media: BackgroundMedia;
+  variant: "hero" | "work";
+}) {
+  const { ref: container, running: canRun } =
+    useVisibleMotion<HTMLDivElement>(0);
   const video = useRef<HTMLVideoElement>(null);
   const mounted = useRef(false);
   const pending = useRef(false);
@@ -72,27 +85,32 @@ export function WorkSculpture() {
   }
 
   return (
-    <div className={styles.sculpture} ref={container}>
+    <div
+      className={`${styles.background} ${styles[variant]}`}
+      ref={container}
+      data-background={variant}
+    >
       {playRejected && canRun && !errored && (
         <button className={styles.control} type="button" onClick={retry}>
-          Play background video
+          Play {variant} background video
         </button>
       )}
       <div className={styles.media} aria-hidden="true">
         <Image
           className={styles.poster}
-          src={business.workMotion.poster}
-          width={business.workMotion.width}
-          height={business.workMotion.height}
+          src={media.poster}
+          width={media.width}
+          height={media.height}
           alt=""
           sizes="100vw"
+          preload={variant === "hero"}
           unoptimized
         />
         <video
           className={styles.video}
           ref={video}
-          src={loaded || canRun ? business.workMotion.video : undefined}
-          poster={business.workMotion.poster}
+          src={loaded || canRun ? media.video : undefined}
+          poster={media.poster}
           muted
           autoPlay
           loop

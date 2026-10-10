@@ -21,11 +21,11 @@ export const business = {
     },
   },
   resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
-  heroPortrait: {
-    src: "/images/syntax-surge-workspace.webp",
-    alt: "A software planning session with a whiteboard and laptops",
-    width: 1200,
-    height: 1600,
+  heroMotion: {
+    poster: "/images/hero-systems.webp",
+    video: "/videos/hero-systems.mp4",
+    width: 1600,
+    height: 905,
   },
   workMotion: {
     poster: "/images/work-sculpture.webp",
@@ -47,20 +47,38 @@ export const business = {
     {
       id: "business-websites",
       title: "Business websites",
-      description: "Turn visitors into your next customers.",
+      description: "Show what you do and help customers get in touch.",
       image: "/images/service-websites.svg",
     },
     {
       id: "custom-software",
       title: "Custom software",
-      description: "Make everyday work simpler.",
+      description: "Tools built around your team’s daily work.",
       image: "/images/service-software.svg",
     },
     {
       id: "ai-automation",
       title: "AI & automation",
-      description: "Give repetitive work a smarter shortcut.",
+      description: "Save time on repetitive tasks with connected workflows.",
       image: "/images/service-automation.svg",
+    },
+    {
+      id: "online-stores",
+      title: "Online stores",
+      description: "Bring your catalog, cart and payments together.",
+      image: "/images/service-stores.svg",
+    },
+    {
+      id: "booking-systems",
+      title: "Booking systems",
+      description: "Appointments and reminders in one place.",
+      image: "/images/service-booking.svg",
+    },
+    {
+      id: "interactive-experiences",
+      title: "Interactive experiences",
+      description: "Games and quizzes for your brand.",
+      image: "/images/service-interactive.svg",
     },
   ],
 };

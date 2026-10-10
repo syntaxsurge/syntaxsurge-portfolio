@@ -6,7 +6,6 @@ Product covers were collected and visually checked on 25 September 2026; supplie
 | --- | --- | --- |
 | `syntaxsurge-logo.jpg` | Original logo supplied by the owner | 640 × 640. Blue lightning bolt and black code brackets on a white background. Copied unchanged; used for business navigation, homepage identity, the social preview, and the self-contained SVG favicon. No redraw, recoloring, or background removal. |
 | `jade-laurence-empleo.jpg` | Original founder photograph supplied by the owner | 1254 × 1254. Jade Laurence Empleo, founder of Syntax Surge. Copied unchanged; displayed in the team section. |
-| `syntax-surge-workspace.webp` | Workspace photograph supplied by the owner | 1200 × 1600, 277,516 bytes. Local WebP derivative showing a software planning session, whiteboard, and laptops. Used as the hero photograph; no staff identities or client engagement are inferred from the scene. |
 | `mc-dental-feature.webp` | Higgsfield GPT Image 2.5 job `80363250-5439-4665-a3ed-cedb538e9c88` | 1600 × 905, 27,420 bytes. Generated clinic concept artwork with a porcelain tooth and abstract appointment/chat/service cards, optimized from the 2688 × 1520 source PNG. It is not a clinic photograph, staff portrait, screenshot, or clinical outcome claim. |
 | `studysoda-cover.webp` | Existing `studyroom/public/media/studysoda-hero.webp`; [StudySoda](https://studysoda.com/) | 1400 × 792. Existing brand artwork: lavender flashcards, a notebook, and a lime soda. Use as a brand cover, not as a screenshot or a claim about product UI. |
 | `kaldi-cover.webp` | Existing `kaldi-rewards/public/images/kaldi-hero.jpg`; [Kaldi project](https://kaldi-rewards.syntaxsurge.com/) | 1400 × 792. Existing generated campaign artwork used by the Kaldi project. It is a stylized project cover, not a documentary photograph of the venue or a claim of merchant endorsement. |
@@ -15,7 +14,7 @@ Product covers were collected and visually checked on 25 September 2026; supplie
 
 The StudySoda, Kaldi, Sipava, and ClipLore cover preparation preserves source proportions and uses WebP quality 86. Originals in neighboring project directories were read only. Public downloads used for those imports are staging material under `.local/asset-source`; they are not needed to serve the business website.
 
-The supplied logo has SHA-256 `e0c615c276f97ff1a6cef7f7283d2971ea36655a4fc4474f764652256abd87a0`, the founder portrait has SHA-256 `9efc402e86751453f163e346a8e38c9c31912d4a9da0f086464f550256a1b3ad`, and the workspace WebP has SHA-256 `13eac44bf977c51acb620117050b6bc4d6aada56863f8af6047346ef7e1ad34e`. The favicon embeds the same logo bytes; the generated social card places that logo beside business copy without altering the source image.
+The supplied logo has SHA-256 `e0c615c276f97ff1a6cef7f7283d2971ea36655a4fc4474f764652256abd87a0`, the founder portrait has SHA-256 `9efc402e86751453f163e346a8e38c9c31912d4a9da0f086464f550256a1b3ad`. The favicon embeds the same logo bytes; the generated social card places that logo beside business copy without altering the source image.
 
 ## Complete project previews
 
@@ -33,11 +32,13 @@ Suggested image descriptions:
 - Founder: “Jade Laurence Empleo, founder of Syntax Surge.”
 - MC Dental Station: “MC Dental Station project artwork with a porcelain tooth and abstract appointment, chat, and service cards.”
 
-## Hero photograph and service illustrations
+## Hero loop and service illustrations
 
-`business.heroPortrait` supplies the local workspace photograph and intrinsic dimensions. `HeroPortrait` adds decorative CSS particles without altering the photo file. Particles start automatically, pause outside the viewport or in a hidden tab, and follow the footer’s shared motion selection. The photograph remains visible independently of animation.
+`business.heroMotion` selects `public/images/hero-systems.webp` and `public/videos/hero-systems.mp4`. The blue-glass ribbon and connected modules are decorative software-inspired artwork generated with Higgsfield GPT Image 2.5 job `89fd0ddf-a009-4c66-8e63-c85c109b75b8`. Seedance 2.5 job `6261216a-a07f-4ec8-b55c-3ec285cb5d79` uses that exact completed image for both its `start_image` and `end_image` references, with a locked camera, gentle floating/light-flow motion and no generated audio. No staff, customer product screens, client work or logo are depicted.
 
-The three original, code-native SVG illustrations are `public/images/service-websites.svg`, `public/images/service-software.svg`, and `public/images/service-automation.svg`. `business.services[].image` selects each local asset. These are illustrations of service concepts, not screenshots of customer applications or evidence of measured business outcomes.
+The 2688 × 1520 source is optimized to a 1600 × 905 local WebP poster (82,480 bytes). The 8.04-second local video export is a 1280 × 720 H.264 MP4 at 24fps, 398,091 bytes, with no audio and fast-start metadata. It runs as the full-width hero background through the shared `BackgroundVideo` component. The poster is preloaded; the video loads only when visible and playing. Theme overlays keep the heading and actions readable. The global animation selection, offscreen/hidden pause, still fallback and independently named autoplay retry apply to both hero and Work. The sampled optimized first/last frames have a mean absolute RGB difference of 2.6/255; the contact sheet and boundary frames were inspected. No Higgsfield call occurs at website runtime.
+
+The six original, code-native SVG illustrations are `service-websites.svg`, `service-software.svg`, `service-automation.svg`, `service-stores.svg`, `service-booking.svg`, and `service-interactive.svg`, all beneath `public/images/`. `business.services[].image` selects each local asset. They illustrate websites, team tools, connected workflows, catalog/checkout, appointments/reminders, and games/quizzes; they are not customer screenshots or evidence of measured business outcomes.
 
 ## Work sculpture and section interactions
 

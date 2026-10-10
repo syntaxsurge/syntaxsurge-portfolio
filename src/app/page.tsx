@@ -3,13 +3,12 @@ import Image from "next/image";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Arrow, DownloadIcon } from "@/components/icons";
-import { HeroPortrait } from "@/components/hero-portrait";
 import { ProjectArchive } from "@/components/project-archive";
 import { PortfolioFacts } from "@/components/portfolio-facts";
 import { ServiceShowcase } from "@/components/service-showcase";
 import { FounderCard } from "@/components/founder-card";
 import { SectionReveal } from "@/components/section-reveal";
-import { WorkSculpture } from "@/components/work-sculpture";
+import { BackgroundVideo } from "@/components/background-video";
 import { business } from "@/data/business";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -19,34 +18,36 @@ export default function Home() {
     <>
       <Header />
       <main id="main" tabIndex={-1}>
-        <section className="business-hero shell" aria-labelledby="hero-title">
-          <div className="hero-copy">
-            <h1 id="hero-title">
-              Built around
-              <br />
-              <span>your business.</span>
-            </h1>
-            <p className="hero-description">
-              Websites, apps and automation. From first idea to launch.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-dark" href={business.links.email}>
-                Start a project <Arrow diagonal />
-              </a>
-              <a className="button button-outline" href="#work">
-                See the work <Arrow />
+        <section className="business-hero" aria-labelledby="hero-title">
+          <BackgroundVideo media={business.heroMotion} variant="hero" />
+          <div className="hero-layout shell">
+            <div className="hero-copy">
+              <h1 id="hero-title">
+                Built around
+                <br />
+                <span>your business.</span>
+              </h1>
+              <p className="hero-description">
+                Websites, apps and automation. From first idea to launch.
+              </p>
+              <div className="hero-actions">
+                <a className="button button-dark" href={business.links.email}>
+                  Start a project <Arrow diagonal />
+                </a>
+                <a className="button button-outline" href="#work">
+                  See the work <Arrow />
+                </a>
+              </div>
+              <a
+                className="hero-resume text-link"
+                href={business.resumeHref}
+                download
+              >
+                <DownloadIcon /> Download résumé{" "}
+                <span className="resume-format">PDF</span>
               </a>
             </div>
-            <a
-              className="hero-resume text-link"
-              href={business.resumeHref}
-              download
-            >
-              <DownloadIcon /> Download résumé{" "}
-              <span className="resume-format">PDF</span>
-            </a>
           </div>
-          <HeroPortrait />
         </section>
 
         <PortfolioFacts />
@@ -69,7 +70,7 @@ export default function Home() {
           className="business-section work-section"
           aria-labelledby="work-title"
         >
-          <WorkSculpture />
+          <BackgroundVideo media={business.workMotion} variant="work" />
           <div className="shell">
             <SectionReveal variant="slide" className="work-heading">
               <h2 id="work-title">Ideas made real.</h2>
