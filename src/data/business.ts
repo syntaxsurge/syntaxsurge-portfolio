@@ -45,16 +45,19 @@ export const business = {
   },
   services: [
     {
+      id: "business-websites",
       title: "Business websites",
       description: "Turn visitors into your next customers.",
       image: "/images/service-websites.svg",
     },
     {
+      id: "custom-software",
       title: "Custom software",
       description: "Make everyday work simpler.",
       image: "/images/service-software.svg",
     },
     {
+      id: "ai-automation",
       title: "AI & automation",
       description: "Give repetitive work a smarter shortcut.",
       image: "/images/service-automation.svg",

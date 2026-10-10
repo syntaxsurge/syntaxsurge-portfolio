@@ -107,61 +107,68 @@ check("Business contact uses the owner-supplied email", () => {
   assert.ok(footer && footer.includes(`href="${business.links.email}"`));
   assert.ok(plain(footer).includes(business.email));
 });
-check("Service tabs expose one illustrated panel with direct contact", () => {
-  const tabs = [
-    ...homepage.matchAll(/<button\b[^>]*role="tab"[^>]*>([\s\S]*?)<\/button>/g),
-  ];
-  const panels = [...homepage.matchAll(/<div\b[^>]*role="tabpanel"[^>]*>/g)];
-  assert.equal(business.services.length, 3);
-  assert.equal(tabs.length, business.services.length);
-  assert.equal(panels.length, business.services.length);
-  assert.ok(homepage.includes('role="tablist"'));
-  assert.ok(homepage.includes('aria-label="What can we build for you?"'));
-  assert.equal(
-    tabs.filter((tab) => tab[0].includes('aria-selected="true"')).length,
-    1,
-  );
-  assert.ok(tabs[0][0].includes('aria-selected="true"'));
-  assert.equal(
-    panels.filter((panel) => /\bhidden=""/.test(panel[0])).length,
-    2,
-  );
-  assert.ok(!/\bhidden=""/.test(panels[0][0]));
-  for (const [index, service] of business.services.entries()) {
-    const tab = tabs[index];
-    const panel = panels[index];
-    assert.ok(plain(tab[1]).includes(service.title));
-    const tabId = tab[0].match(/\bid="([^"]+)"/)?.[1];
-    const panelId = panel[0].match(/\bid="([^"]+)"/)?.[1];
-    assert.ok(tabId && panelId);
-    assert.ok(tab[0].includes(`aria-controls="${panelId}"`));
-    assert.ok(panel[0].includes(`aria-labelledby="${tabId}"`));
-    assert.ok(tab[0].includes(`tabindex="${index === 0 ? "0" : "-1"}"`));
-  }
-  const sources = imageSources(homepage);
-  assert.ok(sources.includes(business.services[0].image));
-  assert.ok(!sources.includes(business.services[1].image));
-  assert.ok(!sources.includes(business.services[2].image));
-  assert.ok(
-    homepage.includes(
-      `${business.links.email}?subject=${encodeURIComponent(`Let's talk about ${business.services[0].title.toLowerCase()}`).replaceAll("'", "&#x27;")}`,
-    ),
-  );
-  assert.equal(
-    new Set(business.services.map((service) => service.image)).size,
-    3,
-  );
-  for (const service of business.services) {
-    assert.ok(service.image.startsWith("/images/"));
-    assert.ok(service.image.endsWith(".svg"));
-    const illustration = readFileSync(
-      resolve(root, "public", service.image.slice(1)),
-      "utf8",
+check(
+  "Scroll-through services render complete cards and native jump links",
+  () => {
+    const nav = homepage.match(
+      /<nav\b[^>]*aria-label="Services"[^>]*>([\s\S]*?)<\/nav>/,
+    )?.[1];
+    const panels = [
+      ...homepage.matchAll(
+        /<article\b[^>]*id="service-[^"]+"[^>]*>([\s\S]*?)<\/article>/g,
+      ),
+    ];
+    assert.equal(business.services.length, 3);
+    assert.ok(nav);
+    const links = [...nav.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)];
+    assert.equal(links.length, business.services.length);
+    assert.equal(panels.length, business.services.length);
+    assert.equal(
+      links.filter((link) => link[0].includes('aria-current="location"'))
+        .length,
+      1,
     );
-    assert.match(illustration, /<svg\b/);
-    assert.match(illustration, /viewBox="[^"]+"/);
-  }
-});
+    assert.ok(links[0][0].includes('aria-current="location"'));
+    assert.equal(
+      new Set(business.services.map((service) => service.id)).size,
+      3,
+    );
+    const sources = imageSources(homepage);
+    for (const [index, service] of business.services.entries()) {
+      const panel = panels[index];
+      const panelId = `service-${service.id}`;
+      assert.match(service.id, /^[a-z0-9-]+$/);
+      assert.ok(plain(links[index][1]).includes(service.title));
+      assert.ok(links[index][0].includes(`href="#${panelId}"`));
+      assert.ok(!links[index][0].includes('tabindex="-1"'));
+      assert.ok(panel[0].includes(`aria-labelledby="${panelId}-title"`));
+      assert.ok(panel[0].includes(`id="${panelId}-title"`));
+      assert.ok(!/\bhidden=""/.test(panel[0]));
+      assert.ok(plain(panel[1]).includes(service.title));
+      assert.ok(plain(panel[1]).includes(service.description));
+      assert.ok(sources.includes(service.image));
+      assert.ok(
+        panel[1].includes(
+          `${business.links.email}?subject=${encodeURIComponent(`Let's talk about ${service.title.toLowerCase()}`).replaceAll("'", "&#x27;")}`,
+        ),
+      );
+    }
+    assert.equal(
+      new Set(business.services.map((service) => service.image)).size,
+      3,
+    );
+    for (const service of business.services) {
+      assert.ok(service.image.startsWith("/images/"));
+      assert.ok(service.image.endsWith(".svg"));
+      const illustration = readFileSync(
+        resolve(root, "public", service.image.slice(1)),
+        "utf8",
+      );
+      assert.match(illustration, /<svg\b/);
+      assert.match(illustration, /viewBox="[^"]+"/);
+    }
+  },
+);
 check(
   "Homepage collection has all project previews and on-request demo controls",
   () => {
