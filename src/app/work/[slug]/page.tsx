@@ -125,7 +125,7 @@ export default async function ProjectPage({
         )}
         {p.id === "mc-dental-station" && (
           <p className="project-artwork-caption">
-            AI-generated project artwork.
+            Project artwork.
           </p>
         )}
         {p.id === "wrap-it-up" && (

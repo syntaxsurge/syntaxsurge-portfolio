@@ -1,6 +1,6 @@
 # SyntaxSurge Software Development Services
 
-A Next.js business website for Syntax Surge: business websites, custom software, and practical AI/automation services. The homepage presents services, all 19 projects as searchable visual cards, founder Jade Laurence Empleo, business registration, a downloadable professional resume, and direct contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo and founder portrait are preserved; project previews and hero motion are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
+A Next.js business website for Syntax Surge: business websites, custom software, and practical AI/automation services. The homepage presents illustrated services, all 19 projects as searchable visual cards, founder Jade Laurence Empleo, business registration, a downloadable professional resume, and direct email/LinkedIn contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo, founder portrait, and workspace hero photograph are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
 
 - `/`: business overview, services, the full searchable project collection at `#work`, team, registration, and contact.
 - `/work`: permanent redirect to `/#work`.
@@ -8,6 +8,8 @@ A Next.js business website for Syntax Surge: business websites, custom software,
 - `/work/[slug]`: project details, including [MC Dental Station](https://syntaxsurge.com/work/mc-dental-station) and Wrap It Up!.
 
 The business brand is **Syntax Surge**; its registered legal name is **SyntaxSurge Software Development Services**. The registration section shows National scope, Business Name No. 8161608, and a rendered certificate preview, with view/download actions for the [unchanged original DTI PDF](public/documents/syntax-surge-dti-certificate.pdf). `src/data/business.ts` stores its verified document facts and local asset paths.
+
+Business inquiries open [syntaxsurge@gmail.com](mailto:syntaxsurge@gmail.com) in the visitor's email application; LinkedIn is also available. The site does not send messages or collect inquiries through a form.
 
 ## Run locally
 
@@ -30,11 +32,11 @@ pnpm test
 pnpm test:startup
 ```
 
-The homepage, recognition page, 19 project detail routes, and two game support/privacy pages are rendered at build time, with 23 unique sitemap URLs. Project search/filter controls, theme selection, and media controls use client state. This business website needs no database, secrets, login, contact-form provider, or analytics integration; linked applications have their own integrations. Images, fonts, and the muted hero loop are served locally. Homepage project demos load in a privacy-enhanced inline player only after an explicit play action, with one active demo, a close control, and focus restoration; detail/recognition pages retain direct external demo links. The hero uses its still poster when reduced motion is preferred, pauses outside view, and provides a pause control. A generated PNG provides the business social-sharing preview.
+The homepage, recognition page, 19 project detail routes, and two game support/privacy pages are rendered at build time, with 23 unique sitemap URLs. Project search/filter controls, theme selection, and media controls use client state. This business website needs no database, secrets, login, contact-form provider, or analytics integration; linked applications have their own integrations. Images, SVG service illustrations, Space Grotesk headings, and Geist body fonts are served locally. Homepage project demos load in a privacy-enhanced inline player only after an explicit play action, with one active demo, a close control, and focus restoration; detail/recognition pages retain direct external demo links. Decorative particles accompany the supplied hero photograph, respect reduced motion, pause outside view or a hidden tab, and provide a pause control. A generated PNG provides the business social-sharing preview.
 
 ## Professional resume
 
-The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the certificate-confirmed full name Jade Laurence Cabaruan Empleo, supplied profile photograph, three project examples, all 14 dated recognitions, and existing website/GitHub/LinkedIn links. The homepage team section provides its download action. No education, employment history, phone number, or email address is invented.
+The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the certificate-confirmed full name Jade Laurence Cabaruan Empleo, supplied profile photograph and business email, three project examples, all 14 dated recognitions, and website/GitHub/LinkedIn links. Download actions are available in the header, hero, and team section; the team section also offers a PDF preview. No education, employment history, or phone number is invented.
 
 `scripts/build-resume.py` reads canonical site data and generates the PDF with ReportLab; rebuilding requires the supported Node version plus Python 3.9+ and `reportlab`. Python is an authoring dependency, not a deployed website requirement. Sources and rebuild instructions are in [the resume source record](docs/RESUME-SOURCES.md).
 
@@ -84,23 +86,24 @@ The game information extends the existing project-detail template, with Support 
 
 ## Edit content
 
-- `src/data/business.ts`: business identity, services, founder professional/full name and portrait, contact links, hero motion, resume path, and certificate facts/PDF path/preview dimensions.
+- `src/data/business.ts`: business identity, illustrated services, founder professional/full name and portrait, email/contact links, workspace hero photograph, resume path, and certificate facts/PDF path/preview dimensions.
 - `src/data/portfolio.ts`: projects, real links, and awards.
 - `src/data/award-media.ts`: local project previews and verified YouTube demos for all 14 recognitions.
 - `src/data/project-media.ts`: media, summaries, labels, and optional demos for all 19 project cards, reusing project-owned previews and product artwork.
 - `src/app/page.tsx`: business homepage and full searchable project collection.
 - `src/app/recognition/page.tsx`: founder recognition record.
 - `src/components/project-visual.tsx`: reusable project visuals for detail pages.
+- `src/components/hero-portrait.tsx`: supplied workspace photograph and accessible decorative particle controls.
 - `src/app/globals.css`: palette, typography, layout, and responsive styles.
 - `src/lib/theme.ts`: stored preference, device preference, cross-tab synchronization, and early theme initialization.
 - `docs/CONTENT-SOURCES.md`: content provenance and historical project distinctions.
 - `docs/ASSET-SOURCES.md`: visual provenance; campaign imagery is not presented as a product screenshot.
 - `docs/AWARD-MEDIA-SOURCES.md`: provenance for recognition previews and demo videos. Project images illustrate the work; they are not award certificates.
 
-Recognition details originate from the founder’s supplied award history and do not imply company client counts or 14 first-place wins. USD and MUSD prizes remain separate. No revenue or user statistics are invented. Website, product, and demo links open directly; project inquiries open the founder's existing LinkedIn profile without an invented business email or nonfunctional contact form.
+Recognition details originate from the founder’s supplied award history and do not imply company client counts or 14 first-place wins. USD and MUSD prizes remain separate. No revenue or user statistics are invented. Website, product, and demo links open directly; project inquiries use the supplied business email or founder's LinkedIn profile.
 
 ## Accessibility and verification
 
-The shared sticky navigation leads to homepage Services/Work/Team and the current page's Contact footer on phones, tablets, and desktop. The work section includes all 19 visual project cards, visible category/result counts, combined search and filters, one-click reset, and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and hero motion provide keyboard-accessible controls and respect the relevant motion/focus behavior.
+The shared sticky navigation leads to homepage Services/Work/Team and the current page's Contact footer on phones, tablets, and desktop, with a resume download available in the header. The work section includes all 19 visual project cards, visible category/result counts, combined search and filters, one-click reset, and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative hero particles provide keyboard-accessible controls and respect the relevant motion/focus behavior.
 
 Semantic landmarks, a focusable skip destination, labeled search and theme controls, visible keyboard focus, live filter announcements, focus restoration after reset, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Validation is recorded in `docs/VALIDATION.md`.

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250" fill="none">
+  <title>Connected automation workflow illustration</title>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="400" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#E7F6F4"/><stop offset="1" stop-color="#DFE9FF"/></linearGradient></defs>
+  <rect width="400" height="250" rx="18" fill="url(#bg)"/>
+  <circle cx="200" cy="125" r="83" stroke="#B9D2E4" stroke-dasharray="4 7"/>
+  <g stroke="#7399CD" stroke-width="3" stroke-linecap="round"><path d="M93 64h39v37h26M93 187h39v-38h26M242 102h26V64h39M242 149h26v38h39"/></g>
+  <g fill="#fff" stroke="#B7CDE4"><rect x="45" y="34" width="76" height="63" rx="13"/><rect x="45" y="155" width="76" height="63" rx="13"/><rect x="280" y="34" width="76" height="63" rx="13"/><rect x="280" y="155" width="76" height="63" rx="13"/></g>
+  <path d="M65 53h36v26H65V53Zm0 1 18 13 18-13" stroke="#285CFF" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M67 173h32v25H67v-25Zm7 6h18m-18 10h12" stroke="#285CFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="m303 67 9 9 21-23" stroke="#0F7A6D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="300" y="172" width="37" height="26" rx="5" stroke="#285CFF" stroke-width="3"/>
+  <path d="M311 172v-5m15 5v-5m-16 15h17m-17 8h10" stroke="#285CFF" stroke-width="3" stroke-linecap="round"/>
+  <rect x="153" y="82" width="94" height="88" rx="19" fill="#285CFF"/>
+  <g stroke="#285CFF" stroke-width="5" stroke-linecap="round"><path d="M175 70v10m25-10v10m25-10v10M175 172v10m25-10v10m25-10v10M141 105h10m-10 21h10m-10 21h10M249 105h10m-10 21h10m-10 21h10"/></g>
+  <path d="m181 138 11-26 11 26m-18-8h14m19-18v26" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

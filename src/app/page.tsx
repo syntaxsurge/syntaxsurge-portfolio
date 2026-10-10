@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Arrow, Trophy } from "@/components/icons";
-import { HeroMotion } from "@/components/hero-motion";
+import { Arrow, Trophy, DownloadIcon } from "@/components/icons";
+import { HeroPortrait } from "@/components/hero-portrait";
 import { ProjectArchive } from "@/components/project-archive";
 import { awards } from "@/data/portfolio";
 import { business } from "@/data/business";
@@ -19,31 +19,32 @@ export default function Home() {
         <section className="business-hero shell" aria-labelledby="hero-title">
           <div className="hero-copy">
             <span className="eyebrow">
-              <span className="status-dot" /> SOFTWARE, WITH A HUMAN TOUCH
+              <span className="status-dot" /> SOFTWARE FOR YOUR NEXT MOVE
             </span>
             <h1 id="hero-title">
-              Make your next
+              Your idea.
               <br />
-              <span>big move.</span>
+              <span>Built right.</span>
             </h1>
             <p className="hero-description">
-              Websites, apps and AI tools that turn your next idea into
-              something people love to use.
+              Websites, apps and smart tools. Built around your business.
             </p>
             <div className="hero-actions">
-              <a
-                className="button button-dark"
-                href={business.links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="button button-dark" href={business.links.email}>
                 Start a project <Arrow diagonal />
-                <span className="sr-only"> (opens LinkedIn in a new tab)</span>
               </a>
               <a className="button button-outline" href="#work">
                 See the work <Arrow />
               </a>
             </div>
+            <a
+              className="hero-resume text-link"
+              href={business.resumeHref}
+              download
+            >
+              <DownloadIcon /> Download résumé{" "}
+              <span className="resume-format">PDF</span>
+            </a>
             <div className="hero-trust">
               <a href="#registration">
                 <span aria-hidden="true">✓</span> DTI registered
@@ -53,7 +54,7 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <HeroMotion />
+          <HeroPortrait />
         </section>
 
         <section
@@ -68,11 +69,22 @@ export default function Home() {
             </div>
           </div>
           <div className="services-grid">
-            {business.services.map((service, index) => (
+            {business.services.map((service) => (
               <article className="service-card" key={service.title}>
-                <span className="service-number mono">0{index + 1}</span>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
+                <div className="service-visual">
+                  <Image
+                    src={service.image}
+                    alt=""
+                    width={400}
+                    height={250}
+                    sizes="(max-width: 700px) 100vw, 400px"
+                    unoptimized
+                  />
+                </div>
+                <div className="service-copy">
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </div>
               </article>
             ))}
           </div>
@@ -87,9 +99,8 @@ export default function Home() {
             <div className="section-heading">
               <div>
                 <span className="eyebrow section-label">IDEAS IN ACTION</span>
-                <h2 id="work-title">The work speaks.</h2>
+                <h2 id="work-title">Explore the work.</h2>
               </div>
-              <p>Find your kind of project.</p>
             </div>
             <ProjectArchive />
           </div>
@@ -103,18 +114,15 @@ export default function Home() {
           <div className="team-grid">
             <div className="team-intro">
               <span className="eyebrow section-label">MEET THE FOUNDER</span>
-              <h2 id="team-title">Built with Jade.</h2>
-              <p>
-                Work directly with your designer and developer, from the first
-                idea to the final details.
-              </p>
+              <h2 id="team-title">Meet your builder.</h2>
+              <p>One point of contact. Design, development and delivery.</p>
               <div className="team-links">
                 <a
                   className="button button-outline"
                   href={business.resumeHref}
                   download
                 >
-                  Download résumé <Arrow />
+                  Download résumé <DownloadIcon />
                   <span className="sr-only"> (PDF)</span>
                 </a>
                 <a

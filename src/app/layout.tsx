@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { themeInitScript } from "@/lib/theme";
 import { siteUrl } from "@/lib/site";
@@ -12,6 +13,12 @@ const sans = Geist({
 const mono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+const display = localFont({
+  src: "../../public/fonts/space-grotesk-variable.woff2",
+  variable: "--font-space-grotesk",
+  weight: "300 700",
   display: "swap",
 });
 export const metadata: Metadata = {
@@ -47,7 +54,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable}`}
+      className={`${sans.variable} ${mono.variable} ${display.variable}`}
       suppressHydrationWarning
     >
       <body id="top">

@@ -16,18 +16,24 @@ export function Footer() {
           What’s your next idea?
         </h2>
         <div className="contact-actions">
-          <p className="contact-copy">
-            Tell Jade what you have in mind. Let’s find the right next step.
-          </p>
-          <a
-            className="button button-lime"
-            href={business.links.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Let’s talk on LinkedIn <Arrow diagonal />
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
+          <p className="contact-copy">Have a project in mind? Email Jade.</p>
+          <div className="contact-links">
+            <a
+              className="button button-lime contact-email"
+              href={business.links.email}
+            >
+              {business.email} <Arrow diagonal />
+            </a>
+            <a
+              className="text-link footer-linkedin"
+              href={business.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Or connect on LinkedIn <Arrow diagonal />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
         </div>
         <div className="footer-bottom">
           <Link

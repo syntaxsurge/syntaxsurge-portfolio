@@ -4,16 +4,17 @@ Project sourcing was recorded on 25 September 2026; business identity and MC Den
 
 ## Attribution
 
-The owner supplied the Syntax Surge business identity, services brief, founder identity, logo, portrait, project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts. Awards are attributed to founder Jade Laurence Empleo's work; prize disbursements and official winner certificates were not independently authenticated. Project totals are examples of work, not a count of paid clients or business revenue.
+The owner supplied the Syntax Surge business identity, services brief, founder identity, logo, portrait, workspace hero photograph, business email, project list, LinkedIn profile, award titles, organizers, dates, placements, and prize amounts. Awards are attributed to founder Jade Laurence Empleo's work; prize disbursements and official winner certificates were not independently authenticated. Project totals are examples of work, not a count of paid clients or business revenue.
 
 The site contains 19 named projects and 14 recognition entries. A recognition entry can include multiple bounties or categories. Do not relabel all 14 entries as first-place wins. Do not turn the two currencies (USD and MUSD) into a single dollar total.
 
 - [GitHub profile](https://github.com/syntaxsurge) confirms the name Jade Laurence Empleo and the SyntaxSurge handle.
 - [LinkedIn profile](https://www.linkedin.com/in/jade-laurence-empleo/) was supplied by the owner. No private LinkedIn content was collected.
+- The owner supplied **syntaxsurge@gmail.com** for public business contact and the resume. `business.email` stores the address and `business.links.email` stores its `mailto:` destination.
 
 ## Business identity and registration
 
-`src/data/business.ts` stores the supplied business brand **Syntax Surge**, registered legal name **SyntaxSurge Software Development Services**, founder professional name **Jade Laurence Empleo**, full name **Jade Laurence Cabaruan Empleo**, service descriptions, and existing LinkedIn/GitHub contact links. The team section identifies the founder and does not invent additional staff. Business inquiries open the supplied founder LinkedIn profile; no unverified business email or contact-form integration is presented.
+`src/data/business.ts` stores the supplied business brand **Syntax Surge**, registered legal name **SyntaxSurge Software Development Services**, founder professional name **Jade Laurence Empleo**, full name **Jade Laurence Cabaruan Empleo**, service descriptions, business email, and LinkedIn/GitHub contact links. The team section identifies the founder and does not invent additional staff. Business inquiries use the owner-supplied email through a direct mail link, with LinkedIn also available. There is no contact form or server-side email sender.
 
 The source is the owner's original `BNRS-Certificate_OPQT791819131516_4fa16974-d870-4131-a5e5-1b61dcec90fd.pdf`, preserved unchanged at `public/documents/syntax-surge-dti-certificate.pdf`. Its extracted business name is **SYNTAXSURGE SOFTWARE DEVELOPMENT SERVICES** (no space between Syntax and Surge), scope **National**, Business Name No. **8161608**, issue date **5 May 2026**, and stated validity **5 May 2026 through 5 May 2031**. The named proprietor is **JADE LAURENCE CABARUAN EMPLEO**. These facts describe the supplied certificate; no independent check of ongoing government registration status is asserted.
 
@@ -21,9 +22,9 @@ The homepage presents the legal name and scope with a locally rendered certifica
 
 ## Resume and project presentation
 
-The downloadable two-page resume uses `business.founder.fullName`, the supplied portrait, existing contacts, MC Dental Station/Kaldi/ClipLore examples, and every dated entry from the canonical awards array. It contains no invented education, employment chronology, phone number, or email address. `scripts/build-resume.py` reads the site exports directly; `business.resumeHref` supplies its public download path. Fact-by-fact sourcing and rebuild instructions are in `docs/RESUME-SOURCES.md`.
+The downloadable two-page resume uses `business.founder.fullName`, the supplied portrait and business email, website/profile links, MC Dental Station/Kaldi/ClipLore examples, and every dated entry from the canonical awards array. It contains no invented education, employment chronology, or phone number. `scripts/build-resume.py` reads the site exports directly; `business.resumeHref` supplies its public download path. Header, hero, and team sections provide download access. Fact-by-fact sourcing and rebuild instructions are in `docs/RESUME-SOURCES.md`.
 
-All 19 projects appear as visual cards in the homepage work section. `src/data/project-media.ts` combines the established project-owned demo previews and original product/game artwork with concise summaries and explicit media labels. Fourteen homepage demos use their verified YouTube associations, loaded inline only on request. ClipLore's hackathon context remains distinct from its current product. Generated hero and MC Dental imagery represents labeled concepts, not captured application UI, clinic staff/facilities, or evidence of real clinical outcomes; generation provenance is in `docs/ASSET-SOURCES.md`.
+All 19 projects appear as visual cards in the homepage work section. `src/data/project-media.ts` combines the established project-owned demo previews and original product/game artwork with concise summaries and neutral media labels. Fourteen homepage demos use their verified YouTube associations, loaded inline only on request. ClipLore's hackathon context remains distinct from its current product. MC Dental imagery is project artwork rather than captured application UI, clinic staff/facilities, or evidence of real clinical outcomes; its generation provenance is retained in `docs/ASSET-SOURCES.md`. The hero uses the supplied workspace photograph with decorative particles. Three original SVG service illustrations represent website, custom-software, and AI/automation concepts without asserting actual application interfaces.
 
 ## Current websites and products
 

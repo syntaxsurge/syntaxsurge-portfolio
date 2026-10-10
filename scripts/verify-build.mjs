@@ -60,7 +60,6 @@ check(
       assert.ok(header.includes(`href="/#${id}"`));
     assert.ok(header.includes('href="#contact"'));
     assert.ok(header.includes(business.name));
-    assert.ok(!header.includes("Jade"));
     assert.ok(homepage.includes(business.legalName));
     assert.ok(homepage.includes(business.founder.name));
     assert.ok(plain(homepage).includes(business.certificate.number));
@@ -77,9 +76,17 @@ check(
     const resumeLinks = [...homepage.matchAll(/<a\b[^>]*>/g)]
       .map((match) => match[0])
       .filter((link) => link.includes(`href="${business.resumeHref}"`));
-    assert.equal(resumeLinks.length, 2);
-    assert.ok(resumeLinks.some((link) => /\bdownload=/.test(link)));
+    assert.equal(resumeLinks.length, 4);
+    assert.equal(
+      resumeLinks.filter((link) => /\bdownload=/.test(link)).length,
+      3,
+    );
     assert.ok(resumeLinks.some((link) => link.includes('target="_blank"')));
+    assert.ok(header.includes(`href="${business.resumeHref}"`));
+    const hero = homepage.match(
+      /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
+    )?.[1];
+    assert.ok(hero && hero.includes(`href="${business.resumeHref}"`));
     const resume = readFileSync(
       resolve(root, "public", business.resumeHref.slice(1)),
     );
@@ -90,6 +97,39 @@ check(
     assert.ok(!homepage.includes("Create Next App"));
   },
 );
+check("Business contact uses the owner-supplied email", () => {
+  assert.equal(business.email, "syntaxsurge@gmail.com");
+  assert.equal(business.links.email, `mailto:${business.email}`);
+  assert.ok(homepage.includes(`href="${business.links.email}"`));
+  const footer = homepage.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/)?.[1];
+  assert.ok(footer && footer.includes(`href="${business.links.email}"`));
+  assert.ok(plain(footer).includes(business.email));
+});
+check("All services have local SVG illustrations", () => {
+  const cards = [
+    ...homepage.matchAll(
+      /<article\b[^>]*class="service-card"[^>]*>([\s\S]*?)<\/article>/g,
+    ),
+  ].map((match) => match[1]);
+  assert.equal(business.services.length, 3);
+  assert.equal(cards.length, business.services.length);
+  assert.equal(
+    new Set(business.services.map((service) => service.image)).size,
+    3,
+  );
+  for (const service of business.services) {
+    const card = cards.find((html) => plain(html).includes(service.title));
+    assert.ok(card && imageSources(card).includes(service.image));
+    assert.ok(service.image.startsWith("/images/"));
+    assert.ok(service.image.endsWith(".svg"));
+    const illustration = readFileSync(
+      resolve(root, "public", service.image.slice(1)),
+      "utf8",
+    );
+    assert.match(illustration, /<svg\b/);
+    assert.match(illustration, /viewBox="[^"]+"/);
+  }
+});
 check(
   "Homepage collection has all project previews and on-request demo controls",
   () => {
@@ -171,11 +211,7 @@ check("Recognition has an accessible standalone route", () => {
       "Clinic staff confirm the final appointment",
     ),
   );
-  assert.ok(
-    read("work/mc-dental-station.html").includes(
-      "AI-generated project artwork.",
-    ),
-  );
+  assert.ok(read("work/mc-dental-station.html").includes("Project artwork."));
 });
 check(
   "Collection address redirects permanently to the homepage work section",
@@ -192,25 +228,26 @@ check(
   },
 );
 check(
-  "Hero serves its poster before motion without repeating the business logo",
+  "Hero presents the supplied workspace photograph without a runtime video",
   () => {
     const hero = homepage.match(
       /<section\b[^>]*class="business-hero shell"[^>]*>([\s\S]*?)<\/section>/,
     )?.[1];
     assert.ok(hero);
-    assert.ok(hero.includes('class="hero-motion"'));
+    assert.ok(hero.includes('class="hero-portrait"'));
     const sources = imageSources(hero);
-    assert.ok(sources.includes(business.heroMotion.poster));
+    assert.ok(sources.includes(business.heroPortrait.src));
+    assert.ok(hero.includes(business.heroPortrait.alt));
     assert.ok(!sources.includes(business.logo.src));
     assert.equal((hero.match(/<video\b/g) || []).length, 0);
-    const poster = readFileSync(
-      resolve(root, "public", business.heroMotion.poster.slice(1)),
+    const photograph = readFileSync(
+      resolve(root, "public", business.heroPortrait.src.slice(1)),
     );
-    assert.equal(poster.subarray(8, 12).toString(), "WEBP");
-    const video = readFileSync(
-      resolve(root, "public", business.heroMotion.src.slice(1)),
+    assert.equal(photograph.subarray(8, 12).toString(), "WEBP");
+    assert.ok(!existsSync(resolve(root, "public/videos/hero-loop.mp4")));
+    assert.ok(
+      !existsSync(resolve(root, "public/images/hero-loop-poster.webp")),
     );
-    assert.equal(video.subarray(4, 8).toString(), "ftyp");
   },
 );
 check(
@@ -385,6 +422,7 @@ for (const project of projects) {
     for (const id of ["services", "work", "team"])
       assert.ok(header.includes(`href="/#${id}"`));
     assert.ok(header.includes('href="#contact"'));
+    assert.ok(header.includes(`href="${business.resumeHref}"`));
     assert.ok(html.includes('href="/#work"'));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));
@@ -423,6 +461,17 @@ check("CSS includes responsive and reduced-motion rules", () => {
   assert.ok(css.includes("700px"));
   assert.ok(
     css.includes('data-theme="dark"') || css.includes("data-theme=dark"),
+  );
+});
+check("Space Grotesk headings are served from a licensed local font", () => {
+  const font = readFileSync(
+    resolve(root, "public/fonts/space-grotesk-variable.woff2"),
+  );
+  assert.equal(font.subarray(0, 4).toString(), "wOF2");
+  assert.ok(
+    readFileSync(resolve(root, "public/fonts/OFL.txt"), "utf8").includes(
+      "SIL OPEN FONT LICENSE",
+    ),
   );
 });
 check("Normal text colors meet 4.5:1 on theme content surfaces", () => {

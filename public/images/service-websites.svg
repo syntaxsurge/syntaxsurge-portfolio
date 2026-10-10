@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250" fill="none">
+  <title>Website and mobile page illustration</title>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="400" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#EDF2FF"/><stop offset="1" stop-color="#D9E4FF"/></linearGradient></defs>
+  <rect width="400" height="250" rx="18" fill="url(#bg)"/>
+  <g stroke="#C7D5F4" opacity=".7"><path d="M0 50h400M0 100h400M0 150h400M0 200h400M50 0v250M100 0v250M150 0v250M200 0v250M250 0v250M300 0v250M350 0v250"/></g>
+  <rect x="46" y="43" width="264" height="170" rx="12" fill="#B0C5FF" opacity=".5"/>
+  <rect x="40" y="35" width="264" height="170" rx="12" fill="#fff" stroke="#B8CBF4"/>
+  <path d="M40 66h264" stroke="#D7E2FA"/>
+  <circle cx="57" cy="50" r="4" fill="#285CFF"/><circle cx="71" cy="50" r="4" fill="#9EB5EF"/><circle cx="85" cy="50" r="4" fill="#CDD9F5"/>
+  <rect x="60" y="89" width="96" height="9" rx="4.5" fill="#183777"/>
+  <rect x="60" y="106" width="72" height="9" rx="4.5" fill="#183777"/>
+  <path d="M60 134h94M60 146h69" stroke="#B1C2E7" stroke-width="5" stroke-linecap="round"/>
+  <rect x="60" y="168" width="58" height="18" rx="5" fill="#285CFF"/>
+  <rect x="185" y="88" width="96" height="98" rx="10" fill="#EDF2FF"/>
+  <path d="m200 163 18-45 18 22 18-38 16 61" fill="#C5D6FF"/>
+  <circle cx="231" cy="126" r="25" fill="#285CFF"/>
+  <path d="m221 126 7 7 13-14" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="282" y="89" width="74" height="132" rx="13" fill="#fff" stroke="#183777" stroke-width="3"/>
+  <rect x="307" y="95" width="24" height="5" rx="2.5" fill="#183777"/>
+  <rect x="292" y="113" width="54" height="51" rx="7" fill="#C5D6FF"/>
+  <path d="M296 179h44M296 188h30" stroke="#B1C2E7" stroke-width="4" stroke-linecap="round"/>
+  <rect x="295" y="200" width="47" height="9" rx="4" fill="#285CFF"/>
+</svg>

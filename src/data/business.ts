@@ -4,7 +4,9 @@ export const business = {
   description:
     "Business websites, custom software, and practical AI tools. Syntax Surge builds clear, useful digital experiences in the Philippines.",
   logo: { src: "/images/syntaxsurge-logo.jpg", width: 640, height: 640 },
+  email: "syntaxsurge@gmail.com",
   links: {
+    email: "mailto:syntaxsurge@gmail.com",
     linkedin: "https://www.linkedin.com/in/jade-laurence-empleo/",
     github: "https://github.com/syntaxsurge",
   },
@@ -19,11 +21,11 @@ export const business = {
     },
   },
   resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
-  heroMotion: {
-    src: "/videos/hero-loop.mp4",
-    poster: "/images/hero-loop-poster.webp",
-    width: 1280,
-    height: 720,
+  heroPortrait: {
+    src: "/images/syntax-surge-workspace.webp",
+    alt: "A software planning session with a whiteboard and laptops",
+    width: 1200,
+    height: 1600,
   },
   certificate: {
     scope: "National",
@@ -38,16 +40,18 @@ export const business = {
   services: [
     {
       title: "Business websites",
-      description: "A clear home for your services, customers and inquiries.",
+      description: "Turn visitors into your next customers.",
+      image: "/images/service-websites.svg",
     },
     {
       title: "Custom software",
-      description: "Tools that fit the way your business works.",
+      description: "Make everyday work simpler.",
+      image: "/images/service-software.svg",
     },
     {
       title: "AI & automation",
-      description:
-        "Practical assistants and workflows that save repetitive work.",
+      description: "Give repetitive work a smarter shortcut.",
+      image: "/images/service-automation.svg",
     },
   ],
 };

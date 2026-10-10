@@ -1,11 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  type CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { business } from "@/data/business";
 import { PlayIcon } from "./icons";
 
 const motionQuery = "(prefers-reduced-motion: reduce)";
+const particles = Array.from({ length: 20 }, (_, index) => ({
+  "--particle-x": `${8 + ((index * 37) % 84)}%`,
+  "--particle-y": `${8 + ((index * 23) % 83)}%`,
+  "--particle-size": `${3 + (index % 3)}px`,
+  "--particle-duration": `${10 + (index % 5) * 2}s`,
+  "--particle-delay": `${index * -0.7}s`,
+  "--particle-dx": `${(index % 2 ? 1 : -1) * (8 + (index % 4) * 3)}px`,
+  "--particle-dy": `${-8 - (index % 5) * 3}px`,
+  "--particle-opacity": 0.25 + (index % 4) * 0.08,
+}));
 
 function subscribeMotionPreference(onChange: () => void) {
   if (typeof window.matchMedia !== "function") return () => {};
@@ -30,7 +46,7 @@ function getVisibility() {
   return document.visibilityState === "visible";
 }
 
-export function HeroMotion() {
+export function HeroPortrait() {
   const reducedMotion = useSyncExternalStore(
     subscribeMotionPreference,
     getReducedMotion,
@@ -42,70 +58,54 @@ export function HeroMotion() {
     () => false,
   );
   const container = useRef<HTMLDivElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const motionAvailable = !reducedMotion && !failed;
-  const shouldPlay = motionAvailable && visible && inView && !userPaused;
+  const running = !reducedMotion && visible && inView && !userPaused;
 
   useEffect(() => {
     const element = container.current;
     if (!element || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      {
-        threshold: 0.1,
-      },
+      { threshold: 0.1 },
     );
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const player = video.current;
-    if (!player) return;
-    if (!shouldPlay) {
-      player.pause();
-      return;
-    }
-    let cancelled = false;
-    player.play().catch(() => {
-      if (!cancelled) setFailed(true);
-    });
-    return () => {
-      cancelled = true;
-      player.pause();
-    };
-  }, [shouldPlay]);
-
   return (
-    <div className="hero-motion" ref={container}>
+    <div className="hero-portrait" ref={container}>
       <Image
-        src={business.heroMotion.poster}
-        alt=""
-        fill
-        sizes="(max-width: 850px) 100vw, 720px"
+        src={business.heroPortrait.src}
+        alt={business.heroPortrait.alt}
+        width={business.heroPortrait.width}
+        height={business.heroPortrait.height}
+        sizes="(max-width: 850px) 100vw, 620px"
         preload
         unoptimized
       />
-      {motionAvailable && (
+      {!reducedMotion && (
         <>
-          <video
-            ref={video}
-            src={business.heroMotion.src}
-            poster={business.heroMotion.poster}
-            width={business.heroMotion.width}
-            height={business.heroMotion.height}
-            loop
-            muted
-            playsInline
-            preload="none"
+          <div
+            className="hero-particles"
             aria-hidden="true"
-            onError={() => setFailed(true)}
-          />
+            data-running={running}
+          >
+            {particles.map((properties, index) => (
+              <span
+                className="hero-particle"
+                key={index}
+                style={
+                  {
+                    ...properties,
+                    animationPlayState: running ? "running" : "paused",
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
           <button
-            className="hero-motion-control"
+            className="hero-portrait-control"
             type="button"
             onClick={() => setUserPaused((paused) => !paused)}
           >

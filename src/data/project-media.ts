@@ -13,11 +13,11 @@ export const projectPreviews: Record<string, ProjectPreview> = {
   "mc-dental-station": {
     image: {
       src: "/images/mc-dental-feature.webp",
-      alt: "AI-generated MC Dental Station artwork with a porcelain tooth and abstract appointment, chat, and service cards",
+      alt: "MC Dental Station project artwork with a porcelain tooth and abstract appointment, chat, and service cards",
       width: 1600,
       height: 905,
     },
-    label: "AI-generated artwork",
+    label: "Project artwork",
     summary:
       "Clinic services, appointment requests, and approved FAQ help in one place.",
   },

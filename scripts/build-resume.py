@@ -130,6 +130,7 @@ def first_page(pdf, data):
     y = paragraph(pdf, f'Founder, {plain(business["legalName"])}', y, header_width, style(9.7, 14, color=MUTED))
     y -= 9
     contacts = (
+        (f'Email: {business["email"]}', business["links"]["email"]),
         ("Portfolio: syntaxsurge.com", WEBSITE),
         ("GitHub: github.com/syntaxsurge", business["links"]["github"]),
         ("LinkedIn: linkedin.com/in/jade-laurence-empleo", business["links"]["linkedin"]),
