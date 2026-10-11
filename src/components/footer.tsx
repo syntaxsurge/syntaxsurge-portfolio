@@ -36,7 +36,7 @@ export function Footer() {
         <div className="footer-bottom">
           <Link
             className="footer-brand"
-            href="/"
+            href="/#top"
             aria-label={`${business.name} — home`}
           >
             {business.legalName}
@@ -46,7 +46,7 @@ export function Footer() {
             <MotionToggle />
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
             <a href="/#work">All projects</a>
-            <Link href="/recognition">Recognition</Link>
+            <Link href="/recognition#top">Recognition</Link>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Native fragments scroll on repeated visits to the same section. */}
             <a href="/#registration">DTI registration</a>
             <a

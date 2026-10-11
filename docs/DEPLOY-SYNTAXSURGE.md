@@ -85,6 +85,10 @@ The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is 
 
 ### What happens on every start
 
+To publish pushed changes on the existing installation, restart only the `syntaxsurge_portfolio` Node.js project in aaPanel, using its configured `pnpm deploy:server` startup command. A GitHub push does not restart the running Next.js process. The runner fetches and prepares a release during startup, then serves that release until the next restart. Confirm its logged serving commit matches the intended GitHub commit and is not marked `DEGRADED` before treating the update as published. Do not start an additional process or run this source-replacing deployment command in the developer's local checkout.
+
+If the live homepage still has external Preview résumé / Download résumé links, lacks the `resume-preview` dialog, or returns 404 for `/images/resume-page-1.webp`, it is not serving the current résumé flow. Inspect the aaPanel startup log and release commit, even if the page itself returns HTTP 200. Check the public route after restart, including a fresh request; do not attribute an old running release to browser caching without checking the response.
+
 1. The runner validates that its source directory is the Git root, checks that the runtime directory does not overlap it, takes an exclusive startup lock, and checks that port 3101 is free.
 2. It fetches `origin/main` without prompting for credentials and pins the exact commit. After checking the target for tracked production environment/generated files, it runs `git reset --hard` to that commit and `git clean -fd` with explicit exclusions for `.env*`, `node_modules/`, and `.next/`. It never uses `git clean -x`, so other ignored files are retained.
 3. It exports the pinned commit into a separate release directory, installs frozen dependencies including development tools needed for the build, and builds the release. A matching completed build is reused when the commit, Node version, and relevant environment configuration have not changed.
@@ -189,6 +193,8 @@ curl -fsS https://mc-dental.syntaxsurge.com/ -o /dev/null
 ```
 
 Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the homepage's 20 visual cards and filters, `/recognition`, all 20 project pages, and the two Wrap It Up! support/privacy pages. Confirm `/work` returns HTTP 308 and redirects to `/#work`; it has no separate page or sitemap entry. Check both themes and persistence, mobile section navigation, keyboard focus, and 200% zoom. Each canonical page uses its own HTTPS URL, and the sitemap has 24 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
+
+From the bottom of a project, select Next project repeatedly and confirm each destination starts at scroll position zero with its header and title visible. Verify collection details, recognition, Home and the game Support/Privacy links similarly. Page-opening links target `#top`; canonicals and sitemap entries remain fragment-free. Browser Back should restore the previous reading position, while All projects, header section links and service links go to their named sections. Root HTML declares `data-scroll-behavior="smooth"` so Next.js can suppress smooth scrolling during cross-page navigation.
 
 Verify the registration preview, PDF view, and download actions. The PDF response should have `application/pdf` content type and match the original SHA-256 recorded in `docs/ASSET-SOURCES.md`; the preview should be a local PNG rendering. The canonical legal name is **SyntaxSurge Software Development Services**, while the business brand remains **Syntax Surge**. The certificate assets do not add sitemap pages and require no external document service.
 

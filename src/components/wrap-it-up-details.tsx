@@ -15,7 +15,7 @@ export function WrapItUpNavigation({
   return (
     <nav className="app-navigation" aria-label="Wrap It Up! navigation">
       {links.map((link) => (
-        <Link key={link.key} href={link.href} aria-current={current === link.key ? "page" : undefined}>
+        <Link key={link.key} href={`${link.href}#top`} aria-current={current === link.key ? "page" : undefined}>
           {link.label}
         </Link>
       ))}
@@ -75,7 +75,7 @@ export function WrapItUpDetails() {
       <section className="app-copy" aria-labelledby="game-help">
         <h2 id="game-help">A helping hand.</h2>
         <p>Need installation help, have a wrapping question, or want to report a bug?</p>
-        <Link href={`${wrapItUp.path}/support`} className="text-link">Visit support <Arrow /></Link>
+        <Link href={`${wrapItUp.path}/support#top`} className="text-link">Visit support <Arrow /></Link>
       </section>
     </>
   );

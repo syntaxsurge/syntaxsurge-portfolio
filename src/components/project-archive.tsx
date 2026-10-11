@@ -157,7 +157,7 @@ export function ProjectArchive() {
                 ) : (
                   <Link
                     className="archive-preview"
-                    href={`/work/${p.id}`}
+                    href={`/work/${p.id}#top`}
                     aria-label={`View ${p.title} project details`}
                   >
                     <ProjectVisual id={p.id} variant="preview" />
@@ -213,14 +213,14 @@ export function ProjectArchive() {
               <div className="archive-card-body">
                 <div className="archive-name">
                   <h3>
-                    <Link href={`/work/${p.id}`}>{p.title}</Link>
+                    <Link href={`/work/${p.id}#top`}>{p.title}</Link>
                   </h3>
                   <p>{preview.summary}</p>
                 </div>
                 <div className="archive-actions">
                   <Link
                     className="text-link"
-                    href={`/work/${p.id}`}
+                    href={`/work/${p.id}#top`}
                     aria-label={`View ${p.title} project details`}
                   >
                     Details <Arrow />

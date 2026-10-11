@@ -127,18 +127,18 @@ check(
     assert.ok(!current.includes(`href="${originalDemo}"`));
     assert.ok(!current.includes(`href="${originalSource}"`));
     assert.ok(!current.includes("Surreal World Assets Buildathon 2"));
-    assert.ok(!recognition.includes(`href="/work/cliplore-ai"`));
-    assert.ok(recognition.includes('href="/work/cliplore"'));
+    assert.ok(!recognition.includes(`href="/work/cliplore-ai#top"`));
+    assert.ok(recognition.includes('href="/work/cliplore#top"'));
     const cards = [
       ...homepage.matchAll(
         /<article\b[^>]*class="archive-row"[^>]*>([\s\S]*?)<\/article>/g,
       ),
     ].map((match) => match[1]);
     const originalCard = cards.find((html) =>
-      html.includes('href="/work/cliplore"'),
+      html.includes('href="/work/cliplore#top"'),
     );
     const currentCard = cards.find((html) =>
-      html.includes('href="/work/cliplore-ai"'),
+      html.includes('href="/work/cliplore-ai#top"'),
     );
     assert.ok(originalCard && currentCard);
     assert.ok(imageSources(originalCard).includes(originalCover));
@@ -188,7 +188,7 @@ check(
     assert.ok(hero && hero.includes('aria-haspopup="dialog"'));
     assert.ok(plain(hero).includes("View résumé"));
     assert.ok(!homepage.includes('href="/work"'));
-    assert.ok(homepage.includes('href="/recognition"'));
+    assert.ok(homepage.includes('href="/recognition#top"'));
     assert.ok(!homepage.includes("<details"));
     assert.ok(!homepage.includes("Create Next App"));
   },
@@ -258,6 +258,53 @@ check(
     assert.equal(resume.subarray(0, 5).toString(), "%PDF-");
   },
 );
+check("Page navigation starts at the top and résumé viewing stays in its dialog", () => {
+  const pages = readdirSync(app, { recursive: true })
+    .filter((file) => file.endsWith(".html"))
+    .map((file) => ({ file, html: read(file) }));
+  assert.ok(pages.length >= projects.length + 4);
+  let topLinks = 0;
+  for (const { file, html } of pages) {
+    if (file === "_global-error.html") {
+      assert.equal((html.match(/<a\b/g) || []).length, 0);
+      continue;
+    }
+    const htmlTag = html.match(/<html\b[^>]*>/)?.[0];
+    assert.ok(htmlTag?.includes('data-scroll-behavior="smooth"'), file);
+    assert.ok(html.includes('<body id="top"'), file);
+    const anchors = [...html.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)];
+    for (const anchor of anchors) {
+      const href = anchor[0].match(/\bhref="([^"]+)"/)?.[1];
+      assert.ok(href, `${file}: every link has a destination`);
+      assert.ok(!/^(?:Preview|Download) r[ée]sum[ée]$/i.test(plain(anchor[1]).trim()), file);
+      if ((!href.startsWith("/") && !href.startsWith("#")) || href.startsWith("//")) continue;
+      if (href.startsWith("/images/") || href.startsWith("/documents/")) continue;
+      const url = new URL(href.replaceAll("&amp;", "&"), `https://example.test/${file === "index.html" ? "" : file.slice(0, -5)}`);
+      if (url.hash === "#top") {
+        topLinks++;
+        continue;
+      }
+      assert.ok(url.hash, `${file}: page-opening link ${href} needs #top`);
+      const destination = href.startsWith("#") ? html : read(url.pathname === "/" ? "index.html" : `${url.pathname.slice(1)}.html`);
+      assert.ok(destination.includes(`id="${decodeURIComponent(url.hash.slice(1))}"`), `${file}: fragment ${href} must exist`);
+    }
+    const outsideDialog = html.replace(/<dialog\b[^>]*>[\s\S]*?<\/dialog>/g, "");
+    assert.ok(!outsideDialog.includes(`href="${business.resumeHref}"`), `${file}: PDF download belongs inside the résumé dialog`);
+    const dialogs = [...html.matchAll(/<dialog\b[^>]*>/g)];
+    assert.equal(dialogs.length, file === "index.html" ? 1 : 0, `${file}: résumé preview belongs to the homepage`);
+    for (const dialog of dialogs) assert.ok(!/\sopen(?:\s|=|>)/.test(dialog[0]), file);
+  }
+  assert.ok(topLinks > projects.length);
+  for (const [index, project] of projects.entries()) {
+    const html = read(`work/${project.id}.html`);
+    const next = projects[(index + 1) % projects.length];
+    const navigation = html.match(/<nav\b[^>]*aria-label="More projects"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+    assert.ok(navigation?.includes('href="/#work"'), project.title);
+    const nextLink = navigation.match(/<a\b[^>]*class="next-project"[^>]*>([\s\S]*?)<\/a>/);
+    assert.ok(nextLink?.[0].includes(`href="/work/${next.id}#top"`), `${project.title}: next project destination`);
+    assert.ok(plain(nextLink[1]).includes(next.title), `${project.title}: next project label`);
+  }
+});
 check("Business contact uses the owner-supplied email", () => {
   assert.equal(business.email, "syntaxsurge@gmail.com");
   assert.equal(business.links.email, `mailto:${business.email}`);
@@ -355,7 +402,7 @@ check(
     for (const project of projects) {
       const preview = projectPreviews[project.id];
       const card = cards.find((html) =>
-        html.includes(`href="/work/${project.id}"`),
+        html.includes(`href="/work/${project.id}#top"`),
       );
       assert.ok(card, `Collection card for ${project.title}`);
       assert.equal((card.match(/<h3\b/g) || []).length, 1);
@@ -483,7 +530,7 @@ check("Awards and their recorded prizes belong to the correct projects", () => {
       const matching = (html) =>
         plain(html).includes(award.title) && plain(html).includes(award.event);
       const card = cards.find((html) =>
-        html.includes(`href="/work/${project.id}"`) && matching(html),
+        html.includes(`href="/work/${project.id}#top"`) && matching(html),
       );
       const detailAward = detailAwards.find(matching);
       assert.ok(card && detailAward, `${project.title}: ${award.event}`);
@@ -844,7 +891,7 @@ check(
       assert.ok(!html.includes("/apps/wrap-it-up"));
       assert.ok(sitemap.includes(`<loc>${siteHref(path)}</loc>`));
       for (const destination of wrapItUpPaths)
-        assert.ok(html.includes(`href="${destination}"`));
+        assert.ok(html.includes(`href="${destination}#top"`));
     }
     const game = read("work/wrap-it-up.html");
     const support = read("work/wrap-it-up/support.html");

@@ -16,7 +16,7 @@ export default function NotFound() {
           <Link className="button button-dark" href="/#work">
             Browse all projects <Arrow />
           </Link>
-          <Link className="button button-outline" href="/">
+          <Link className="button button-outline" href="/#top">
             Back to home <Arrow />
           </Link>
         </div>

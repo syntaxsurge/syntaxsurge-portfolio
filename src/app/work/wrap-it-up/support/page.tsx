@@ -167,7 +167,7 @@ export default function WrapItUpSupportPage() {
         </details>
       </section>
       <p className="app-copy">
-        <Link className="text-link" href={`${wrapItUp.path}/privacy`}>
+        <Link className="text-link" href={`${wrapItUp.path}/privacy#top`}>
           Read the privacy policy <Arrow />
         </Link>
       </p>

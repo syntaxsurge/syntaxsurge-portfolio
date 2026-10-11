@@ -68,7 +68,7 @@ export default async function ProjectPage({
       <Header />
       <main id="main" tabIndex={-1} className="project-page shell">
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
+          <Link href="/#top">Home</Link>
           <span aria-hidden="true">/</span>
           <Link href="/#work">All projects</Link>
           <span aria-hidden="true">/</span>
@@ -200,7 +200,7 @@ export default async function ProjectPage({
           <Link href="/#work" className="button button-outline">
             All projects <Arrow />
           </Link>
-          <Link href={`/work/${next.id}`} className="next-project">
+          <Link href={`/work/${next.id}#top`} className="next-project">
             <div>
               <span className="eyebrow">NEXT PROJECT</span>
               <h2>{next.title}</h2>

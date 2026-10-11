@@ -74,7 +74,7 @@ export function PortfolioFacts() {
           Projects <Arrow diagonal />
         </span>
       </a>
-      <Link className="portfolio-fact" href="/recognition">
+      <Link className="portfolio-fact" href="/recognition#top">
         <span className="sr-only">
           {totals[1]} hackathon recognitions. See the recognition record.
         </span>

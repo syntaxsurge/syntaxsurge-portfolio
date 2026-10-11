@@ -13,17 +13,17 @@ export default function WrapItUpLayout({
       <Header />
       <main id="main" tabIndex={-1} className="project-page app-page shell">
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
+          <Link href="/#top">Home</Link>
           <span aria-hidden="true">/</span>
           <Link href="/#work">All projects</Link>
           <span aria-hidden="true">/</span>
-          <Link href={wrapItUp.path}>{wrapItUp.name}</Link>
+          <Link href={`${wrapItUp.path}#top`}>{wrapItUp.name}</Link>
         </nav>
         {children}
         <div className="app-page-footer">
           <p>Wrap It Up! by Jade Laurence Empleo · Syntax Surge</p>
-          <Link href={`${wrapItUp.path}/support`}>Get help</Link>
-          <Link href={`${wrapItUp.path}/privacy`}>Privacy policy</Link>
+          <Link href={`${wrapItUp.path}/support#top`}>Get help</Link>
+          <Link href={`${wrapItUp.path}/privacy#top`}>Privacy policy</Link>
         </div>
       </main>
       <Footer />

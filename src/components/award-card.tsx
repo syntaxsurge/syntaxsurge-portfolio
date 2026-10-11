@@ -12,7 +12,7 @@ export function AwardCard({
 }) {
   const project = projects.find((p) => p.id === award.projectId)!;
   const media = awardMedia[award.projectId];
-  const destination = media?.video?.href || `/work/${award.projectId}`;
+  const destination = media?.video?.href || `/work/${award.projectId}#top`;
   return (
     <article className={`award-card${compact ? " award-card-compact" : ""}`}>
       {!compact && (
@@ -66,7 +66,7 @@ export function AwardCard({
           )}
         </div>
         <h2>
-          <Link href={`/work/${award.projectId}`}>{project.title}</Link>
+          <Link href={`/work/${award.projectId}#top`}>{project.title}</Link>
         </h2>
         <p className="award-title">
           <Trophy />
@@ -87,7 +87,7 @@ export function AwardCard({
             </a>
           )}
           <Link
-            href={`/work/${award.projectId}`}
+            href={`/work/${award.projectId}#top`}
             aria-label={`View ${project.title} project details`}
           >
             Project details

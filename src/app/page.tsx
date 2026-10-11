@@ -98,7 +98,7 @@ export default function Home() {
               <div className="team-links">
                 <ResumeButton className="button button-outline" />
               </div>
-              <a className="text-link team-recognition" href="/recognition">
+              <a className="text-link team-recognition" href="/recognition#top">
                 Explore my hackathon recognitions <Arrow />
               </a>
             </div>

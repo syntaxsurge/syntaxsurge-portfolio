@@ -18,7 +18,7 @@ export default function RecognitionPage() {
       <Header />
       <main id="main" tabIndex={-1} className="collection-page shell">
         <nav className="project-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
+          <Link href="/#top">Home</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">Recognition</span>
         </nav>
