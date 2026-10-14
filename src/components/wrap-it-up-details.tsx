@@ -64,7 +64,7 @@ export function WrapItUpDetails() {
         <p>Step behind the counter at Grandma Mimi&apos;s shop. Meet customers, read their orders, and turn everyday objects into thoughtful presents. Choose your supplies, unroll and cut the paper, fold each shape, seal it with tape, and finish with ribbons, bows, cards, and little details.</p>
         <div className="app-feature-grid">
           <article><h3>Make it by hand</h3><p>A touch-first wrapping workshop with boxes, cylinders, and round gifts.</p></article>
-          <article><h3>Find your rhythm</h3><p>Play through shop days, discover supplies and customer stories, or relax in Zen mode.</p></article>
+          <article><h3>Find your rhythm</h3><p>Play through shop days, discover supplies and customer stories, or serve customers at your own pace in Zen mode.</p></article>
           <article><h3>Play wherever you are</h3><p>Core gameplay works offline. No player account, energy bars, or cloud save is required.</p></article>
         </div>
       </section>

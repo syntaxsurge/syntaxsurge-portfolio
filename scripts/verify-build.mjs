@@ -923,9 +923,8 @@ check(
     assert.ok(support.includes("<details"));
     assert.ok(support.includes("cannot restore a local save from a server"));
     for (const html of [game, support, privacy]) {
-      assert.ok(html.includes("ESRB Everyone"));
-      assert.ok(html.includes("PEGI 3"));
-      assert.ok(html.includes("18+ in Australia"));
+      assert.ok(plain(html).includes(wrapItUp.playAgeRatingSummary));
+      assert.ok(plain(html).includes(wrapItUp.appleAgeRatingSummary));
     }
     for (const html of [game, support]) {
       if (wrapItUp.closedTestingAvailable) {
@@ -944,10 +943,15 @@ check(
     assert.ok(privacy.includes("automatic startup entry points"));
     assert.ok(privacy.includes("Google Mobile Ads"));
     assert.ok(!privacy.includes("collect no data"));
-    assert.ok(privacy.includes("In build 4"));
-    assert.ok(privacy.includes("The distributed Android beta"));
-    assert.ok(privacy.includes(wrapItUp.version));
-    assert.ok(!privacy.toLowerCase().includes("release candidate"));
+    assert.ok(!privacy.includes("In build 4"));
+    assert.ok(privacy.includes(wrapItUp.privacyEffectiveDate));
+    assert.ok(privacy.includes(wrapItUp.privacyCandidateVersion));
+    assert.ok(plain(privacy).includes(`latest verified testing build ${wrapItUp.version}`));
+    assert.ok(plain(privacy).includes("2 Goodwill"));
+    assert.ok(plain(privacy).includes("Live ads are disabled"));
+    assert.ok(plain(privacy).includes("no real-world prize, real-money wager or cash-out"));
+    assert.ok(!plain(game).includes(wrapItUp.privacyCandidateVersion));
+    assert.ok(!plain(support).includes(wrapItUp.privacyCandidateVersion));
   },
 );
 check(

@@ -1,16 +1,18 @@
 export const wrapItUp = {
   name: "Wrap It Up!",
   path: "/work/wrap-it-up",
-  version: "1.0.1 (7)",
+  version: "1.0.1 (19)",
+  privacyEffectiveDate: "October 15, 2026",
+  privacyCandidateVersion: "1.0.1 (20)",
   playTestingUrl:
     "https://play.google.com/apps/internaltest/4701089363572737974",
   playClosedTestingUrl:
     "https://play.google.com/apps/testing/com.syntaxsurge.wrapitup",
-  closedTestingAvailable: false,
+  closedTestingAvailable: true,
   playAgeRatingSummary:
-    "Google Play ratings vary by region: ESRB Everyone in North America (alcohol reference), PEGI 3 in Europe, and 18+ in Australia (simulated gambling). Check the rating shown in your local store.",
+    "Google Play ratings vary by region. Check the current age rating in your local Google Play listing.",
   appleAgeRatingSummary:
-    "The current iOS age declaration is 17+ on older OS versions and 18+ in Brazil and France. It covers an occasional wine-bottle gift and the optional wheel's randomized virtual rewards.",
+    "Check the current App Store age rating for your region and OS version. The game includes an occasional wine-bottle gift and optional virtual prize games.",
   testFlightUrl: "https://testflight.apple.com/join/9f2WNa94",
   supportEmail: "ejadelaurence@icloud.com",
   contactUrl: "mailto:ejadelaurence@icloud.com?subject=Wrap%20It%20Up!%20Support",
