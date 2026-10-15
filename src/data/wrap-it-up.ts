@@ -1,9 +1,8 @@
 export const wrapItUp = {
   name: "Wrap It Up!",
   path: "/work/wrap-it-up",
-  version: "1.0.1 (19)",
+  version: "1.0.1 (20)",
   privacyEffectiveDate: "October 15, 2026",
-  privacyCandidateVersion: "1.0.1 (20)",
   playTestingUrl:
     "https://play.google.com/apps/internaltest/4701089363572737974",
   playClosedTestingUrl:
@@ -12,7 +11,7 @@ export const wrapItUp = {
   playAgeRatingSummary:
     "Google Play ratings vary by region. Check the current age rating in your local Google Play listing.",
   appleAgeRatingSummary:
-    "Check the current App Store age rating for your region and OS version. The game includes an occasional wine-bottle gift and optional virtual prize games.",
+    "Apple’s saved age rating is 18+ in most regions (17+ on operating systems earlier than version 26), with regional exceptions. Check the rating in your local App Store listing.",
   testFlightUrl: "https://testflight.apple.com/join/9f2WNa94",
   supportEmail: "ejadelaurence@icloud.com",
   contactUrl: "mailto:ejadelaurence@icloud.com?subject=Wrap%20It%20Up!%20Support",

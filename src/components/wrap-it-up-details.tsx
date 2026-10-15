@@ -28,6 +28,7 @@ export function WrapItUpBetaNote() {
     <div className="detail-note">
       <span className="eyebrow">TESTING / VERSION {wrapItUp.version}</span>
       <h3>Join the beta.</h3>
+      <p>Version {wrapItUp.version} is verified for Android internal testing and TestFlight.</p>
       <p>The Android and TestFlight actions above open beta enrollment pages. Availability depends on your tester access and the store&apos;s current review status.</p>
       <p>Android requires an allowlisted Google account. TestFlight requires Apple&apos;s TestFlight app and an available invitation. The game is not yet a public App Store or Google Play release.</p>
       <WrapItUpClosedTesting />
@@ -38,7 +39,7 @@ export function WrapItUpBetaNote() {
 export function WrapItUpClosedTesting() {
   return wrapItUp.closedTestingAvailable ? (
     <>
-      <p>Invited Android testers can join the <a href={wrapItUp.playClosedTestingUrl} target="_blank" rel="noopener noreferrer">closed Alpha test</a> using the Google account on the tester list. Opt in, then follow Google Play&apos;s installation link.</p>
+      <p>Invited Android testers can join the <a href={wrapItUp.playClosedTestingUrl} target="_blank" rel="noopener noreferrer">closed Alpha test</a> using the Google account on the tester list. Opt in, then follow Google Play&apos;s installation link. Closed Alpha may offer an earlier build.</p>
       <p>If you already joined internal testing, first leave it on the <a href={wrapItUp.playTestingUrl} target="_blank" rel="noopener noreferrer">internal-test enrollment page</a>, then join the closed test. Google Play does not enroll an internal tester into a closed test automatically.</p>
     </>
   ) : (

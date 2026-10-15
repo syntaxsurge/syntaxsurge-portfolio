@@ -945,13 +945,12 @@ check(
     assert.ok(!privacy.includes("collect no data"));
     assert.ok(!privacy.includes("In build 4"));
     assert.ok(privacy.includes(wrapItUp.privacyEffectiveDate));
-    assert.ok(privacy.includes(wrapItUp.privacyCandidateVersion));
-    assert.ok(plain(privacy).includes(`latest verified testing build ${wrapItUp.version}`));
+    assert.ok(plain(privacy).includes(`Testing version ${wrapItUp.version}`));
     assert.ok(plain(privacy).includes("2 Goodwill"));
     assert.ok(plain(privacy).includes("Live ads are disabled"));
     assert.ok(plain(privacy).includes("no real-world prize, real-money wager or cash-out"));
-    assert.ok(!plain(game).includes(wrapItUp.privacyCandidateVersion));
-    assert.ok(!plain(support).includes(wrapItUp.privacyCandidateVersion));
+    assert.ok(plain(game).includes(`Version ${wrapItUp.version} is verified for Android internal testing and TestFlight`));
+    assert.ok(plain(support).includes("Closed Alpha may offer an earlier build"));
   },
 );
 check(
