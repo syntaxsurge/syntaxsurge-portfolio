@@ -9,7 +9,7 @@ A Next.js business website for Syntax Surge, a Philippine software studio buildi
 
 The business brand is **Syntax Surge**; its registered legal name is **SyntaxSurge Software Development Services**. The registration section shows National scope, Business Name No. 8161608, and a rendered certificate preview, with view/download actions for the [unchanged original DTI PDF](public/documents/syntax-surge-dti-certificate.pdf). `src/data/business.ts` stores its verified document facts and local asset paths.
 
-Business inquiries open [syntaxsurge@gmail.com](mailto:syntaxsurge@gmail.com) in the visitor's email application; LinkedIn is also available. The site does not send messages or collect inquiries through a form.
+Business inquiries open [syntaxsurge@gmail.com](mailto:syntaxsurge@gmail.com) in the visitor’s email application. The Work section offers an editable project brief with prompts for a goal, target timeline and optional team time zone. LinkedIn is also available. The site does not send messages or collect inquiries through a form.
 
 ## Run locally
 
@@ -71,6 +71,6 @@ Recognition details originate from the founder’s supplied award history and do
 
 ## Accessibility and verification
 
-The shared sticky navigation leads to homepage Work/Services/Team and the current page's Contact footer on phones, tablets, and desktop. The Work section leads with The Perfume Notebook and shows 11 projects at first, with a control to reveal all 28, a Search & filter disclosure that searches the full collection, category/result counts, one-click reset and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative motion controls support keyboard interaction and visible focus.
+The shared sticky navigation leads to homepage Work/Services/Team and the current page's Contact footer on phones, tablets, and desktop. The Work section leads with The Perfume Notebook. The preview shows at least 11 ranked projects and fills its last row at each grid width. It includes a control to reveal all 28 projects, a Search & filter disclosure that searches the full collection, category/result counts, one-click reset and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative motion controls support keyboard interaction and visible focus.
 
 Semantic landmarks, a focusable skip destination, labeled search and theme controls, visible keyboard focus, live filter announcements, focus restoration after reset, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Validation is recorded in `docs/VALIDATION.md`.

@@ -384,6 +384,24 @@ check("Business contact uses the owner-supplied email", () => {
   const footer = homepage.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/)?.[1];
   assert.ok(footer && footer.includes(`href="${business.links.email}"`));
   assert.ok(plain(footer).includes(business.email));
+
+  const inquiry = homepage.match(
+    /<aside\b[^>]*class="work-inquiry"[^>]*>([\s\S]*?)<\/aside>/,
+  )?.[1];
+  assert.ok(inquiry);
+  const encodedBrief = inquiry.match(/href="(mailto:[^"]+\?[^"]+)"/)?.[1];
+  assert.ok(encodedBrief);
+  const brief = new URL(encodedBrief.replaceAll("&amp;", "&"));
+  assert.equal(brief.href, business.links.projectBrief);
+  assert.equal(brief.protocol, "mailto:");
+  assert.equal(brief.pathname, business.email);
+  assert.ok(brief.searchParams.get("subject")?.trim());
+  const body = brief.searchParams.get("body") ?? "";
+  assert.match(body, /project goal/i);
+  assert.match(body, /timeline/i);
+  assert.match(body, /time zone \(optional\)/i);
+  assert.ok(inquiry.includes(`href="${business.links.email}"`));
+  assert.ok(plain(inquiry).includes(business.email));
 });
 check(
   "Scroll-through services render complete cards and native jump links",

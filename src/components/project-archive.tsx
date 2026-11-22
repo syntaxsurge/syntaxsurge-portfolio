@@ -15,14 +15,22 @@ const filters = [
 ] as const;
 const initialProjectCount = 11;
 
+function previewCountFor(columns: number) {
+  // The lead takes its own row. Round up only the regular cards.
+  return 1 + Math.ceil((initialProjectCount - 1) / columns) * columns;
+}
+
 export function ProjectArchive() {
   const [filter, setFilter] = useState<(typeof filters)[number]>(filters[0]);
   const [query, setQuery] = useState("");
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [columns, setColumns] = useState(1);
   const filterToggle = useRef<HTMLButtonElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+  const results = useRef<HTMLDivElement>(null);
+  const showMoreButton = useRef<HTMLButtonElement>(null);
   const firstAdditionalProject = useRef<HTMLAnchorElement>(null);
   const demoTrigger = useRef<HTMLButtonElement>(null);
   const closeDemoButton = useRef<HTMLButtonElement>(null);
@@ -51,6 +59,22 @@ export function ProjectArchive() {
   useEffect(() => {
     if (showAll) firstAdditionalProject.current?.focus();
   }, [showAll]);
+  useEffect(() => {
+    const list = results.current;
+    if (!list) return;
+    const observer = new ResizeObserver(() => {
+      const columnCount =
+        Number(getComputedStyle(list).getPropertyValue("--archive-columns")) || 1;
+      const focusedCard = document.activeElement?.closest(".archive-row");
+      const focusedIndex = focusedCard ? Array.from(list.children).indexOf(focusedCard) : -1;
+      if (focusedIndex >= previewCountFor(columnCount)) {
+        showMoreButton.current?.focus({ preventScroll: true });
+      }
+      setColumns(columnCount);
+    });
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, []);
   const visible = useMemo(
     () =>
       projects.filter(
@@ -62,7 +86,16 @@ export function ProjectArchive() {
       ),
     [filter, search],
   );
-  const showMore = !showAll && !hasFilters && visible.length > initialProjectCount;
+  const previewCount = previewCountFor(columns);
+  const showMore = !showAll && !hasFilters && visible.length > previewCount;
+  const regularCount = visible.length - Number(!hasFilters);
+  const hasSingleTail = !showMore && columns > 1 && regularCount % columns === 1;
+
+  function revealProjects() {
+    firstAdditionalProject.current =
+      results.current?.children[previewCount]?.querySelector("h3 a") ?? null;
+    setShowAll(true);
+  }
 
   return (
     <div className="archive">
@@ -152,7 +185,7 @@ export function ProjectArchive() {
         </div>
         <div className="archive-results-summary">
           <p role="status" aria-live="polite" aria-atomic="true">
-            {showMore ? initialProjectCount : visible.length} of {projects.length} projects
+            {showMore ? previewCount : visible.length} of {projects.length} projects
             {filter.category !== null && ` · ${filter.label}`}
             {search && ` matching “${query.trim()}”`}
           </p>
@@ -163,7 +196,7 @@ export function ProjectArchive() {
           )}
         </div>
       </div>
-      <div className="archive-list" id="project-results">
+      <div ref={results} className="archive-list" id="project-results">
         {visible.map((p, index) => {
           const preview = projectPreviews[p.id];
           const isActive = activeDemo === p.id;
@@ -180,10 +213,7 @@ export function ProjectArchive() {
                 : destination.label;
           const title = (
             <h3 className={featured ? "archive-lead-title" : undefined}>
-              <Link
-                ref={index === initialProjectCount ? firstAdditionalProject : undefined}
-                href={`/work/${p.id}#top`}
-              >
+              <Link href={`/work/${p.id}#top`}>
                 {p.title}
               </Link>
             </h3>
@@ -205,7 +235,8 @@ export function ProjectArchive() {
               className="archive-row"
               key={p.id}
               data-featured={featured ? "true" : undefined}
-              data-collapsed={showMore && index >= initialProjectCount ? "true" : undefined}
+              data-collapsed={showMore && index >= previewCount ? "true" : undefined}
+              data-single-tail={hasSingleTail && index === visible.length - 1 ? "true" : undefined}
             >
               {featured && title}
               <div className="archive-preview-wrap">
@@ -332,12 +363,13 @@ export function ProjectArchive() {
       {showMore && (
         <div className="archive-more">
           <button
+            ref={showMoreButton}
             className="button button-outline"
             type="button"
             aria-controls="project-results"
-            onClick={() => setShowAll(true)}
+            onClick={revealProjects}
           >
-            Show {visible.length - initialProjectCount} more projects <Arrow />
+            Show {visible.length - previewCount} more projects <Arrow />
           </button>
         </div>
       )}

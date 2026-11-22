@@ -1,12 +1,26 @@
+const email = "syntaxsurge@gmail.com";
+const emailHref = `mailto:${email}`;
+const briefSubject = "New project inquiry";
+const briefBody = [
+  "Hello Syntax Surge,",
+  "",
+  "I would like to discuss a project.",
+  "",
+  "Project goal:",
+  "Target timeline:",
+  "Team time zone (optional):",
+].join("\r\n");
+
 export const business = {
   name: "Syntax Surge",
   legalName: "SyntaxSurge Software Development Services",
   description:
     "Syntax Surge is a Philippine software studio building websites, apps and automation for businesses worldwide.",
   logo: { src: "/images/syntaxsurge-logo.jpg", width: 640, height: 640 },
-  email: "syntaxsurge@gmail.com",
+  email,
   links: {
-    email: "mailto:syntaxsurge@gmail.com",
+    email: emailHref,
+    projectBrief: `${emailHref}?subject=${encodeURIComponent(briefSubject)}&body=${encodeURIComponent(briefBody)}`,
     linkedin: "https://www.linkedin.com/in/jade-laurence-empleo/",
     github: "https://github.com/syntaxsurge",
   },

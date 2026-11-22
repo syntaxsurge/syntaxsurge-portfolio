@@ -70,11 +70,22 @@ export default function Home() {
           <BackgroundVideo media={business.workMotion} variant="work" />
           <div className="shell">
             <ProjectArchive />
-            <aside className="work-inquiry" aria-label="Project inquiries">
-              <p>Have a similar project in mind?</p>
-              <a className="text-link" href={business.links.email}>
-                Talk to our studio <Arrow diagonal />
-              </a>
+            <aside className="work-inquiry" aria-labelledby="work-inquiry-title">
+              <div className="work-inquiry-copy">
+                <h3 id="work-inquiry-title">Let’s plan your project</h3>
+                <p>
+                  Tell our studio what you’d like to build and when you hope to
+                  launch. Add your team’s time zone if it helps us coordinate.
+                </p>
+              </div>
+              <div className="work-inquiry-actions">
+                <a className="button button-dark" href={business.links.projectBrief}>
+                  Email your project brief <Arrow diagonal />
+                </a>
+                <a className="text-link" href={business.links.email}>
+                  {business.email}
+                </a>
+              </div>
             </aside>
           </div>
         </section>
