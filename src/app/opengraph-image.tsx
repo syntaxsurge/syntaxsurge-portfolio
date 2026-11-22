@@ -58,8 +58,8 @@ export default async function OpenGraphImage() {
               letterSpacing: -3,
             }}
           >
-            <span>Software built to</span>
-            <span style={{ color: "#295bff" }}>fit your business.</span>
+            <span>Websites and apps</span>
+            <span style={{ color: "#295bff" }}>built for business.</span>
           </div>
           {/* ImageResponse uses a native image with embedded local asset bytes. */}
           <img

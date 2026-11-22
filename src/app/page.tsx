@@ -4,7 +4,6 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Arrow } from "@/components/icons";
 import { ProjectArchive } from "@/components/project-archive";
-import { PortfolioFacts } from "@/components/portfolio-facts";
 import { ServiceShowcase } from "@/components/service-showcase";
 import { LeadershipCards } from "@/components/leadership-cards";
 import { SectionReveal } from "@/components/section-reveal";
@@ -42,44 +41,43 @@ export default function Home() {
           <div className="hero-layout shell">
             <div className="hero-copy">
               <p className="hero-kicker">
-                <span aria-hidden="true" />
-                Philippine software studio · Available worldwide
+                Philippine studio · Available worldwide
               </p>
               <h1 id="hero-title">
-                Software built to <span>fit your business.</span>
+                Websites and apps <span>built for business.</span>
               </h1>
               <p className="hero-description">
-                We design and build websites, apps and automations that help you
-                reach customers and simplify the way your team works.
+                We design customer-facing products and back-office tools, from
+                bilingual catalogs to retail checkout.
               </p>
               <div className="hero-actions">
-                <a className="button button-dark" href={business.links.email}>
+                <a className="button hero-primary" href="#work">
+                  See our work <Arrow />
+                </a>
+                <a className="button hero-contact" href={business.links.email}>
                   Start a project <Arrow diagonal />
                 </a>
-                <a className="button button-outline" href="#work">
-                  See the work <Arrow />
-                </a>
               </div>
-              <ResumeButton className="hero-resume text-link" />
             </div>
-            <figure className="hero-workspace">
-              <div className="hero-photo">
-                <Image
-                  src={business.workspacePhoto.src}
-                  alt={business.workspacePhoto.alt}
-                  width={business.workspacePhoto.width}
-                  height={business.workspacePhoto.height}
-                  sizes="(max-width: 700px) 100vw, 540px"
-                  preload
-                  unoptimized
-                />
-              </div>
-              <figcaption>Inside a Syntax Surge planning session</figcaption>
-            </figure>
           </div>
         </section>
 
-        <PortfolioFacts />
+        <section
+          id="work"
+          className="business-section work-section"
+          aria-labelledby="work-title"
+        >
+          <BackgroundVideo media={business.workMotion} variant="work" />
+          <div className="shell">
+            <ProjectArchive />
+            <aside className="work-inquiry" aria-label="Project inquiries">
+              <p>Have a similar project in mind?</p>
+              <a className="text-link" href={business.links.email}>
+                Talk to our studio <Arrow diagonal />
+              </a>
+            </aside>
+          </div>
+        </section>
 
         <section
           id="services"
@@ -98,13 +96,27 @@ export default function Home() {
         >
           <div className="shell">
             <SectionReveal className="process-panel">
-              <div className="section-heading">
+              <div className="delivery-intro">
                 <h2 id="process-title">How we work together</h2>
                 <p>
-                  We work remotely with your team. At kickoff, we agree on how
-                  we’ll communicate across time zones and when you’ll review
-                  the work.
+                  Work directly with our studio from the Philippines. We agree on
+                  milestones, feedback windows and handover details around your
+                  team’s time zone.
                 </p>
+                <figure className="delivery-photo">
+                  <Image
+                    src={business.workspacePhoto.src}
+                    alt={business.workspacePhoto.alt}
+                    width={business.workspacePhoto.width}
+                    height={business.workspacePhoto.height}
+                    sizes="(max-width: 700px) 90vw, 450px"
+                  />
+                  <figcaption>Project planning at Syntax Surge</figcaption>
+                </figure>
+                <div className="delivery-lead">
+                  <span>Project lead · {business.founder.name}</span>
+                  <ResumeButton className="text-link" />
+                </div>
               </div>
               <ol className="project-stages" role="list">
                 {projectStages.map((stage, index) => (
@@ -118,21 +130,6 @@ export default function Home() {
                 ))}
               </ol>
             </SectionReveal>
-          </div>
-        </section>
-
-        <section
-          id="work"
-          className="business-section work-section"
-          aria-labelledby="work-title"
-        >
-          <BackgroundVideo media={business.workMotion} variant="work" />
-          <div className="shell">
-            <SectionReveal variant="slide" className="work-heading">
-              <h2 id="work-title">Explore our work</h2>
-              <p>See the websites, apps and experiments we’ve built.</p>
-            </SectionReveal>
-            <ProjectArchive />
           </div>
         </section>
 

@@ -8,8 +8,8 @@ import { ThemeToggle } from "./theme-toggle";
 import styles from "./header.module.css";
 
 const links = [
-  { href: "/#services", label: "Services", icon: "services" },
   { href: "/#work", label: "Work", icon: "work" },
+  { href: "/#services", label: "Services", icon: "services" },
   { href: "/#team", label: "Team", icon: "team" },
   { href: "#contact", label: "Contact", icon: "contact" },
 ] as const;

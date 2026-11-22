@@ -108,6 +108,12 @@ export default async function ProjectPage({
             <h2 id="project-focus-title">About the project</h2>
             <div className="detail-note">
               <p>{p.description}</p>
+              <a
+                className="text-link"
+                href={`${business.links.email}?subject=${encodeURIComponent(`Project inquiry inspired by ${p.title}`)}`}
+              >
+                Discuss a similar project <Arrow diagonal />
+              </a>
             </div>
           </section>
           <section aria-labelledby="project-recognition-title">

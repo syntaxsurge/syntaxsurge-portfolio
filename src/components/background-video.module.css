@@ -84,48 +84,42 @@
   position: absolute;
   inset: 0;
   height: 100%;
-  background: var(--paper);
+  background: #0c1932;
 }
 
 .hero .media::after {
-  background: linear-gradient(
-    90deg,
-    var(--paper) 0%,
-    color-mix(in srgb, var(--paper) 96%, transparent) 25%,
-    color-mix(in srgb, var(--paper) 85%, transparent) 43%,
-    color-mix(in srgb, var(--paper) 20%, transparent) 72%,
-    color-mix(in srgb, var(--paper) 8%, transparent)
-  );
+  background: linear-gradient(90deg, #09152b 6%, #0d1c36f2 34%, #0d1c36a8 59%, #0b163a22 90%);
 }
 
 .hero .poster,
 .hero .video {
-  object-position: 68% center;
+  inset: 0 0 0 auto;
+  width: min(83%, 1350px);
+  object-position: 76% 50%;
 }
 
 .hero .control {
   position: absolute;
   top: auto;
-  bottom: 18px;
-  right: 18px;
+  bottom: 12px;
+  right: 12px;
   margin: 0;
 }
 
 @media (max-width: 700px) {
-  .hero .media {
-    height: 100%;
-  }
   .hero .media::after {
-    background: linear-gradient(
-      180deg,
-      var(--paper),
-      color-mix(in srgb, var(--paper) 94%, transparent) 33%,
-      color-mix(in srgb, var(--paper) 86%, transparent) 58%,
-      color-mix(in srgb, var(--paper) 35%, transparent)
-    );
+    background: linear-gradient(90deg, #09152bf5, #0a1633d9 58%, #0b163ba6);
   }
   .hero .poster,
   .hero .video {
-    object-position: 73% center;
+    width: 100%;
+    object-position: 70% center;
+  }
+  .hero .control {
+    position: static;
+    margin: 8px 12px 0 auto;
+  }
+  .hero:has(.control) + :global(.hero-layout) {
+    margin-top: 48px;
   }
 }

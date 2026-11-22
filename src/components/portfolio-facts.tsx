@@ -61,7 +61,7 @@ export function PortfolioFacts() {
 
   return (
     <div
-      className="portfolio-facts shell"
+      className="portfolio-facts"
       ref={container}
       data-running={running}
     >

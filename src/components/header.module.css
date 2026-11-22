@@ -11,7 +11,7 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 32px;
-  min-height: 88px;
+  min-height: 72px;
 }
 
 .wordmark {
@@ -129,14 +129,14 @@
 
 @media (min-width: 851px) {
   .navigation .contactLink {
-    padding-inline: 14px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--elevated);
+    padding-inline: 16px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--inverse);
   }
 
   .navigation .contactLink:hover {
-    border-color: var(--accent);
+    background: var(--accent);
   }
 }
 
@@ -167,9 +167,9 @@
 @media (max-width: 850px) {
   .inner {
     grid-template-columns: 1fr auto;
-    grid-template-rows: 76px auto;
+    grid-template-rows: 68px auto;
     column-gap: 12px;
-    min-height: 76px;
+    min-height: 68px;
   }
 
   .wordmark {

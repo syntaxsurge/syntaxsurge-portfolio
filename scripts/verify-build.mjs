@@ -10,6 +10,19 @@ import { wrapItUp, wrapItUpPaths } from "../src/data/wrap-it-up.ts";
 import { motionInitScript } from "../src/lib/motion.ts";
 const root = process.cwd();
 const app = resolve(root, ".next/server/app");
+const featuredProjectIds = [
+  "perfume-notebook",
+  "cliplore-ai",
+  "topic-machine",
+  "orderkubo",
+  "modelcab",
+  "filemaple",
+  "linkmaple",
+  "studysoda",
+  "romcamp",
+  "muslim-everyday",
+  "mc-dental-station",
+];
 const read = (file) => readFileSync(resolve(app, file), "utf8");
 const plain = (s) =>
   s
@@ -33,6 +46,10 @@ function check(label, run) {
 check("Complete, unique project and award collection", () => {
   assert.equal(projects.length, 28);
   assert.equal(new Set(projects.map((p) => p.id)).size, projects.length);
+  assert.deepEqual(
+    projects.slice(0, featuredProjectIds.length).map((project) => project.id),
+    featuredProjectIds,
+  );
   assert.equal(awards.length, 14);
   for (const p of projects) {
     assert.match(p.id, /^[a-z0-9-]+$/);
@@ -204,11 +221,13 @@ check(
     assert.equal(certificate.subarray(0, 5).toString(), "%PDF-");
     assert.ok(!header.includes(`href="${business.resumeHref}"`));
     assert.ok(!plain(header).includes("Download résumé"));
-    const hero = homepage.match(
-      /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
+    const delivery = homepage.match(
+      /<section\b[^>]*aria-labelledby="process-title"[^>]*>([\s\S]*?)<\/section>/,
     )?.[1];
-    assert.ok(hero && hero.includes('aria-haspopup="dialog"'));
-    assert.ok(plain(hero).includes("View résumé"));
+    assert.ok(delivery && delivery.includes('aria-haspopup="dialog"'));
+    assert.ok(plain(delivery).includes("View résumé"));
+    assert.ok(imageSources(delivery).includes(business.workspacePhoto.src));
+    assert.ok(delivery.includes(business.workspacePhoto.alt));
     assert.ok(!homepage.includes('href="/work"'));
     assert.ok(homepage.includes('href="/recognition#top"'));
     assert.ok(!homepage.includes("<details"));
@@ -431,6 +450,15 @@ check(
 check(
   "Homepage collection has all project previews and on-request demo controls",
   () => {
+    const filterToggle = homepage.match(
+      /<button\b(?=[^>]*aria-controls="project-filters")[^>]*>([\s\S]*?)<\/button>/,
+    );
+    assert.ok(filterToggle && filterToggle[0].includes('aria-expanded="false"'));
+    assert.equal(plain(filterToggle[1]).trim(), "Search & filter");
+    const filterPanel = homepage.match(
+      /<div\b(?=[^>]*id="project-filters")[^>]*>/,
+    )?.[0];
+    assert.ok(filterPanel?.includes('hidden=""'));
     assert.deepEqual(
       Object.keys(projectPreviews).sort(),
       projects.map((project) => project.id).sort(),
@@ -441,6 +469,28 @@ check(
       ),
     ].map((match) => match[1]);
     assert.equal(cards.length, projects.length);
+    const featured = [
+      ...homepage.matchAll(
+        /<article\b[^>]*class="archive-row"[^>]*data-featured="true"[^>]*>([\s\S]*?)<\/article>/g,
+      ),
+    ];
+    assert.equal(featured.length, 1);
+    assert.equal(featured[0][1], cards[0]);
+    const featuredProject = projects[0];
+    assert.ok(featured[0][1].includes(`href="/work/${featuredProject.id}#top"`));
+    const leadTitlePosition = featured[0][1].indexOf('class="archive-lead-title"');
+    assert.ok(leadTitlePosition >= 0 && leadTitlePosition < featured[0][1].indexOf("<img"));
+    assert.ok(featured[0][1].includes('sizes="(max-width: 850px) 90vw,'));
+    const capabilityList = featured[0][1].match(
+      /<ul\b[^>]*aria-label="Project capabilities"[^>]*>([\s\S]*?)<\/ul>/,
+    )?.[1];
+    assert.ok(capabilityList);
+    assert.deepEqual(
+      [...capabilityList.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((match) =>
+        plain(match[1]),
+      ),
+      featuredProject.tags,
+    );
     assert.equal((homepage.match(/<iframe\b/g) || []).length, 0);
     const demoCount = projects.filter(
       (project) => projectPreviews[project.id].demo,
@@ -452,15 +502,18 @@ check(
     assert.equal(demoButtons.length, demoCount);
     for (const button of demoButtons)
       assert.ok(button[0].includes('aria-expanded="false"'));
-    for (const project of projects) {
+    for (const [index, project] of projects.entries()) {
       const preview = projectPreviews[project.id];
-      const card = cards.find((html) =>
-        html.includes(`href="/work/${project.id}#top"`),
+      const card = cards[index];
+      assert.ok(
+        card.includes(`href="/work/${project.id}#top"`),
+        `Collection card ${index + 1}: ${project.title}`,
       );
-      assert.ok(card, `Collection card for ${project.title}`);
       assert.equal((card.match(/<h3\b/g) || []).length, 1);
       assert.ok(plain(card).includes(project.title));
-      assert.ok(plain(card).includes(preview.summary));
+      assert.ok(
+        plain(card).includes(project === featuredProject ? project.description : preview.summary),
+      );
       const destination =
         project.links.find(
           (link) => !/watch demo|award-winning demo/i.test(link.label),
@@ -531,11 +584,14 @@ check("Homepage introduces the project process and previews the collection", () 
     ...homepage.matchAll(/<article\b[^>]*class="archive-row"[^>]*>/g),
   ].map(([tag]) => tag);
   assert.equal(projectRows.length, projects.length);
-  assert.equal(
-    projectRows.filter((tag) => tag.includes('data-collapsed="true"')).length,
-    projects.length - 11,
-  );
-  assert.ok(plain(homepage).includes(`Show ${projects.length - 11} more projects`));
+  for (const [index, tag] of projectRows.entries()) {
+    assert.equal(
+      tag.includes('data-collapsed="true"'),
+      index >= featuredProjectIds.length,
+    );
+  }
+  const moreCount = projects.length - featuredProjectIds.length;
+  assert.ok(plain(homepage).includes(`Show ${moreCount} more projects`));
 });
 check("Recognition has an accessible standalone route", () => {
   assert.equal((recognition.match(/<h1\b/g) || []).length, 1);
@@ -632,7 +688,7 @@ check(
     assert.equal(redirect.statusCode, 308);
   },
 );
-check("Hero pairs the supplied workspace photo with a lazy looping background", () => {
+check("Hero shows a lazy looping background and leads directly to Work", () => {
   const hero = homepage.match(
     /<section\b[^>]*class="business-hero"[^>]*>([\s\S]*?)<\/section>/,
   )?.[1];
@@ -650,8 +706,7 @@ check("Hero pairs the supplied workspace photo with a lazy looping background", 
   assert.ok(video.includes('aria-hidden="true"'));
   assert.ok(video.includes('tabindex="-1"'));
   assert.ok(imageSources(hero).includes(business.heroMotion.poster));
-  assert.ok(imageSources(hero).includes(business.workspacePhoto.src));
-  assert.ok(hero.includes(business.workspacePhoto.alt));
+  assert.match(homepage, /class="business-hero"[^>]*>(?:(?!<section)[\s\S])*?<\/section>\s*<section id="work"/);
   const workspace = readFileSync(
     resolve(root, "public", business.workspacePhoto.src.slice(1)),
   );
@@ -796,8 +851,8 @@ check(
       const links = [...navigation[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)];
       assert.equal(links.length, 4);
       for (const [index, href] of [
-        "/#services",
         "/#work",
+        "/#services",
         "/#team",
         "#contact",
       ].entries()) {
@@ -919,13 +974,13 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(
     (match) => match[1],
   );
-  const expected = new Set([
+  const expected = [
     siteHref("/"),
     siteHref("/recognition"),
     ...projects.map((project) => siteHref(`/work/${project.id}`)),
-    ...wrapItUpPaths.map((path) => siteHref(path)),
-  ]);
-  assert.equal(locations.length, expected.size);
+    ...wrapItUpPaths.slice(1).map((path) => siteHref(path)),
+  ];
+  assert.deepEqual(locations, expected);
   assert.equal(locations.length, 32);
   assert.equal(new Set(locations).size, locations.length);
   assert.ok(!sitemap.includes("/apps/wrap-it-up"));
@@ -935,7 +990,6 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
   );
   for (const project of projects) {
     const canonical = siteHref(`/work/${project.id}`);
-    assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
     assert.ok(
       read(`work/${project.id}.html`).includes(
         `rel="canonical" href="${canonical}"`,
@@ -1066,6 +1120,8 @@ for (const project of projects) {
     assert.ok(!html.includes('class="detail-tags"'));
     assert.ok(!html.includes('class="project-artwork-caption"'));
     assert.ok(html.includes("About the project"));
+    const subject = encodeURIComponent(`Project inquiry inspired by ${project.title}`);
+    assert.ok(html.includes(`href="${business.links.email}?subject=${subject}"`));
     assert.ok(html.includes('href="/#work"'));
     for (const link of project.links)
       assert.ok(html.includes(`href="${link.href.replaceAll("&", "&amp;")}"`));

@@ -5,10 +5,12 @@ export function ProjectVisual({
   id,
   priority = false,
   variant = "detail",
+  sizes,
 }: {
   id: string;
   priority?: boolean;
   variant?: "detail" | "preview";
+  sizes?: string;
 }) {
   const preview = projectPreviews[id];
   if (!preview) return null;
@@ -27,9 +29,9 @@ export function ProjectVisual({
         alt={image.alt}
         fill
         sizes={
-          variant === "preview"
+          sizes ?? (variant === "preview"
             ? "(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 600px"
-            : "(max-width: 700px) 100vw, 1100px"
+            : "(max-width: 700px) 100vw, 1100px")
         }
         preload={priority}
       />

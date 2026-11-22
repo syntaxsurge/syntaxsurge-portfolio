@@ -31,46 +31,8 @@ export type Award = {
 };
 
 // Content provenance and historical product distinctions: docs/CONTENT-SOURCES.md.
+// The homepage collection and Next project navigation follow this order.
 export const projects: Project[] = [
-  {
-    id: "mc-dental-station",
-    title: "MC Dental Station",
-    description:
-      "A dental clinic website that brings service information, appointment requests, and approved FAQ assistance together, with a workspace for the clinic team.",
-    category: "Products",
-    year: "Current",
-    tags: ["Clinic website", "Appointment requests", "Staff workspace"],
-    links: [
-      { label: "Visit website", href: "https://mc-dental.syntaxsurge.com/" },
-    ],
-    focus: [
-      {
-        title: "A clear next step for patients",
-        description:
-          "Services, clinic hours, contact details, and directions help visitors plan their visit before sending an appointment request.",
-      },
-      {
-        title: "Appointment requests the team can manage",
-        description:
-          "A form and guided chat collect the preferred service and schedule. Clinic staff confirm the final appointment, with optional email reminders after confirmation.",
-      },
-      {
-        title: "Consistent answers and content",
-        description:
-          "English and Filipino FAQs use clinic-approved information. The staff workspace brings appointment management, website content, and the knowledge base together.",
-      },
-    ],
-  },
-  {
-    id: "cliplore-ai",
-    title: "ClipLore.ai",
-    description:
-      "An AI creation and video editing product with generation workflows, editable timelines, captions, audio, and export.",
-    category: "Products",
-    year: "Current",
-    tags: ["AI video", "Creator tools", "Timeline editor"],
-    links: [{ label: "Visit product", href: "https://cliplore.ai/" }],
-  },
   {
     id: "perfume-notebook",
     title: "The Perfume Notebook",
@@ -96,26 +58,14 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "orderkubo",
-    title: "OrderKubo",
+    id: "cliplore-ai",
+    title: "ClipLore.ai",
     description:
-      "A point-of-sale platform that connects checkout, inventory, stores, customers, and staff workflows for small businesses.",
+      "An AI creation and video editing product with generation workflows, editable timelines, captions, audio, and export.",
     category: "Products",
     year: "Current",
-    tags: ["Point of sale", "Inventory", "Retail operations"],
-    links: [{ label: "Visit website", href: "https://orderkubo.com/" }],
-    focus: [
-      {
-        title: "Serve customers at the counter",
-        description:
-          "Bring product lookup, quantities, discounts, and customer information into the checkout workflow.",
-      },
-      {
-        title: "See how the store runs",
-        description:
-          "Connect stock, sales activity, and reports so teams can review what happened during the day.",
-      },
-    ],
+    tags: ["AI video", "Creator tools", "Timeline editor"],
+    links: [{ label: "Visit product", href: "https://cliplore.ai/" }],
   },
   {
     id: "topic-machine",
@@ -140,24 +90,24 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "romcamp",
-    title: "Romcamp",
+    id: "orderkubo",
+    title: "OrderKubo",
     description:
-      "A discovery site for classic console games, with a searchable game archive, a personal favorites shelf, and practical emulator setup guides.",
+      "A point-of-sale platform that connects checkout, inventory, stores, customers, and staff workflows for small businesses.",
     category: "Products",
     year: "Current",
-    tags: ["Game catalog", "Search and discovery", "Field guides"],
-    links: [{ label: "Visit website", href: "https://romcamp.com/" }],
+    tags: ["Point of sale", "Inventory", "Retail operations"],
+    links: [{ label: "Visit website", href: "https://orderkubo.com/" }],
     focus: [
       {
-        title: "Find a familiar game or a new favorite",
+        title: "Serve customers at the counter",
         description:
-          "Search the archive, browse by console or genre, and keep a personal collection in your browser.",
+          "Bring product lookup, quantities, discounts, and customer information into the checkout workflow.",
       },
       {
-        title: "Get oriented with field guides",
+        title: "See how the store runs",
         description:
-          "Read console profiles, emulator overviews, and step-by-step setup notes.",
+          "Connect stock, sales activity, and reports so teams can review what happened during the day.",
       },
     ],
   },
@@ -228,6 +178,38 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "studysoda",
+    title: "StudySoda",
+    description:
+      "Turn notes and documents into reviewers, flashcards, and practice exams. A calmer place to study, edit, and share what you learn.",
+    category: "Products",
+    year: "Current",
+    tags: ["Learning", "AI study tools", "Knowledge sharing"],
+    links: [{ label: "Visit product", href: "https://studysoda.com/" }],
+  },
+  {
+    id: "romcamp",
+    title: "Romcamp",
+    description:
+      "A discovery site for classic console games, with a searchable game archive, a personal favorites shelf, and practical emulator setup guides.",
+    category: "Products",
+    year: "Current",
+    tags: ["Game catalog", "Search and discovery", "Field guides"],
+    links: [{ label: "Visit website", href: "https://romcamp.com/" }],
+    focus: [
+      {
+        title: "Find a familiar game or a new favorite",
+        description:
+          "Search the archive, browse by console or genre, and keep a personal collection in your browser.",
+      },
+      {
+        title: "Get oriented with field guides",
+        description:
+          "Read console profiles, emulator overviews, and step-by-step setup notes.",
+      },
+    ],
+  },
+  {
     id: "muslim-everyday",
     title: "Muslim Everyday",
     description:
@@ -250,24 +232,33 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "studysoda",
-    title: "StudySoda",
+    id: "mc-dental-station",
+    title: "MC Dental Station",
     description:
-      "Turn notes and documents into reviewers, flashcards, and practice exams. A calmer place to study, edit, and share what you learn.",
+      "A dental clinic website that brings service information, appointment requests, and approved FAQ assistance together, with a workspace for the clinic team.",
     category: "Products",
     year: "Current",
-    tags: ["Learning", "AI study tools", "Knowledge sharing"],
-    links: [{ label: "Visit product", href: "https://studysoda.com/" }],
-  },
-  {
-    id: "sipava",
-    title: "Sipava",
-    description:
-      "A daily accountability app that connects clear plans, intentional alarms, and progress shared with a buddy.",
-    category: "Products",
-    year: "Current",
-    tags: ["Habits", "Accountability", "Productivity"],
-    links: [{ label: "Visit product", href: "https://sipava.com/" }],
+    tags: ["Clinic website", "Appointment requests", "Staff workspace"],
+    links: [
+      { label: "Visit website", href: "https://mc-dental.syntaxsurge.com/" },
+    ],
+    focus: [
+      {
+        title: "A clear next step for patients",
+        description:
+          "Services, clinic hours, contact details, and directions help visitors plan their visit before sending an appointment request.",
+      },
+      {
+        title: "Appointment requests the team can manage",
+        description:
+          "A form and guided chat collect the preferred service and schedule. Clinic staff confirm the final appointment, with optional email reminders after confirmation.",
+      },
+      {
+        title: "Consistent answers and content",
+        description:
+          "English and Filipino FAQs use clinic-approved information. The staff workspace brings appointment management, website content, and the knowledge base together.",
+      },
+    ],
   },
   {
     id: "kaldi",
@@ -282,6 +273,16 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "sipava",
+    title: "Sipava",
+    description:
+      "A daily accountability app that connects clear plans, intentional alarms, and progress shared with a buddy.",
+    category: "Products",
+    year: "Current",
+    tags: ["Habits", "Accountability", "Productivity"],
+    links: [{ label: "Visit product", href: "https://sipava.com/" }],
+  },
+  {
     id: "wrap-it-up",
     title: "Wrap It Up!",
     description:
@@ -293,6 +294,77 @@ export const projects: Project[] = [
       { label: "Android beta", href: wrapItUp.playTestingUrl },
       { label: "TestFlight", href: wrapItUp.testFlightUrl },
     ],
+  },
+  {
+    id: "packtrace",
+    title: "PackTrace",
+    description:
+      "Medicine traceability for African supply chains, combining industrial IoT, real-time operations data, and blockchain provenance.",
+    category: "Tools",
+    year: "2025",
+    tags: ["Industrial IoT", "Supply chains", "Hedera"],
+    links: [
+      {
+        label: "Watch demo",
+        href: "https://www.youtube.com/watch?v=hJAu5NF_61I",
+      },
+      { label: "GitHub", href: "https://github.com/syntaxsurge/pack-trace" },
+      {
+        label: "Pitch deck",
+        href: "https://www.canva.com/design/DAG5oi7Oh8E/SIrLnkFLTiG0i1bJYmP_sw/edit",
+      },
+    ],
+    award: "2nd place · supOS Global Hackathon",
+  },
+  {
+    id: "creatorbank",
+    title: "CreatorBank",
+    description:
+      "A Mezo-native toolkit for MUSD payment links, invoices, memberships, marketplace listings, and split payouts.",
+    category: "AI & Web3",
+    year: "2025",
+    tags: ["Mezo", "MUSD", "Creator finance"],
+    links: [
+      { label: "Testnet demo", href: "https://creator-bank.vercel.app/" },
+      {
+        label: "Watch demo",
+        href: "https://creator-bank.vercel.app/demo-video",
+      },
+      { label: "GitHub", href: "https://github.com/syntaxsurge/creator-bank" },
+      {
+        label: "Pitch deck",
+        href: "https://creator-bank.vercel.app/pitch-deck",
+      },
+    ],
+    award: "Community Choice · Mezo Hackathon",
+  },
+  {
+    id: "viskify",
+    title: "Viskify",
+    description:
+      "AI-assisted talent verification that combines cheqd credentials with insights from private, user-owned data through Verida.",
+    category: "AI & Web3",
+    year: "2025",
+    tags: ["Verifiable credentials", "cheqd", "Verida"],
+    links: [
+      { label: "GitHub", href: "https://github.com/syntaxsurge/viskify-cheqd" },
+    ],
+    award: "1st place & Verida bounty · Verifiable AI Hackathon",
+  },
+  {
+    id: "ping402",
+    title: "Ping402",
+    description:
+      "A paid inbox for creators. Send a priority message with x402 and Solana USDC, then track delivery with a verifiable receipt.",
+    category: "AI & Web3",
+    year: "2026",
+    tags: ["Solana", "x402", "Paid messaging"],
+    links: [
+      { label: "Live demo", href: "https://pingx402.vercel.app/" },
+      { label: "Watch demo", href: "https://pingx402.vercel.app/demo-video" },
+      { label: "GitHub", href: "https://github.com/syntaxsurge/ping402" },
+    ],
+    award: "Best x402 App · Solana Winter Build Challenge",
   },
   {
     id: "croignite",
@@ -312,21 +384,6 @@ export const projects: Project[] = [
       },
     ],
     award: "3rd place · Cronos x402 PayTech Hackathon",
-  },
-  {
-    id: "ping402",
-    title: "Ping402",
-    description:
-      "A paid inbox for creators. Send a priority message with x402 and Solana USDC, then track delivery with a verifiable receipt.",
-    category: "AI & Web3",
-    year: "2026",
-    tags: ["Solana", "x402", "Paid messaging"],
-    links: [
-      { label: "Live demo", href: "https://pingx402.vercel.app/" },
-      { label: "Watch demo", href: "https://pingx402.vercel.app/demo-video" },
-      { label: "GitHub", href: "https://github.com/syntaxsurge/ping402" },
-    ],
-    award: "Best x402 App · Solana Winter Build Challenge",
   },
   {
     id: "cliplore",
@@ -364,25 +421,33 @@ export const projects: Project[] = [
     award: "SpaceAgri & Akedo bounty winner · UK AI Agent Hackathon",
   },
   {
-    id: "packtrace",
-    title: "PackTrace",
+    id: "rivalidate",
+    title: "Rivalidate",
     description:
-      "Medicine traceability for African supply chains, combining industrial IoT, real-time operations data, and blockchain provenance.",
-    category: "Tools",
+      "An on-chain hiring platform combining verifiable credentials, AI-assisted candidate review, Coinbase Smart Wallets, and stablecoin payments.",
+    category: "AI & Web3",
     year: "2025",
-    tags: ["Industrial IoT", "Supply chains", "Hedera"],
+    tags: ["Base", "Hiring", "Smart wallets"],
     links: [
       {
-        label: "Watch demo",
-        href: "https://www.youtube.com/watch?v=hJAu5NF_61I",
-      },
-      { label: "GitHub", href: "https://github.com/syntaxsurge/pack-trace" },
-      {
-        label: "Pitch deck",
-        href: "https://www.canva.com/design/DAG5oi7Oh8E/SIrLnkFLTiG0i1bJYmP_sw/edit",
+        label: "GitHub",
+        href: "https://github.com/syntaxsurge/rivalidate-base",
       },
     ],
-    award: "2nd place · supOS Global Hackathon",
+    award: "Consumer Track runner-up · Base Batch 001 APAC",
+  },
+  {
+    id: "lexlink",
+    title: "LexLink",
+    description:
+      "An IP licensing workflow connecting Story registration, ICP / ckBTC checkout, and Constellation evidence records.",
+    category: "AI & Web3",
+    year: "2025",
+    tags: ["IP licensing", "Story Protocol", "ICP"],
+    links: [
+      { label: "GitHub", href: "https://github.com/syntaxsurge/lexlink" },
+    ],
+    award: "Story Protocol bounty winner · LegalHack",
   },
   {
     id: "sentinelx",
@@ -399,84 +464,6 @@ export const projects: Project[] = [
       },
     ],
     award: "3rd place, Open Track · Somnia AI Hackathon",
-  },
-  {
-    id: "creatorbank",
-    title: "CreatorBank",
-    description:
-      "A Mezo-native toolkit for MUSD payment links, invoices, memberships, marketplace listings, and split payouts.",
-    category: "AI & Web3",
-    year: "2025",
-    tags: ["Mezo", "MUSD", "Creator finance"],
-    links: [
-      { label: "Testnet demo", href: "https://creator-bank.vercel.app/" },
-      {
-        label: "Watch demo",
-        href: "https://creator-bank.vercel.app/demo-video",
-      },
-      { label: "GitHub", href: "https://github.com/syntaxsurge/creator-bank" },
-      {
-        label: "Pitch deck",
-        href: "https://creator-bank.vercel.app/pitch-deck",
-      },
-    ],
-    award: "Community Choice · Mezo Hackathon",
-  },
-  {
-    id: "lexlink",
-    title: "LexLink",
-    description:
-      "An IP licensing workflow connecting Story registration, ICP / ckBTC checkout, and Constellation evidence records.",
-    category: "AI & Web3",
-    year: "2025",
-    tags: ["IP licensing", "Story Protocol", "ICP"],
-    links: [
-      { label: "GitHub", href: "https://github.com/syntaxsurge/lexlink" },
-    ],
-    award: "Story Protocol bounty winner · LegalHack",
-  },
-  {
-    id: "escrowzy",
-    title: "Escrowzy",
-    description:
-      "A gamified DeFi trading experience where PvP battles, achievements, and progression unlock trading-fee discounts.",
-    category: "AI & Web3",
-    year: "2025",
-    tags: ["DeFi", "Game mechanics", "P2P trading"],
-    links: [
-      { label: "Watch demo", href: "https://youtu.be/ZJdJATkRHgg" },
-      { label: "GitHub", href: "https://github.com/syntaxsurge/escrowzy-okx" },
-    ],
-    award: "Special recognition · OKX ETHCC Hackathon",
-  },
-  {
-    id: "viskify",
-    title: "Viskify",
-    description:
-      "AI-assisted talent verification that combines cheqd credentials with insights from private, user-owned data through Verida.",
-    category: "AI & Web3",
-    year: "2025",
-    tags: ["Verifiable credentials", "cheqd", "Verida"],
-    links: [
-      { label: "GitHub", href: "https://github.com/syntaxsurge/viskify-cheqd" },
-    ],
-    award: "1st place & Verida bounty · Verifiable AI Hackathon",
-  },
-  {
-    id: "rivalidate",
-    title: "Rivalidate",
-    description:
-      "An on-chain hiring platform combining verifiable credentials, AI-assisted candidate review, Coinbase Smart Wallets, and stablecoin payments.",
-    category: "AI & Web3",
-    year: "2025",
-    tags: ["Base", "Hiring", "Smart wallets"],
-    links: [
-      {
-        label: "GitHub",
-        href: "https://github.com/syntaxsurge/rivalidate-base",
-      },
-    ],
-    award: "Consumer Track runner-up · Base Batch 001 APAC",
   },
   {
     id: "polkastamp",
@@ -506,6 +493,20 @@ export const projects: Project[] = [
       },
     ],
     award: "2nd place, Commerce & Gig Economy · (A)I BUIDL Lab",
+  },
+  {
+    id: "escrowzy",
+    title: "Escrowzy",
+    description:
+      "A gamified DeFi trading experience where PvP battles, achievements, and progression unlock trading-fee discounts.",
+    category: "AI & Web3",
+    year: "2025",
+    tags: ["DeFi", "Game mechanics", "P2P trading"],
+    links: [
+      { label: "Watch demo", href: "https://youtu.be/ZJdJATkRHgg" },
+      { label: "GitHub", href: "https://github.com/syntaxsurge/escrowzy-okx" },
+    ],
+    award: "Special recognition · OKX ETHCC Hackathon",
   },
   {
     id: "aipenguild",

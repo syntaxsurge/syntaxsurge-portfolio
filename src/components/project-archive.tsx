@@ -4,7 +4,9 @@ import Link from "next/link";
 import { projects } from "@/data/portfolio";
 import { projectPreviews } from "@/data/project-media";
 import { Arrow, PlayIcon } from "./icons";
+import { PortfolioFacts } from "./portfolio-facts";
 import { ProjectVisual } from "./project-visual";
+import { SectionReveal } from "./section-reveal";
 const filters = [
   { label: "All projects", category: null },
   { label: "Websites & apps", category: "Products" },
@@ -18,6 +20,8 @@ export function ProjectArchive() {
   const [query, setQuery] = useState("");
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterToggle = useRef<HTMLButtonElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const firstAdditionalProject = useRef<HTMLAnchorElement>(null);
   const demoTrigger = useRef<HTMLButtonElement>(null);
@@ -30,7 +34,7 @@ export function ProjectArchive() {
     setFilter(filters[0]);
     setActiveDemo(null);
     restoreDemoFocus.current = false;
-    searchInput.current?.focus();
+    (filtersOpen ? searchInput : filterToggle).current?.focus();
   }
   function closeDemo() {
     restoreDemoFocus.current = true;
@@ -62,75 +66,108 @@ export function ProjectArchive() {
 
   return (
     <div className="archive">
-      <div className="archive-toolbar">
-        <div className="filter-group" role="group" aria-label="Filter projects">
-          {filters.map((f) => (
-            <button
-              key={f.label}
-              type="button"
-              aria-pressed={filter === f}
+      <SectionReveal variant="slide" className="work-heading">
+        <h2 id="work-title">Selected work</h2>
+        <PortfolioFacts />
+        <button
+          ref={filterToggle}
+          className="button button-outline archive-filter-toggle"
+          type="button"
+          aria-expanded={filtersOpen}
+          aria-controls="project-filters"
+          onClick={() => setFiltersOpen((open) => !open)}
+        >
+          Search &amp; filter
+          {!filtersOpen && hasFilters && (
+            <span className="archive-filter-count">
+              {visible.length} {visible.length === 1 ? "match" : "matches"}
+            </span>
+          )}
+          <Arrow className="archive-filter-arrow" />
+        </button>
+      </SectionReveal>
+      <div
+        className="archive-filter-panel"
+        id="project-filters"
+        hidden={!filtersOpen}
+        onKeyDown={(event) => {
+          if (event.key !== "Escape") return;
+          event.preventDefault();
+          setFiltersOpen(false);
+          filterToggle.current?.focus();
+        }}
+      >
+        <div className="archive-toolbar">
+          <div className="filter-group" role="group" aria-label="Filter projects">
+            {filters.map((f) => (
+              <button
+                key={f.label}
+                type="button"
+                aria-pressed={filter === f}
+                aria-controls="project-results"
+                onClick={() => {
+                  restoreDemoFocus.current = false;
+                  setActiveDemo(null);
+                  setFilter(f);
+                }}
+              >
+                {f.label}
+                <span>
+                  {
+                    projects.filter(
+                      (p) => f.category === null || p.category === f.category,
+                    ).length
+                  }
+                </span>
+              </button>
+            ))}
+          </div>
+          <label className="project-search">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              aria-hidden="true"
+            >
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg>
+            <span className="sr-only">Search projects</span>
+            <input
+              ref={searchInput}
+              type="search"
               aria-controls="project-results"
-              onClick={() => {
+              value={query}
+              onChange={(e) => {
                 restoreDemoFocus.current = false;
                 setActiveDemo(null);
-                setFilter(f);
+                setQuery(e.target.value);
               }}
-            >
-              {f.label}
-              <span>
-                {
-                  projects.filter(
-                    (p) => f.category === null || p.category === f.category,
-                  ).length
-                }
-              </span>
-            </button>
-          ))}
+              placeholder="Search projects"
+            />
+          </label>
         </div>
-        <label className="project-search">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            aria-hidden="true"
-          >
-            <circle cx="10.5" cy="10.5" r="6.5" />
-            <path d="m16 16 5 5" />
-          </svg>
-          <span className="sr-only">Search projects</span>
-          <input
-            ref={searchInput}
-            type="search"
-            aria-controls="project-results"
-            value={query}
-            onChange={(e) => {
-              restoreDemoFocus.current = false;
-              setActiveDemo(null);
-              setQuery(e.target.value);
-            }}
-            placeholder="Search projects"
-          />
-        </label>
-      </div>
-      <div className="archive-results-summary">
-        <p role="status" aria-live="polite" aria-atomic="true">
-          {showMore ? initialProjectCount : visible.length} of {projects.length} projects
-          {filter.category !== null && ` · ${filter.label}`}
-          {search && ` matching “${query.trim()}”`}
-        </p>
-        {hasFilters && (
-          <button className="text-link" type="button" onClick={resetFilters}>
-            Reset filters
-          </button>
-        )}
+        <div className="archive-results-summary">
+          <p role="status" aria-live="polite" aria-atomic="true">
+            {showMore ? initialProjectCount : visible.length} of {projects.length} projects
+            {filter.category !== null && ` · ${filter.label}`}
+            {search && ` matching “${query.trim()}”`}
+          </p>
+          {hasFilters && (
+            <button className="text-link" type="button" onClick={resetFilters}>
+              Reset filters
+            </button>
+          )}
+        </div>
       </div>
       <div className="archive-list" id="project-results">
         {visible.map((p, index) => {
           const preview = projectPreviews[p.id];
           const isActive = activeDemo === p.id;
+          const featured = !hasFilters && index === 0;
           const destination =
             p.links.find(
               (link) => !/watch demo|award-winning demo/i.test(link.label),
@@ -141,12 +178,36 @@ export function ProjectArchive() {
               : /visit website|visit product/i.test(destination.label)
                 ? "Open website"
                 : destination.label;
+          const title = (
+            <h3 className={featured ? "archive-lead-title" : undefined}>
+              <Link
+                ref={index === initialProjectCount ? firstAdditionalProject : undefined}
+                href={`/work/${p.id}#top`}
+              >
+                {p.title}
+              </Link>
+            </h3>
+          );
+          const cover = (
+            <ProjectVisual
+              id={p.id}
+              variant="preview"
+              sizes={
+                featured
+                  ? "(max-width: 850px) 90vw, (max-width: 1250px) 52vw, 600px"
+                  : undefined
+              }
+              priority={featured}
+            />
+          );
           return (
             <article
               className="archive-row"
               key={p.id}
+              data-featured={featured ? "true" : undefined}
               data-collapsed={showMore && index >= initialProjectCount ? "true" : undefined}
             >
+              {featured && title}
               <div className="archive-preview-wrap">
                 {preview.demo ? (
                   <button
@@ -162,7 +223,7 @@ export function ProjectArchive() {
                       setActiveDemo(p.id);
                     }}
                   >
-                    <ProjectVisual id={p.id} variant="preview" />
+                    {cover}
                     <span className="archive-preview-play" aria-hidden="true">
                       <PlayIcon />
                     </span>
@@ -173,7 +234,7 @@ export function ProjectArchive() {
                     href={`/work/${p.id}#top`}
                     aria-label={`View ${p.title} project details`}
                   >
-                    <ProjectVisual id={p.id} variant="preview" />
+                    {cover}
                   </Link>
                 )}
                 {preview.demo && (
@@ -225,23 +286,31 @@ export function ProjectArchive() {
               </div>
               <div className="archive-card-body">
                 <div className="archive-name">
-                  <h3>
-                    <Link
-                      ref={index === initialProjectCount ? firstAdditionalProject : undefined}
-                      href={`/work/${p.id}#top`}
-                    >
-                      {p.title}
-                    </Link>
-                  </h3>
-                  <p>{preview.summary}</p>
+                  {!featured && title}
+                  <p>{featured ? p.description : preview.summary}</p>
                 </div>
+                {featured && (
+                  <ul
+                    className="archive-capabilities"
+                    role="list"
+                    aria-label="Project capabilities"
+                  >
+                    {p.tags.map((tag) => (
+                      <li key={tag}>{tag}</li>
+                    ))}
+                  </ul>
+                )}
                 <div className="archive-actions">
                   <Link
-                    className="text-link"
+                    className={featured ? "button button-dark" : "text-link"}
                     href={`/work/${p.id}#top`}
-                    aria-label={`View ${p.title} project details`}
+                    aria-label={
+                      featured
+                        ? `View project: ${p.title}`
+                        : `View ${p.title} project details`
+                    }
                   >
-                    Details <Arrow />
+                    {featured ? "View project" : "Details"} <Arrow />
                   </Link>
                   {destination && (
                     <a
@@ -273,7 +342,7 @@ export function ProjectArchive() {
         </div>
       )}
       <noscript>
-        <style>{'.archive-row[data-collapsed="true"]{display:flex}.archive-more,.archive-results-summary,.archive-toolbar{display:none}'}</style>
+        <style>{'.archive-row[data-collapsed="true"]{display:flex}.archive-more,.archive-filter-toggle,.archive-filter-panel{display:none}'}</style>
       </noscript>
       {visible.length === 0 && (
         <div className="empty-results">

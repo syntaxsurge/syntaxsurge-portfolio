@@ -1,8 +1,8 @@
 # SyntaxSurge Software Development Services
 
-A Next.js business website for Syntax Surge, a Philippine software studio building websites, apps and automation for businesses worldwide. The homepage presents illustrated services, the remote collaboration process, 28 searchable projects, leadership profiles for founder and CEO Jade Laurence C. Empleo and CMO Mariy Krishan, Adam Bashar Faleh, business registration, and direct email and LinkedIn contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo, leadership portraits, and workspace hero photograph are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
+A Next.js business website for Syntax Surge, a Philippine software studio building websites, apps and automation for businesses worldwide. The homepage leads with 28 searchable projects, followed by illustrated services, the remote collaboration process, leadership profiles for founder and CEO Jade Laurence C. Empleo and CMO Mariy Krishan, Adam Bashar Faleh, business registration, and direct email and LinkedIn contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo, leadership portraits, and studio planning photograph are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
 
-- `/`: business overview, services, the collaboration process, the searchable project collection at `#work`, team, registration, and contact.
+- `/`: business overview, the searchable project collection at `#work`, services, the collaboration process, team, registration, and contact.
 - `/work`: permanent redirect to `/#work`.
 - `/recognition`: all founder recognitions and their project previews/demos.
 - `/work/[slug]`: project details, including [MC Dental Station](https://syntaxsurge.com/work/mc-dental-station) and Wrap It Up!.
@@ -35,7 +35,7 @@ The homepage, recognition page, 28 project detail routes, and two game support/p
 
 ## Professional resume
 
-The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the professional name Jade Laurence C. Empleo, supplied profile photograph and business email, three project examples, all 14 dated recognitions, and website/GitHub/LinkedIn links. The hero and CEO profile open a shared preview dialog with a PDF download.
+The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the professional name Jade Laurence C. Empleo, supplied profile photograph and business email, three project examples, all 14 dated recognitions, and website/GitHub/LinkedIn links. The delivery section and CEO profile open a shared preview dialog with a PDF download.
 
 `scripts/build-resume.py` reads canonical site data and generates the PDF with ReportLab; rebuilding requires the supported Node version plus Python 3.9+ and `reportlab`. Python is an authoring dependency, not a deployed website requirement. Sources and rebuild instructions are in [the resume source record](docs/RESUME-SOURCES.md).
 
@@ -53,7 +53,7 @@ The game information extends the existing project-detail template, with Support 
 
 ## Edit content
 
-- `src/data/business.ts`: business identity, illustrated services, leadership profiles and portraits, email/contact links, workspace hero photograph, resume path, and certificate facts/PDF path/preview dimensions.
+- `src/data/business.ts`: business identity, illustrated services, leadership profiles and portraits, email/contact links, studio planning photograph, resume path, and certificate facts/PDF path/preview dimensions.
 - `src/data/portfolio.ts`: projects, real links, and awards.
 - `src/data/award-media.ts`: local project previews and verified YouTube demos for all 14 recognitions.
 - `src/data/project-media.ts`: media, summaries, labels, and optional demos for all 28 project cards, reusing project-owned previews and product artwork.
@@ -71,6 +71,6 @@ Recognition details originate from the founder’s supplied award history and do
 
 ## Accessibility and verification
 
-The shared sticky navigation leads to homepage Services/Work/Team and the current page's Contact footer on phones, tablets, and desktop. The Work section shows 11 projects at first, with a control to reveal all 28, search across the full collection, category/result counts, one-click reset and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative motion controls support keyboard interaction and visible focus.
+The shared sticky navigation leads to homepage Work/Services/Team and the current page's Contact footer on phones, tablets, and desktop. The Work section leads with The Perfume Notebook and shows 11 projects at first, with a control to reveal all 28, a Search & filter disclosure that searches the full collection, category/result counts, one-click reset and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative motion controls support keyboard interaction and visible focus.
 
 Semantic landmarks, a focusable skip destination, labeled search and theme controls, visible keyboard focus, live filter announcements, focus restoration after reset, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Validation is recorded in `docs/VALIDATION.md`.
