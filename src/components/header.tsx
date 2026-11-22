@@ -96,7 +96,12 @@ export function Header() {
           data-open={open}
         >
           {links.map((link) => (
-            <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+            <a
+              key={link.href}
+              href={link.href}
+              className={link.icon === "contact" ? styles.contactLink : undefined}
+              onClick={() => setOpen(false)}
+            >
               <NavigationIcon name={link.icon} />
               {link.label}
             </a>

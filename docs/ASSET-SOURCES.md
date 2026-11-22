@@ -19,7 +19,22 @@ The supplied logo has SHA-256 `e0c615c276f97ff1a6cef7f7283d2971ea36655a4fc4474f7
 
 ## Complete project previews
 
-`src/data/project-media.ts` maps all 20 project cards to local media, plain-language summaries, and optional demonstrations. Fourteen entries reuse the authentic project-owned images and matching YouTube demos documented in `docs/AWARD-MEDIA-SOURCES.md`; the other entries use official product previews, supplied product/game campaign covers, or MC Dental concept artwork. ClipLore for Story Protocol uses its own authentic preview and demo at `/images/awards/cliplore.webp`; ClipLore.ai uses the public workflow preview and its live product link. Project cards and detail covers share the same canonical image without repeated media captions; descriptive alt text and this source record preserve their context.
+`src/data/project-media.ts` maps all 28 project cards to local media, plain-language summaries, and optional demonstrations. Fourteen entries reuse project-owned images and matching YouTube demos documented in `docs/AWARD-MEDIA-SOURCES.md`. The other entries use public website captures, official product previews, supplied campaign covers, or MC Dental concept artwork. ClipLore for Story Protocol uses its own preview and demo at `/images/awards/cliplore.webp`. ClipLore.ai uses its public workflow preview and live product link. Project cards and detail covers share the same canonical image with descriptive alt text.
+
+### Public website covers
+
+These eight public homepage views were captured in Chromium on 22 November 2026 at 1280 × 720 and converted to WebP at quality 85. The covers show public marketing and editorial content, including the sample interface visible in OrderKubo’s hero and ModelCab’s request-routing diagram.
+
+| Asset | Public source |
+| --- | --- |
+| `perfume-notebook-cover.webp` | [The Perfume Notebook homepage](https://perfumenotebook.com/) |
+| `orderkubo-cover.webp` | [OrderKubo homepage](https://orderkubo.com/) |
+| `topic-machine-cover.webp` | [TopicMachine homepage](https://topicmachine.com/) |
+| `romcamp-cover.webp` | [Romcamp homepage](https://romcamp.com/) |
+| `modelcab-cover.webp` | [ModelCab request-routing example](https://modelcab.com/#routing) |
+| `filemaple-cover.webp` | [FileMaple homepage](https://filemaple.com/) |
+| `linkmaple-cover.webp` | [LinkMaple homepage](https://linkmaple.com/) |
+| `muslim-everyday-cover.webp` | [Muslim Everyday homepage](https://muslimeveryday.com/) |
 
 The 14 homepage demo buttons create a privacy-enhanced `youtube-nocookie.com` iframe only after the visitor selects a demo. Only one demo is active; closing it removes the player and restores focus. Static local previews do not load a third-party video player.
 

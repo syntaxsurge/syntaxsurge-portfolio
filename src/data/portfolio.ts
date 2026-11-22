@@ -72,6 +72,184 @@ export const projects: Project[] = [
     links: [{ label: "Visit product", href: "https://cliplore.ai/" }],
   },
   {
+    id: "perfume-notebook",
+    title: "The Perfume Notebook",
+    description:
+      "A bilingual perfumery platform that pairs a searchable public fragrance catalog with a private workspace for notes, materials, and formula development.",
+    category: "Products",
+    year: "Current",
+    tags: ["Perfumery", "Arabic and English", "Formula builder"],
+    links: [
+      { label: "Visit website", href: "https://perfumenotebook.com/" },
+    ],
+    focus: [
+      {
+        title: "Explore by scent",
+        description:
+          "Browse fragrances by note or accord, compare materials, and save references to a private notebook.",
+      },
+      {
+        title: "Develop a formula",
+        description:
+          "Organize materials by project, calculate weights and dilution, and export a formula as a PDF.",
+      },
+    ],
+  },
+  {
+    id: "orderkubo",
+    title: "OrderKubo",
+    description:
+      "A point-of-sale platform that connects checkout, inventory, stores, customers, and staff workflows for small businesses.",
+    category: "Products",
+    year: "Current",
+    tags: ["Point of sale", "Inventory", "Retail operations"],
+    links: [{ label: "Visit website", href: "https://orderkubo.com/" }],
+    focus: [
+      {
+        title: "Serve customers at the counter",
+        description:
+          "Bring product lookup, quantities, discounts, and customer information into the checkout workflow.",
+      },
+      {
+        title: "See how the store runs",
+        description:
+          "Connect stock, sales activity, and reports so teams can review what happened during the day.",
+      },
+    ],
+  },
+  {
+    id: "topic-machine",
+    title: "TopicMachine",
+    description:
+      "An AI-assisted editorial workspace for researching topics, refining drafts, and publishing articles to WordPress or a custom website.",
+    category: "Products",
+    year: "Current",
+    tags: ["Editorial automation", "WordPress", "Article-to-video"],
+    links: [{ label: "Visit website", href: "https://topicmachine.com/" }],
+    focus: [
+      {
+        title: "Keep the editorial review in the workflow",
+        description:
+          "Start from a keyword, build an outline from research, and edit the article before scheduling or publishing it.",
+      },
+      {
+        title: "Adapt articles for video",
+        description:
+          "The optional ClipLore integration turns a completed article into a video for editing or delivery to YouTube.",
+      },
+    ],
+  },
+  {
+    id: "romcamp",
+    title: "Romcamp",
+    description:
+      "A discovery site for classic console games, with a searchable game archive, a personal favorites shelf, and practical emulator setup guides.",
+    category: "Products",
+    year: "Current",
+    tags: ["Game catalog", "Search and discovery", "Field guides"],
+    links: [{ label: "Visit website", href: "https://romcamp.com/" }],
+    focus: [
+      {
+        title: "Find a familiar game or a new favorite",
+        description:
+          "Search the archive, browse by console or genre, and keep a personal collection in your browser.",
+      },
+      {
+        title: "Get oriented with field guides",
+        description:
+          "Read console profiles, emulator overviews, and step-by-step setup notes.",
+      },
+    ],
+  },
+  {
+    id: "modelcab",
+    title: "ModelCab",
+    description:
+      "A developer console and asynchronous API for text and image generation, with a Playground to test models before integrating them into an application.",
+    category: "Products",
+    year: "Current",
+    tags: ["AI gateway", "Developer tools", "API"],
+    links: [{ label: "Visit website", href: "https://modelcab.com/" }],
+    focus: [
+      {
+        title: "Try models in the Playground",
+        description:
+          "Explore the model catalog, test a prompt, and export an API request from the console.",
+      },
+      {
+        title: "Integrate asynchronous requests",
+        description:
+          "Submit a job through the API, then retrieve its result using the job ID.",
+      },
+    ],
+  },
+  {
+    id: "filemaple",
+    title: "FileMaple",
+    description:
+      "A web workspace that connects to S3-compatible storage so teams can organize uploads, share files, and publish download pages.",
+    category: "Products",
+    year: "Current",
+    tags: ["Cloud storage", "File management", "Upload API"],
+    links: [{ label: "Visit website", href: "https://filemaple.com/" }],
+    focus: [
+      {
+        title: "Manage files in your own bucket",
+        description:
+          "Browse folders, organize files, monitor activity, and share files from a connected S3-compatible bucket.",
+      },
+      {
+        title: "Upload from the web or a script",
+        description:
+          "Drag files into the workspace or use a scoped API key for multipart uploads.",
+      },
+    ],
+  },
+  {
+    id: "linkmaple",
+    title: "LinkMaple",
+    description:
+      "A link-shortening platform for publishers to share short URLs, track eligible views, and request payouts from monetized links.",
+    category: "Products",
+    year: "Current",
+    tags: ["URL shortening", "Publisher analytics", "Link monetization"],
+    links: [{ label: "Visit website", href: "https://linkmaple.com/" }],
+    focus: [
+      {
+        title: "Create links for sharing",
+        description:
+          "Turn a destination URL into a short link and choose an ad format for monetized publisher links.",
+      },
+      {
+        title: "Track activity and payouts",
+        description:
+          "Review eligible views and earnings in the publisher dashboard, then request a payout when the balance reaches its minimum.",
+      },
+    ],
+  },
+  {
+    id: "muslim-everyday",
+    title: "Muslim Everyday",
+    description:
+      "An editorial website with practical guides to Islam, Quran reading, prayer, and everyday Muslim life.",
+    category: "Products",
+    year: "Current",
+    tags: ["Editorial website", "Learning resources", "Content discovery"],
+    links: [{ label: "Visit website", href: "https://muslimeveryday.com/" }],
+    focus: [
+      {
+        title: "Start with a guided introduction",
+        description:
+          "Browse topic guides on core beliefs, reading the Quran, preparing for daily prayer, and observing Ramadan.",
+      },
+      {
+        title: "Explore related articles",
+        description:
+          "Find recent articles and related guides by topic, with site search for specific questions.",
+      },
+    ],
+  },
+  {
     id: "studysoda",
     title: "StudySoda",
     description:

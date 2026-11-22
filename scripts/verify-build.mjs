@@ -31,8 +31,8 @@ function check(label, run) {
   console.log(`PASS ${label}`);
 }
 check("Complete, unique project and award collection", () => {
-  assert.equal(projects.length, 20);
-  assert.equal(new Set(projects.map((p) => p.id)).size, 20);
+  assert.equal(projects.length, 28);
+  assert.equal(new Set(projects.map((p) => p.id)).size, projects.length);
   assert.equal(awards.length, 14);
   for (const p of projects) {
     assert.match(p.id, /^[a-z0-9-]+$/);
@@ -105,6 +105,28 @@ check(
 );
 const homepage = read("index.html");
 const recognition = read("recognition.html");
+check("Public websites have dedicated project pages and live destinations", () => {
+  const websites = {
+    "perfume-notebook": "perfumenotebook.com",
+    orderkubo: "orderkubo.com",
+    "topic-machine": "topicmachine.com",
+    romcamp: "romcamp.com",
+    modelcab: "modelcab.com",
+    filemaple: "filemaple.com",
+    linkmaple: "linkmaple.com",
+    "muslim-everyday": "muslimeveryday.com",
+  };
+  for (const [id, domain] of Object.entries(websites)) {
+    const project = projects.find((entry) => entry.id === id);
+    const href = `https://${domain}/`;
+    const detail = read(`work/${id}.html`);
+    assert.equal(project?.category, "Products");
+    assert.equal(project.links[0].href, href);
+    assert.ok(detail.includes(`href="${href}"`));
+    assert.ok(imageSources(detail).includes(`/images/${id}-cover.webp`));
+    assert.match(plain(detail), /What it does/);
+  }
+});
 check(
   "ClipLore pages and collection cards show each project's own cover and links",
   () => {
@@ -191,6 +213,37 @@ check(
     assert.ok(homepage.includes('href="/recognition#top"'));
     assert.ok(!homepage.includes("<details"));
     assert.ok(!homepage.includes("Create Next App"));
+  },
+);
+check(
+  "Leadership cards identify the CEO and CMO with local portraits and profile links",
+  () => {
+    const team = homepage.match(
+      /<section\b[^>]*id="team"[^>]*>([\s\S]*?)<\/section>/,
+    )?.[1];
+    assert.ok(team);
+    const cards = [...team.matchAll(/<article\b[^>]*>([\s\S]*?)<\/article>/g)]
+      .map((match) => match[1]);
+    assert.equal(cards.length, 2);
+    const profiles = [
+      [business.founder, cards[0], [business.links.github, business.links.linkedin]],
+      [business.marketingLead, cards[1], [business.marketingLead.github]],
+    ];
+    for (const [member, card, links] of profiles) {
+      assert.ok(plain(card).includes(member.name));
+      assert.ok(plain(card).includes(member.role));
+      assert.ok(plain(card).includes(member.description));
+      assert.ok(imageSources(card).includes(member.portrait.src));
+      assert.ok(existsSync(resolve(root, "public", member.portrait.src.slice(1))));
+      for (const link of links) {
+        const anchor = [...card.matchAll(/<a\b[^>]*>/g)].find(([tag]) =>
+          tag.includes(`href="${link}"`),
+        )?.[0];
+        assert.match(anchor ?? "", /aria-label="[^"]*opens in a new tab\)"/);
+      }
+    }
+    assert.ok(cards[0].includes('aria-controls="resume-preview"'));
+    assert.ok(cards[0].includes('href="/recognition#top"'));
   },
 );
 check(
@@ -451,8 +504,8 @@ check(
     assert.ok(homepage.includes('aria-live="polite"'));
     assert.ok(homepage.includes('id="project-results"'));
     for (const [label, count] of [
-      ["All projects", 20],
-      ["Websites & apps", 6],
+      ["All projects", 28],
+      ["Websites & apps", 14],
       ["Experiments", 11],
       ["Tools", 3],
     ]) {
@@ -468,6 +521,22 @@ check(
     }
   },
 );
+check("Homepage introduces the project process and previews the collection", () => {
+  const processSection = homepage.match(
+    /<section\b[^>]*aria-labelledby="process-title"[^>]*>([\s\S]*?)<\/section>/,
+  )?.[1];
+  assert.ok(processSection);
+  assert.equal((processSection.match(/<li\b/g) || []).length, 3);
+  const projectRows = [
+    ...homepage.matchAll(/<article\b[^>]*class="archive-row"[^>]*>/g),
+  ].map(([tag]) => tag);
+  assert.equal(projectRows.length, projects.length);
+  assert.equal(
+    projectRows.filter((tag) => tag.includes('data-collapsed="true"')).length,
+    projects.length - 11,
+  );
+  assert.ok(plain(homepage).includes(`Show ${projects.length - 11} more projects`));
+});
 check("Recognition has an accessible standalone route", () => {
   assert.equal((recognition.match(/<h1\b/g) || []).length, 1);
   assert.ok(recognition.includes('id="main"'));
@@ -857,7 +926,7 @@ check("Domain metadata and sitemap use the portfolio origin", () => {
     ...wrapItUpPaths.map((path) => siteHref(path)),
   ]);
   assert.equal(locations.length, expected.size);
-  assert.equal(locations.length, 24);
+  assert.equal(locations.length, 32);
   assert.equal(new Set(locations).size, locations.length);
   assert.ok(!sitemap.includes("/apps/wrap-it-up"));
   assert.ok(!locations.includes(siteHref("/work")));

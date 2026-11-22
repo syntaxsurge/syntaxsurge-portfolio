@@ -11,11 +11,15 @@ const filters = [
   { label: "Experiments", category: "AI & Web3" },
   { label: "Tools", category: "Tools" },
 ] as const;
+const initialProjectCount = 11;
+
 export function ProjectArchive() {
   const [filter, setFilter] = useState<(typeof filters)[number]>(filters[0]);
   const [query, setQuery] = useState("");
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
+  const firstAdditionalProject = useRef<HTMLAnchorElement>(null);
   const demoTrigger = useRef<HTMLButtonElement>(null);
   const closeDemoButton = useRef<HTMLButtonElement>(null);
   const restoreDemoFocus = useRef(false);
@@ -40,17 +44,22 @@ export function ProjectArchive() {
       restoreDemoFocus.current = false;
     }
   }, [activeDemo]);
+  useEffect(() => {
+    if (showAll) firstAdditionalProject.current?.focus();
+  }, [showAll]);
   const visible = useMemo(
     () =>
       projects.filter(
         (p) =>
           (filter.category === null || p.category === filter.category) &&
-          `${p.title} ${p.description} ${p.category} ${p.year} ${p.tags.join(" ")} ${p.award ?? ""}`
+          `${p.title} ${p.description} ${p.category} ${p.year} ${p.tags.join(" ")} ${p.award ?? ""} ${p.links.map((link) => link.href).join(" ")}`
             .toLowerCase()
             .includes(search),
       ),
     [filter, search],
   );
+  const showMore = !showAll && !hasFilters && visible.length > initialProjectCount;
+
   return (
     <div className="archive">
       <div className="archive-toolbar">
@@ -108,7 +117,7 @@ export function ProjectArchive() {
       </div>
       <div className="archive-results-summary">
         <p role="status" aria-live="polite" aria-atomic="true">
-          {visible.length} of {projects.length} projects
+          {showMore ? initialProjectCount : visible.length} of {projects.length} projects
           {filter.category !== null && ` · ${filter.label}`}
           {search && ` matching “${query.trim()}”`}
         </p>
@@ -119,7 +128,7 @@ export function ProjectArchive() {
         )}
       </div>
       <div className="archive-list" id="project-results">
-        {visible.map((p) => {
+        {visible.map((p, index) => {
           const preview = projectPreviews[p.id];
           const isActive = activeDemo === p.id;
           const destination =
@@ -133,7 +142,11 @@ export function ProjectArchive() {
                 ? "Open website"
                 : destination.label;
           return (
-            <article className="archive-row" key={p.id}>
+            <article
+              className="archive-row"
+              key={p.id}
+              data-collapsed={showMore && index >= initialProjectCount ? "true" : undefined}
+            >
               <div className="archive-preview-wrap">
                 {preview.demo ? (
                   <button
@@ -213,7 +226,12 @@ export function ProjectArchive() {
               <div className="archive-card-body">
                 <div className="archive-name">
                   <h3>
-                    <Link href={`/work/${p.id}#top`}>{p.title}</Link>
+                    <Link
+                      ref={index === initialProjectCount ? firstAdditionalProject : undefined}
+                      href={`/work/${p.id}#top`}
+                    >
+                      {p.title}
+                    </Link>
                   </h3>
                   <p>{preview.summary}</p>
                 </div>
@@ -242,6 +260,21 @@ export function ProjectArchive() {
           );
         })}
       </div>
+      {showMore && (
+        <div className="archive-more">
+          <button
+            className="button button-outline"
+            type="button"
+            aria-controls="project-results"
+            onClick={() => setShowAll(true)}
+          >
+            Show {visible.length - initialProjectCount} more projects <Arrow />
+          </button>
+        </div>
+      )}
+      <noscript>
+        <style>{'.archive-row[data-collapsed="true"]{display:flex}.archive-more,.archive-results-summary,.archive-toolbar{display:none}'}</style>
+      </noscript>
       {visible.length === 0 && (
         <div className="empty-results">
           <h3>No projects found</h3>

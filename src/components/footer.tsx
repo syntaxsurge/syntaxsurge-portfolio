@@ -10,11 +10,14 @@ export function Footer() {
       <div className="shell">
         <SectionReveal variant="rise" className="contact-heading">
           <h2 id="contact-title" className="contact-title">
-            What’s your next idea?
+            Let’s talk about your project
           </h2>
         </SectionReveal>
         <div className="contact-actions">
-          <p className="contact-copy">Have a project in mind? Email Jade.</p>
+          <p className="contact-copy">
+            Tell us what you’d like to build, who it’s for and when you hope to
+            launch. Jade will help you work out the next step.
+          </p>
           <div className="contact-links">
             <a
               className="button button-lime contact-email"

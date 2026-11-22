@@ -1,261 +1,45 @@
-# Syntax Surge business website at syntaxsurge.com
+# Deploy Syntax Surge
 
-The SyntaxSurge Software Development Services website, branded as Syntax Surge, is prepared for **https://syntaxsurge.com/**. Its canonical URLs, business social previews, robots file, and sitemap use that origin by default. This document and the Nginx snippet are deployment preparation; they do not change the live server.
+The website runs as **SyntaxSurge / production / Portfolio**. Its raw Docker Compose configuration defines a single `portfolio` service that builds from the public GitHub repository at an explicit commit. [Dokploy panel](https://onshore-dokploy.syntaxsurge.com/)
 
-Kaldi is published separately at **https://kaldi-rewards.syntaxsurge.com/**, with its own domain/vhost configuration. MC Dental Station is a separate clinic application at **https://mc-dental.syntaxsurge.com/**. This guide configures only the business website at `syntaxsurge.com`; linked applications' servers, processes, and private listeners are managed by their deployments. Do not add a Next.js `basePath` to this website or reuse another application's process, environment file, database, or port.
-
-| Public route | Application | Private listener |
-| --- | --- | --- |
-| `/`, `/recognition`, `/work/*`, `/_next/*`, `/images/*`, `/videos/*`, `/documents/*`, metadata routes; `/work` and `/apps/wrap-it-up` redirects | Business website | `127.0.0.1:3101` |
-| `https://kaldi-rewards.syntaxsurge.com/` | Kaldi | Managed by its separate deployment |
-| `https://mc-dental.syntaxsurge.com/` | MC Dental Station | Managed by its separate deployment |
-
-## Install the source and runtime
-
-Use the existing aaPanel Node.js manager as the only process supervisor. Its [official guide](https://www.aapanel.com/docs/Function/Node.html) supports a custom startup command, a Node version, and a runtime user. Choose `www`, not `root`. Creating a new domain mapping is unnecessary because the existing Nginx vhost already owns `syntaxsurge.com`. Kaldi's subdomain configuration is separate.
-
-Use these separate directories, outside WordPress's document root:
-
-| Directory | Purpose |
-| --- | --- |
-| `/www/syntaxsurge-portfolio/source` | Force-synced Git checkout and `pnpm deploy:server` startup entry point |
-| `/www/syntaxsurge-portfolio/runtime` | Build releases, startup lock, and last-successful-release history |
-
-Both directories must be owned by the runtime user `www`, with sufficient free disk space for dependency installation and two successful releases plus one build in progress. The runtime directory must be outside the source checkout and must not contain it; the runner checks resolved paths, including symlinks. The user also needs a writable package-manager cache/store. Do not copy local `node_modules`, `.next`, or environment files from another application.
-
-The repository is `https://github.com/syntaxsurge/syntaxsurge-portfolio.git`. Clone it only after the initial `main` commit has been pushed. Keep `.git`: startup uses it to fetch the newest commit. The public HTTPS origin avoids putting a developer's SSH key or GitHub token on the web server.
-
-The earlier server had Node.js at `/www/server/nodejs/v24.15.0/bin`; verify that installation still exists, then select Node 24.15.0 or a later supported 24.x version. The project also supports Node 22.21.1 or later 22.x. Install pnpm **10.15.0** for the selected Node installation and confirm that `node`, `pnpm`, `git`, and `tar` are available to `www` in the project's environment. Do not replace the global Node version used by Kaldi or other applications.
-
-For a Linux terminal opened by the server administrator, the directory setup and checkout are:
-
-```sh
-install -d -o www -g www -m 0755 /www/syntaxsurge-portfolio
-install -d -o www -g www -m 0700 /www/syntaxsurge-portfolio/runtime
-runuser -u www -- git clone https://github.com/syntaxsurge/syntaxsurge-portfolio.git /www/syntaxsurge-portfolio/source
+```yaml
+services:
+  portfolio:
+    build:
+      context: https://github.com/syntaxsurge/syntaxsurge-portfolio.git#<full-main-commit>
 ```
 
-Install pnpm using the selected Node installation's package manager if it is not already available. Before configuring the service, verify the selected executables and write permissions while running as `www`. If a checkout was uploaded by an administrator instead of cloned as `www`, correct ownership of this business website's directories only. Do not recursively change ownership of `/www` or other applications' directories.
+The inline Dockerfile uses `node:24-bookworm-slim` with pnpm 10.15.0, installs from the frozen lockfile, and runs `pnpm build`. The container runs as `node` and starts Next.js on `0.0.0.0:3000`. A container health check requests `http://127.0.0.1:3000/` every 15 seconds. The production environment sets `SITE_URL=https://syntaxsurge.com` for canonical metadata. The portfolio runs without a database, app secrets, or data volumes.
 
-### Install the source dependencies before the first start
+Cloudflare proxies `syntaxsurge.com` and `www.syntaxsurge.com` to the Dokploy origin. Both HTTPS domains map to `portfolio` port 3000 on path `/`. The origin TLS certificate covers both hostnames. Linked products and subdomains use their own deployment settings.
 
-Run the following in the actual source checkout configured in aaPanel, with the selected Node installation and as the project's runtime user. Do not assume a different project uses the example source path above.
+## Publish a release
 
-```sh
-node --version
-pnpm --version
-pnpm install --frozen-lockfile --prod=false
-```
+1. Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, and `pnpm test`. Push the verified commit to GitHub `main` and confirm its full SHA with `git ls-remote origin refs/heads/main`.
+2. Open the existing **Portfolio** Compose service and record its current commit pin for rollback. Change the Git context fragment to the new full SHA and save the Compose configuration.
+3. Select **Deploy** in the same service. Wait for the specific deployment to succeed, verify the pinned commit in the build output, and confirm that the `portfolio` container reports healthy.
+4. Verify the public site using the checks below.
 
-This initial installation prepares the configured project directory. The runner's later installations happen inside separate release directories and cannot satisfy a panel check that blocks launch beforehand. Do not copy dependencies from a Mac or create an empty `node_modules` directory to disguise a failed installation.
+For an API deployment, use `compose.one` to read the raw configuration, `compose.update` to save the updated `composeFile`, and `compose.deploy` to queue the release. Use `deployment.allByCompose` to track the new deployment and `deployment.readLogs` to inspect its build. Include the Dokploy API key in the `x-api-key` header and keep it out of shell history, logs, and source control. [Compose API](https://docs.dokploy.com/docs/api/compose) · [Deployment API](https://docs.dokploy.com/docs/api/deployment)
 
-If aaPanel displays **“Project dependency installation is abnormal. Please reinstall the dependencies in the module management first and try again!”**, complete the frozen pnpm install above in a server terminal. Wait for successful completion, then start the project with `pnpm deploy:server`. The [official startup check](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/nodeMod.py#L142-L170) emits this message when a project declares dependencies but its configured folder has no `node_modules`, before running its startup command. The exact installed panel version has not been inspected.
-
-Prefer the terminal command over the Module page's one-click installer: the [current official installer implementation](https://github.com/aaPanel/aaPanel/blob/4af59b2386e118fc0e4b2ae838dacac992d16b1c/mod/project/nodejs/packageManage.py#L56-L60) removes `pnpm-lock.yaml` and other lockfiles before installing. The frozen command preserves our committed dependency versions. If installation fails, capture the first actual error in its output; the panel popup alone does not identify a registry, permission, Node version, or package problem. Confirm Node 24.15.0+ within 24.x (or supported 22.x) and pnpm 10.15.0 are available under the selected user. Do not remove the dependency gate or edit panel internals to force a start.
-
-## Configure the aaPanel Node.js project
-
-Create one Node.js process entry with these settings:
-
-| Setting | Value |
-| --- | --- |
-| Name | `syntaxsurge-portfolio` |
-| Project path / working directory | `/www/syntaxsurge-portfolio/source` |
-| Run mode | Custom command |
-| Startup command | `pnpm deploy:server` (`pnpm serve` runs the same runner) |
-| Node.js version | Verified Node 24.15.0+ in the 24.x series |
-| Runtime user | `www` |
-| Port | `3101` |
-| Domain mapping | Leave unused; edit the existing vhost as described below |
-| Restart policy | Restart after an unexpected process exit, with a delay |
-| Start on boot | Enabled |
-
-Set the following environment variables in the aaPanel project:
-
-```dotenv
-NODE_ENV=production
-SITE_URL=https://syntaxsurge.com
-PORT=3101
-PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
-```
-
-The startup entry point fixes the listener to `127.0.0.1`. Confirm port 3101 is free before starting. It checks the port before replacing source files and refuses to stop another process occupying that port. Do not expose port 3101 in the firewall; Nginx is the business website's public entry point. If the manager cannot find `pnpm`, fix its executable search path for the selected Node installation rather than launching another supervisor.
-
-`SITE_URL` is an origin only: no path, credentials, query, or fragment. Invalid values fail the build. The business website needs no database or secrets. Optional source environment files are loaded in this order: `.env.production.local`, `.env.local`, `.env.production`, `.env`; variables already supplied by aaPanel take priority. Environment files are copied privately into each new release. Keep them untracked and outside the public document root. The runner refuses a target commit that tracks any of these four files, `node_modules`, or `.next`; the tracked `.env.example` template is allowed. The aaPanel environment is the recommended place for `PORT` and `PORTFOLIO_DEPLOY_DIR`; source environment files also support them. A separate preview origin should also have access protection or a noindex policy to avoid duplicate indexing.
-
-### What happens on every start
-
-To publish pushed changes on the existing installation, restart only the `syntaxsurge_portfolio` Node.js project in aaPanel, using its configured `pnpm deploy:server` startup command. A GitHub push does not restart the running Next.js process. The runner fetches and prepares a release during startup, then serves that release until the next restart. Confirm its logged serving commit matches the intended GitHub commit and is not marked `DEGRADED` before treating the update as published. Do not start an additional process or run this source-replacing deployment command in the developer's local checkout.
-
-If the live homepage still has external Preview résumé / Download résumé links, lacks the `resume-preview` dialog, or returns 404 for `/images/resume-page-1.webp`, it is not serving the current résumé flow. Inspect the aaPanel startup log and release commit, even if the page itself returns HTTP 200. Check the public route after restart, including a fresh request; do not attribute an old running release to browser caching without checking the response.
-
-1. The runner validates that its source directory is the Git root, checks that the runtime directory does not overlap it, takes an exclusive startup lock, and checks that port 3101 is free.
-2. It fetches `origin/main` without prompting for credentials and pins the exact commit. After checking the target for tracked production environment/generated files, it runs `git reset --hard` to that commit and `git clean -fd` with explicit exclusions for `.env*`, `node_modules/`, and `.next/`. It never uses `git clean -x`, so other ignored files are retained.
-3. It exports the pinned commit into a separate release directory, installs frozen dependencies including development tools needed for the build, and builds the release. A matching completed build is reused when the commit, Node version, and relevant environment configuration have not changed.
-4. It starts Next.js in the foreground, waits for a successful homepage response, then records the release as successful. It retains the current and previous successful releases.
-5. aaPanel supervises the foreground command. On stop, the runner forwards the signal to its child processes and forces their shutdown after 10 seconds if needed.
-
-**After fetching and validating the target, the shortcut replaces staged and unstaged source edits, local commits, and nonignored untracked source files.** Keep server configuration in aaPanel or ignored environment files. Commit and push code changes through GitHub before restarting this service. Protected environment/dependency/build paths and other ignored files remain; the separate runtime directory is outside the cleanup boundary.
-
-If fetching, dependency installation, building, or startup fails, the runner logs the cause and attempts the most recent successful release. A failed fetch leaves source working files unchanged. If installation or building fails after the reset, the source checkout can already be at the new commit; fallback serves the previous complete release with its own unchanged source, dependencies, and build. A fallback is labeled `DEGRADED` in the logs so a stale deployment is not mistaken for a successful update. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. If there is no healthy compatible saved release, startup fails visibly. A successful homepage response is a startup check, not a substitute for the wider release checks below.
-
-Allow at least **20 seconds for shutdown**. The runner allows up to 2 minutes per Git/archive step, 10 minutes for installation, 15 minutes for the build, and 1 minute per startup readiness check. The manager must not kill a legitimate build after a short startup timeout; allow at least 40 minutes for a cold start if a configurable startup deadline exists. Build output and the selected commit are written to the Node project's logs. Inspect those logs if aaPanel reports that the port is unavailable while a first build is still running.
-
-This workflow intentionally rebuilds on restart when the pushed commit or build configuration changes. Because aaPanel stops the existing process first, the website is unavailable during that restart and build. A restart with an unchanged successful release is faster, but still has a brief interruption. This setup does not promise zero downtime; do not schedule frequent automatic restarts merely to poll for changes.
-
-### Publishing future updates
-
-Run the local checks, commit the intended files, and push `main` to GitHub. Then restart this business website's Node.js project in aaPanel. Only pushed commits are fetched; uncommitted or unpushed development changes do not appear on the server, and local changes in the server checkout are discarded.
+## Verify the public release
 
 ```sh
-pnpm lint
-pnpm build
-pnpm test
-pnpm test:startup
-git push origin main
-```
-
-The startup runner itself is loaded from the source checkout. Every start also updates that checkout, so future runner changes are fetched automatically. The process already executing keeps its loaded implementation; a newly fetched `scripts/serve.mjs` takes effect on the following restart. Read the serving-commit log to confirm which application release is active.
-
-### One-time adoption on an existing server
-
-The earlier `pnpm serve` runner builds fetched releases without updating the source checkout, so it cannot install this updated runner by restarting alone. After these changes are committed and pushed to `origin/main`, stop only this business website's aaPanel project. Verify the source and external runtime paths above, and preserve any needed server edits outside the checkout before replacing it. Keep production environment files ignored and untracked; keep the runtime history intact.
-
-From the server administrator's terminal, run these commands for the configured runtime user against the actual server checkout. The reset intentionally discards tracked source edits and local commits:
-
-```sh
-runuser -u www -- git -C /www/syntaxsurge-portfolio/source fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
-runuser -u www -- git -C /www/syntaxsurge-portfolio/source reset --hard origin/main
-```
-
-With the selected Node installation, run `pnpm install --frozen-lockfile --prod=false` as `www` in the source directory if the initial aaPanel dependency check is not already satisfied. Change the aaPanel startup command to `pnpm deploy:server` and start the project. `pnpm serve` remains accepted. The new runner handles force-sync, cleanup, and isolated release builds on every subsequent start; no repeated manual source update is required.
-
-### Recovery
-
-When an update fails, first read the logged error and check whether the previous release is serving. Fix the cause, push a corrected commit if needed, and restart. Do not delete the runtime directory: it contains the saved builds used for fallback. A lock owned by an exited process is recovered automatically. If startup reports a lock owned by a live process, confirm which website process is already running; do not remove its lock to start a duplicate service.
-
-For a release that starts successfully but later proves incorrect, revert the offending commit in Git, verify the fix locally, push it to `main`, and restart. The next start fetches that corrected history. Do not edit generated files inside a saved release. If the root route must be taken back to WordPress immediately, use the Nginx rollback below; leave Kaldi running throughout.
-
-## Replace only the root routing
-
-Inspect the current effective Nginx configuration and take private backups before editing. aaPanel can put rules in several included files. The earlier installation used:
-
-- Vhost: `/www/server/panel/vhost/nginx/syntaxsurge.com.conf`
-- WordPress rewrite include: `/www/server/panel/vhost/rewrite/syntaxsurge.com.conf`
-- WordPress files: `/www/wwwroot/syntaxsurge.com`
-
-Verify these paths and contents again. Kaldi's and MC Dental Station's separate vhosts are outside these business-site routing changes; use each application's deployment configuration for server details.
-
-The previous WordPress rewrite include contained a `location /` block with `try_files $uri $uri/ /index.php?$args`. **Remove that one catch-all, then include [nginx-portfolio.conf](../deploy/nginx-portfolio.conf) once inside the existing server; the snippet contains its replacement. Do not keep or add a second `location /`.** Keep the backup outside wildcard include directories so Nginx does not load it. Preserve the WordPress files/database, PHP settings, TLS certificate, HTTP-to-HTTPS behavior, ACME challenge rules, and existing security rules. Do not replace the entire vhost or add another website claiming the same domain.
-
-Install the business-site snippet only in the `syntaxsurge.com` server block; leave linked applications' vhosts and deployment configurations unchanged. The `^~ /_next/`, `^~ /work/`, `^~ /images/`, `^~ /videos/`, and `^~ /documents/` blocks prevent WordPress file-extension regexes from intercepting those routes. The catch-all handles `/recognition` and the `/work` permanent redirect to `/#work`; exact blocks handle the business icon, social preview, robots file, and sitemap. `/documents/` serves the original registration certificate and professional resume; `/images/` serves the supplied workspace photograph, service illustrations, certificate and résumé previews, project artwork, and motion poster. `/videos/` serves the local muted hero and Work loops. Add explicit routing if new public asset directories or metadata routes are introduced later. These selection rules follow the [Nginx location documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location).
-
-The proxy preserves the request path, forwards to loopback port 3101, disables shared proxy caching, and overwrites forwarded client/host headers. It does not forward a user-supplied Host to Next. Review existing server-level rewrites, cache directives, and `www` redirects before applying: a rewrite executed before location selection can still alter routing. Keep business-site proxy settings scoped to its own vhost. See [Nginx proxy documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass).
-
-Only after the business website passes its private listener checks, validate the combined Nginx configuration with the server's existing Nginx executable. Reload only if validation passes. On the earlier aaPanel installation, the executable was `/www/server/nginx/sbin/nginx`; verify the active executable rather than starting a second Nginx instance.
-
-## Confirm the cutover
-
-Check these privately first, then on HTTPS after the reload:
-
-```sh
-curl -fsS http://127.0.0.1:3101/ -o /dev/null
-curl -sS -D - http://127.0.0.1:3101/work -o /dev/null
-curl -fsS http://127.0.0.1:3101/recognition -o /dev/null
-curl -fsS http://127.0.0.1:3101/work/cliplore -o /dev/null
-curl -fsS http://127.0.0.1:3101/documents/syntax-surge-dti-certificate.pdf -o /dev/null
-curl -fsS http://127.0.0.1:3101/documents/jade-laurence-empleo-resume.pdf -o /dev/null
-curl -fsS http://127.0.0.1:3101/sitemap.xml
 curl -fsS https://syntaxsurge.com/ -o /dev/null
-curl -sS -D - https://syntaxsurge.com/work -o /dev/null
-curl -fsS https://syntaxsurge.com/recognition -o /dev/null
-curl -fsS https://syntaxsurge.com/work/mc-dental-station -o /dev/null
-curl -fsS https://syntaxsurge.com/work/cliplore -o /dev/null
-curl -fsS https://syntaxsurge.com/robots.txt
+curl -fsS https://www.syntaxsurge.com/ -o /dev/null
 curl -fsS https://syntaxsurge.com/sitemap.xml
-curl -fsS https://syntaxsurge.com/icon.svg -o /dev/null
-curl -fsS https://syntaxsurge.com/opengraph-image -o /dev/null
-curl -fsS https://syntaxsurge.com/images/cliplore-ai-preview.webp -o /dev/null
-curl -fsS https://syntaxsurge.com/images/syntaxsurge-logo.jpg -o /dev/null
-curl -fsS https://syntaxsurge.com/images/jade-laurence-empleo.jpg -o /dev/null
-curl -fsS https://syntaxsurge.com/images/mc-dental-feature.webp -o /dev/null
-curl -fsS https://syntaxsurge.com/images/hero-systems.webp -o /dev/null
-curl -fsS https://syntaxsurge.com/images/work-sculpture.webp -o /dev/null
-curl -fsS https://syntaxsurge.com/videos/work-sculpture.mp4 -o /dev/null
-curl -fsS https://syntaxsurge.com/images/service-websites.svg -o /dev/null
-curl -fsS https://syntaxsurge.com/images/service-software.svg -o /dev/null
-curl -fsS https://syntaxsurge.com/images/service-automation.svg -o /dev/null
-curl -fsS https://syntaxsurge.com/documents/syntax-surge-dti-certificate.pdf -o /dev/null
-curl -fsS https://syntaxsurge.com/images/syntax-surge-dti-certificate.png -o /dev/null
-curl -fsS https://syntaxsurge.com/documents/jade-laurence-empleo-resume.pdf -o /dev/null
-curl -fsS https://kaldi-rewards.syntaxsurge.com/ -o /dev/null
-curl -fsS https://mc-dental.syntaxsurge.com/ -o /dev/null
+curl -fsS https://syntaxsurge.com/recognition -o /dev/null
+curl -fsS https://syntaxsurge.com/work/wrap-it-up/support -o /dev/null
+curl -fsS https://syntaxsurge.com/work/wrap-it-up/privacy -o /dev/null
+curl -sS -D - https://syntaxsurge.com/work -o /dev/null
 ```
 
-Inspect an actual hashed `/_next/static/` script and stylesheet URL from the rendered page and confirm each returns the expected content type. In a browser verify the homepage's 20 visual cards and filters, `/recognition`, all 20 project pages, and the two Wrap It Up! support/privacy pages. Confirm `/work` returns HTTP 308 and redirects to `/#work`; it has no separate page or sitemap entry. Check both themes and persistence, mobile section navigation, keyboard focus, and 200% zoom. Each canonical page uses its own HTTPS URL, and the sitemap has 24 unique business-site URLs. Linked applications' separate origins are not part of this sitemap.
+Confirm that the public HTML shows content specific to the release. Check the changed project routes and media, a hashed Next.js stylesheet or script from the homepage, and the expected sitemap entries. The sitemap contains the homepage, recognition page, all project pages, and the Wrap It Up! support and privacy pages. `/work` redirects to `/#work` with status 308. Each of the three `/apps/wrap-it-up` addresses redirects to its corresponding `/work/wrap-it-up` address with status 308.
 
-From the bottom of a project, select Next project repeatedly and confirm each destination starts at scroll position zero with its header and title visible. Verify collection details, recognition, Home and the game Support/Privacy links similarly. Page-opening links target `#top`; canonicals and sitemap entries remain fragment-free. Browser Back should restore the previous reading position, while All projects, header section links and service links go to their named sections. Root HTML declares `data-scroll-behavior="smooth"` so Next.js can suppress smooth scrolling during cross-page navigation.
+Use a desktop and a phone-sized viewport for changed interactive behavior. Verify clear keyboard focus, sticky navigation, project search and filters, motion controls, and theme support where relevant. Check the résumé and business registration downloads when their paths or presentation change.
 
-Verify the registration preview, PDF view, and download actions. The PDF response should have `application/pdf` content type and match the original SHA-256 recorded in `docs/ASSET-SOURCES.md`; the preview should be a local PNG rendering. The canonical legal name is **SyntaxSurge Software Development Services**, while the business brand remains **Syntax Surge**. The certificate assets do not add sitemap pages and require no external document service.
+## Recover a release
 
-Verify that both hero and team View résumé buttons open the same dialog, both preview pages load, and its download action returns the two-page PDF. Check keyboard focus containment, Escape/backdrop/close dismissal, focus restoration and phone scrolling with the download toolbar visible. The runtime serves committed PDF/WebP assets; Python, ReportLab, Pillow and Poppler are authoring dependencies only. Confirm the supplied workspace photograph and both local background posters and all six service SVG illustrations load locally, with SVG responses using `image/svg+xml`. Heading and body fonts load through generated `/_next/static/media/` assets. Check that scrolling through Services highlights each of the six compact cards in both directions, manual service links jump below the sticky header, and keyboard focus stays on the visitor’s chosen control. Verify the wrapped phone links and static service navigation on phones and short viewports. Check automatic hero-video, Work-video, founder-wave, service-artwork, and cube motion on both phones and desktops. The site defaults to playing independently of device motion preference. Verify the footer’s Pause animations / Play animations action, persistence across reloads and pages, and suspension outside the viewport or in a hidden tab. Each background video loads only after its container enters view with motion allowed; verify MP4 byte-range requests return 206. Check the single theme icon, desktop navigation icons, and vertical mobile disclosure, including Escape, outside click, repeated fragment visits, and resizing. Section reveals run once. Verify native video playback time advances in the full-width hero and Work backgrounds, including while scrolling the tall collection and after category/search filtering; confirm the background stays behind usable controls and readable cards. Confirm the visible email action opens `syntaxsurge@gmail.com` in the visitor's mail application; this website requires no email delivery service. Before any homepage demo is selected, no YouTube iframe should exist. Opening a demo should create one privacy-enhanced player; opening another replaces it, and closing restores keyboard focus. Demo and artwork provenance is in `docs/ASSET-SOURCES.md` and `docs/AWARD-MEDIA-SOURCES.md`.
+Check the deployment output first if an install or build fails. Verify the status of the running portfolio container before attempting another deployment. For a site regression, save the prior full commit in the build context and deploy the same Compose service again. Verify container health and the restored public content. Scope release and rollback operations to Portfolio.
 
-Also check that `/.env.local`, `/package.json`, and unknown `/work/` slugs do not expose source files. Confirm Kaldi loads at `https://kaldi-rewards.syntaxsurge.com/` with its own assets, wallet, and sign-in callback. Check MC Dental Station's public root independently; its booking, staff authentication, database, and FAQ integrations belong to that application. Inspect the business website's aaPanel Node project and Nginx logs for errors. Confirm the logged serving commit is the intended commit and is not marked `DEGRADED`. Keep the runtime release history intact after these checks.
-
-If verification fails, restore only the backed-up root routing and business-site include changes, validate, and reload Nginx. Do not stop, restart, or change linked applications during a business-site rollback. Retain WordPress data even after a successful cutover.
-
-## Diagnose a 502 Bad Gateway
-
-A Next.js **Ready** message and the runner's homepage check describe startup, not current public health. Run these checks in the **server terminal** while the error occurs, before changing configuration.
-
-### 1. Check the current business-site listener
-
-These are GET requests with response bodies discarded. `000` means no HTTP response; keep the accompanying connection error.
-
-```sh
-curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'website: HTTP %{http_code}\n' -H 'Host: syntaxsurge.com' http://127.0.0.1:3101/
-ss -ltnp '( sport = :3101 )'
-```
-
-If 3101 fails, inspect current business-site aaPanel logs for a stopped process, restart, or build; do not start a duplicate supervisor. If this private request succeeds but the business website's public route fails, investigate its Nginx/public routing. Check Kaldi and MC Dental Station separately at their public roots; this guide assumes no private listener or health endpoint for either application.
-
-### 2. Inspect the Nginx configuration and matching error
-
-Verify the running Nginx executable and any custom `-c` configuration or `-p` prefix before using the aaPanel path below. Inspect the capture locally; share only relevant domain/upstream lines with private values removed, never the full configuration.
-
-```sh
-ps -eo pid,ppid,user,args | rg 'nginx: master process|nginx: worker process'
-portfolio_nginx_capture="$(mktemp /tmp/portfolio-nginx.XXXXXX)"
-/www/server/nginx/sbin/nginx -T > "$portfolio_nginx_capture" 2>&1
-rg -n 'configuration file|server_name.*syntaxsurge[.]com|proxy_pass|error_log|conflicting server name|duplicate location|test failed' "$portfolio_nginx_capture"
-```
-
-Inspect the captured `syntaxsurge.com` HTTPS block and its includes. Business-site locations require **`http://127.0.0.1:3101`**: HTTP, IPv4 loopback, port 3101. Check for an old port, HTTPS upstream, or `localhost` resolving to `::1`. Check duplicate vhosts or aaPanel Node domain mappings: server-name warnings can accompany a successful syntax test. `nginx -T` reads configuration on disk, not the configuration loaded by existing workers. See [Nginx command documentation](https://nginx.org/en/docs/switches.html).
-
-Reproduce one failing request, then read the error log named by that active vhost's `error_log` directive. Replace the example path with the actual log path:
-
-```sh
-curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public: HTTP %{http_code}\n' https://syntaxsurge.com/
-tail -n 50 /path/to/the/active-vhost-error.log
-```
-
-Match the request timestamp, host, and upstream. `Connection refused` means the logged address had no reachable listener; `::1`, a wrong port, or upstream SSL errors suggest a routing mismatch. Investigate permission, timeout, or closed-connection errors individually. Separate containers/network namespaces have separate loopback addresses; confirm that topology if applicable. Leave Kaldi's separate vhost unchanged.
-
-### 3. Compare the origin with public routing
-
-This GET bypasses public DNS and Cloudflare while preserving hostname and TLS verification. If Nginx does not listen on loopback/all interfaces on port 443, replace `127.0.0.1` in `--resolve` with its verified origin address.
-
-```sh
-curl --noproxy '*' --resolve syntaxsurge.com:443:127.0.0.1 -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'origin: HTTP %{http_code}\n' https://syntaxsurge.com/
-curl --noproxy '*' -sS --connect-timeout 3 --max-time 10 -o /dev/null -w 'public: HTTP %{http_code}; peer %{remote_ip}\n' https://syntaxsurge.com/
-```
-
-Keep TLS verification enabled. A Cloudflare Origin CA certificate needs its verified CA supplied with `--cacert /path/to/origin-ca.pem` for direct clients; otherwise report the trust error. See [Cloudflare Origin CA documentation](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/).
-
-If origin succeeds but public fails, compare the configured origin, IPv4/IPv6 DNS targets, proxy routing, and origin logs. Cloudflare can relay an origin 502; its response alone does not identify the cause. Keep the URL, timestamp/timezone, and request identifier for [Cloudflare 502 troubleshooting](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502-504/). Keep port 3101 private and firewall/TLS protections enabled.
-
-After identifying a configuration mistake, privately back up the affected file outside wildcard includes and fix that rule. Run `/www/server/nginx/sbin/nginx -t` with the verified configuration/prefix. **Reload with the same executable/options and `-s reload` only after the intended fix validates.** Confirm reload logs and repeat private, origin, public, asset, and Kaldi checks. Avoid whole-vhost replacement or blind reloads.
-
-## Wrap It Up! public pages
-
-The business website owns `/work/wrap-it-up`, `/work/wrap-it-up/support`, and `/work/wrap-it-up/privacy` on the same HTTPS origin. The game content extends the project-detail template; Support and Privacy are child routes. `next.config.ts` serves HTTP 308 redirects from the matching three `/apps/wrap-it-up` addresses for installed beta links, with no separate pages or sitemap entries. These routes use the existing `/work/` proxy; their local image uses `/images/`. No DNS, TLS, permission, or Kaldi change is required. Publish through the existing pushed-`main` update runner and restart only the `syntaxsurge_portfolio` aaPanel project. Its configured source path is `/www/wwwroot/syntaxsurge-portfolio`, with Node 24.15.0; the existing runtime-user configuration is preserved during deployment. Verify the three canonical pages, their metadata/contact, the 24 unique sitemap entries, and all three old addresses’ 308 status and correct destination after each release.
+For a public gateway error, inspect the Portfolio container health and logs, then confirm that the two domain mappings route to `portfolio:3000`. Compare the Cloudflare response with a direct HTTPS request to the configured origin using `curl --resolve`, the domain hostname, and the official Cloudflare Origin CA root with `--cacert`. A successful origin response with a failing public response directs investigation to the Cloudflare origin routing and TLS configuration. [Cloudflare Origin CA](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/)

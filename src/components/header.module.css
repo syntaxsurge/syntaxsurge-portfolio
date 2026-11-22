@@ -127,6 +127,19 @@
   color: var(--accent);
 }
 
+@media (min-width: 851px) {
+  .navigation .contactLink {
+    padding-inline: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--elevated);
+  }
+
+  .navigation .contactLink:hover {
+    border-color: var(--accent);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :global(:root:not([data-theme])) .lightIcon {
     display: none;

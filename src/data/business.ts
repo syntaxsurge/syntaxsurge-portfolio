@@ -2,7 +2,7 @@ export const business = {
   name: "Syntax Surge",
   legalName: "SyntaxSurge Software Development Services",
   description:
-    "Business websites, custom software, and practical AI tools. Syntax Surge builds clear, useful digital experiences in the Philippines.",
+    "Syntax Surge is a Philippine software studio building websites, apps and automation for businesses worldwide.",
   logo: { src: "/images/syntaxsurge-logo.jpg", width: 640, height: 640 },
   email: "syntaxsurge@gmail.com",
   links: {
@@ -13,12 +13,26 @@ export const business = {
   founder: {
     name: "Jade Laurence C. Empleo",
     fullName: "Jade Laurence Cabaruan Empleo",
-    role: "Founder & Software Developer",
+    role: "Founder & CEO",
+    description:
+      "Jade leads product strategy and engineering, turning complex requirements into clear decisions and dependable software from discovery through launch.",
     portrait: {
       src: "/images/jade-laurence-empleo.jpg",
       width: 1254,
       height: 1254,
     },
+  },
+  marketingLead: {
+    name: "Mariy Krishan, Adam Bashar Faleh",
+    role: "Chief Marketing Officer (CMO)",
+    description:
+      "Adam leads brand strategy and communications, combining creative judgment with the drive to see ideas through. He focuses on clear positioning and dependable relationships with clients and partners.",
+    portrait: {
+      src: "/images/adam-bashar-faleh-mariy-krishan.webp",
+      width: 1254,
+      height: 1254,
+    },
+    github: "https://github.com/adamyoubash-gif",
   },
   resumeHref: "/documents/jade-laurence-empleo-resume.pdf",
   resumePreview: [

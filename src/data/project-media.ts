@@ -28,6 +28,78 @@ export const projectPreviews: Record<string, ProjectPreview> = {
     summary:
       "A studio for AI generation, timeline editing, captions, and sound.",
   },
+  "perfume-notebook": {
+    image: {
+      src: "/images/perfume-notebook-cover.webp",
+      alt: "The Perfume Notebook homepage with a fragrance catalog introduction and perfume still life",
+      width: 1280,
+      height: 720,
+    },
+    summary: "A fragrance catalog and bilingual notebook for building formulas.",
+  },
+  orderkubo: {
+    image: {
+      src: "/images/orderkubo-cover.webp",
+      alt: "OrderKubo homepage with a point-of-sale overview and a dashboard preview",
+      width: 1280,
+      height: 720,
+    },
+    summary: "Point of sale, inventory, and store operations in one workspace.",
+  },
+  "topic-machine": {
+    image: {
+      src: "/images/topic-machine-cover.webp",
+      alt: "TopicMachine homepage with an article publishing illustration against a dark backdrop",
+      width: 1280,
+      height: 720,
+    },
+    summary: "AI-assisted article research, editing, and publishing.",
+  },
+  romcamp: {
+    image: {
+      src: "/images/romcamp-cover.webp",
+      alt: "Romcamp homepage with a game search box and a featured Game Boy Advance title",
+      width: 1280,
+      height: 720,
+    },
+    summary: "A classic game archive with console profiles and setup guides.",
+  },
+  modelcab: {
+    image: {
+      src: "/images/modelcab-cover.webp",
+      alt: "ModelCab homepage diagram showing an app request routed through the gateway to a selected AI model",
+      width: 1280,
+      height: 720,
+    },
+    summary: "An AI gateway and Playground for testing and integrating models.",
+  },
+  filemaple: {
+    image: {
+      src: "/images/filemaple-cover.webp",
+      alt: "FileMaple homepage showing a laptop with a cloud storage file workspace open",
+      width: 1280,
+      height: 720,
+    },
+    summary: "Organize, upload, and share files from S3-compatible storage.",
+  },
+  linkmaple: {
+    image: {
+      src: "/images/linkmaple-cover.webp",
+      alt: "LinkMaple homepage with a URL input and an example of a shortened link",
+      width: 1280,
+      height: 720,
+    },
+    summary: "Short links with publisher analytics and payout tracking.",
+  },
+  "muslim-everyday": {
+    image: {
+      src: "/images/muslim-everyday-cover.webp",
+      alt: "Muslim Everyday homepage with a reading nook illustration and links to beginner guides",
+      width: 1280,
+      height: 720,
+    },
+    summary: "Practical guides to Islam, the Quran, and daily Muslim life.",
+  },
   studysoda: {
     image: {
       src: "/images/studysoda-cover.webp",

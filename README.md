@@ -1,8 +1,8 @@
 # SyntaxSurge Software Development Services
 
-A Next.js business website for Syntax Surge: business websites, custom software, and practical AI/automation services. The homepage presents illustrated services, all 19 projects as searchable visual cards, founder Jade Laurence Empleo, business registration, a downloadable professional resume, and direct email/LinkedIn contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo, founder portrait, and workspace hero photograph are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
+A Next.js business website for Syntax Surge, a Philippine software studio building websites, apps and automation for businesses worldwide. The homepage presents illustrated services, the remote collaboration process, 28 searchable projects, leadership profiles for founder and CEO Jade Laurence C. Empleo and CMO Mariy Krishan, Adam Bashar Faleh, business registration, and direct email and LinkedIn contact. The recognition page presents all 14 founder hackathon recognitions. The supplied logo, leadership portraits, and workspace hero photograph are served locally. Light and dark themes follow the device preference initially and remember an explicit choice.
 
-- `/`: business overview, services, the full searchable project collection at `#work`, team, registration, and contact.
+- `/`: business overview, services, the collaboration process, the searchable project collection at `#work`, team, registration, and contact.
 - `/work`: permanent redirect to `/#work`.
 - `/recognition`: all founder recognitions and their project previews/demos.
 - `/work/[slug]`: project details, including [MC Dental Station](https://syntaxsurge.com/work/mc-dental-station) and Wrap It Up!.
@@ -29,52 +29,19 @@ pnpm lint
 pnpm typecheck
 pnpm build
 pnpm test
-pnpm test:startup
 ```
 
-The homepage, recognition page, 19 project detail routes, and two game support/privacy pages are rendered at build time, with 23 unique sitemap URLs. Project search/filter controls, theme selection, and media controls use client state. This business website needs no database, secrets, login, contact-form provider, or analytics integration; linked applications have their own integrations. Images, SVG service illustrations, Space Grotesk headings, and Geist body fonts are served locally. Homepage project demos load in a privacy-enhanced inline player only after an explicit play action, with one active demo, a close control, and focus restoration; detail/recognition pages retain direct external demo links. Decorative particles accompany the supplied hero photograph, respect reduced motion, pause outside view or a hidden tab, and provide a pause control. A generated PNG provides the business social-sharing preview.
+The homepage, recognition page, 28 project detail routes, and two game support/privacy pages are rendered at build time, with 32 unique sitemap URLs. Project search/filter controls, theme selection, and media controls use client state. This business website needs no database, secrets, login, contact-form provider, or analytics integration; linked applications have their own integrations. Images, SVG service illustrations, Space Grotesk headings, and Geist body fonts are served locally. Homepage project demos load in a privacy-enhanced inline player only after an explicit play action, with one active demo, a close control, and focus restoration; detail/recognition pages retain direct external demo links. The homepage uses local decorative video loops and viewport-aware animations, with a shared pause control in the footer. A generated PNG provides the business social-sharing preview.
 
 ## Professional resume
 
-The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the certificate-confirmed full name Jade Laurence Cabaruan Empleo, supplied profile photograph and business email, three project examples, all 14 dated recognitions, and website/GitHub/LinkedIn links. Download actions are available in the header, hero, and team section; the team section also offers a PDF preview. No education, employment history, or phone number is invented.
+The [two-page PDF resume](public/documents/jade-laurence-empleo-resume.pdf) includes the professional name Jade Laurence C. Empleo, supplied profile photograph and business email, three project examples, all 14 dated recognitions, and website/GitHub/LinkedIn links. The hero and CEO profile open a shared preview dialog with a PDF download.
 
 `scripts/build-resume.py` reads canonical site data and generates the PDF with ReportLab; rebuilding requires the supported Node version plus Python 3.9+ and `reportlab`. Python is an authoring dependency, not a deployed website requirement. Sources and rebuild instructions are in [the resume source record](docs/RESUME-SOURCES.md).
 
-## aaPanel startup and automatic updates
+## Production deployment
 
-Before the first start, install dependencies in the **source checkout configured as the aaPanel project path**, using the project's selected Node version and runtime user:
-
-```sh
-pnpm install --frozen-lockfile --prod=false
-```
-
-If aaPanel reports “Project dependency installation is abnormal,” run that installation in a server terminal using the project's configured directory and runtime user. Our startup runner installs dependencies in separate release directories; it cannot repair a panel dependency check that prevents the runner from being launched. The initial source installation and release installations serve different purposes. Keep pnpm 10.15.0 available to the project. Prefer this frozen install over aaPanel's one-click installer, whose current implementation removes dependency lockfiles before installing.
-
-Then use this startup command:
-
-```sh
-pnpm deploy:server
-```
-
-Use this as the custom startup command for the business website's aaPanel Node.js project. `pnpm serve` remains an alias for the same runner. Each start fetches the latest **pushed `origin/main` commit**, forcefully replaces the server's source checkout with that exact commit, installs its locked dependencies, builds a separate release, and starts it on `127.0.0.1:3101`. Repeated starts reuse a completed build when its commit, Node version, and build configuration match.
-
-**The server shortcut discards staged and unstaged source edits, local commits, and nonignored untracked source files.** It preserves untracked `.env*`, `node_modules`, `.next`, and other ignored files. Supported production environment files and generated dependency/build directories must remain untracked. Put changes in GitHub before restarting; keep server settings in aaPanel's environment or ignored environment files.
-
-If fetching, installing, building, or starting the new release fails, the command tries a previously successful complete release and reports the failure in the logs. A failed fetch leaves the source checkout unchanged; an installation or build failure can leave it at the new commit while the previous release serves with its own source, dependencies, and build. The current and previous successful releases are retained. Fallback requires a release built with matching runtime and build configuration; changing Node or environment settings may require a successful fresh build. On the first deployment, there is no previous release to fall back to. A restart stops the old process before preparing the new one, so updates have downtime; this is not a zero-downtime deployment system.
-
-Set these variables in the aaPanel project environment:
-
-```dotenv
-SITE_URL=https://syntaxsurge.com
-PORT=3101
-PORTFOLIO_DEPLOY_DIR=/www/syntaxsurge-portfolio/runtime
-```
-
-The recommended source checkout is `/www/syntaxsurge-portfolio/source`, owned by the aaPanel runtime user `www`. The runtime directory must be outside the source checkout and must not contain it, including through symlinks; it is writable by the same user. The runner checks the Git root and occupied port before changing the checkout, and refuses a remote commit that tracks supported production environment files, `node_modules`, or `.next`. Keep the source `.git` directory and use the public HTTPS origin `https://github.com/syntaxsurge/syntaxsurge-portfolio.git`; no GitHub private key is needed for server updates. `pnpm start` remains available for starting an already-built checkout without fetching or rebuilding.
-
-An existing server running the earlier `pnpm serve` implementation needs a one-time source update while stopped, after this change is committed and pushed. Follow the adoption procedure in [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md). Subsequent starts update the runner's source automatically; a newly fetched runner implementation takes effect on the following restart because the current process already loaded its code.
-
-The production origin defaults to `https://syntaxsurge.com`. Canonical links, the sitemap, robots metadata, and social-preview URLs use that origin; `SITE_URL` can override it with another HTTP(S) origin. See [the domain deployment guide](docs/DEPLOY-SYNTAXSURGE.md) for the exact aaPanel settings, update limits, logs, and rollback procedure. The staged Nginx configuration applies only to this business website's vhost. Kaldi (`https://kaldi-rewards.syntaxsurge.com/`) and MC Dental Station (`https://mc-dental.syntaxsurge.com/`) are independent applications with their own domain routing. **Local implementation and deployment preparation do not publish a live update.**
+The site runs in Dokploy under **SyntaxSurge / production / Portfolio**. Its Docker Compose build context pins a full GitHub `main` commit. To publish, update the pin to the verified pushed SHA, deploy the existing service, and confirm container health and release content at [syntaxsurge.com](https://syntaxsurge.com). The [deployment guide](docs/DEPLOY-SYNTAXSURGE.md) covers configuration, public checks, and rollback.
 
 ## Wrap It Up! app pages
 
@@ -86,14 +53,14 @@ The game information extends the existing project-detail template, with Support 
 
 ## Edit content
 
-- `src/data/business.ts`: business identity, illustrated services, founder professional/full name and portrait, email/contact links, workspace hero photograph, resume path, and certificate facts/PDF path/preview dimensions.
+- `src/data/business.ts`: business identity, illustrated services, leadership profiles and portraits, email/contact links, workspace hero photograph, resume path, and certificate facts/PDF path/preview dimensions.
 - `src/data/portfolio.ts`: projects, real links, and awards.
 - `src/data/award-media.ts`: local project previews and verified YouTube demos for all 14 recognitions.
-- `src/data/project-media.ts`: media, summaries, labels, and optional demos for all 19 project cards, reusing project-owned previews and product artwork.
+- `src/data/project-media.ts`: media, summaries, labels, and optional demos for all 28 project cards, reusing project-owned previews and product artwork.
 - `src/app/page.tsx`: business homepage and full searchable project collection.
 - `src/app/recognition/page.tsx`: founder recognition record.
 - `src/components/project-visual.tsx`: reusable project visuals for detail pages.
-- `src/components/hero-portrait.tsx`: supplied workspace photograph and accessible decorative particle controls.
+- `src/components/leadership-cards.tsx`: shared profile cards, social links and portrait motion.
 - `src/app/globals.css`: palette, typography, layout, and responsive styles.
 - `src/lib/theme.ts`: stored preference, device preference, cross-tab synchronization, and early theme initialization.
 - `docs/CONTENT-SOURCES.md`: content provenance and historical project distinctions.
@@ -104,6 +71,6 @@ Recognition details originate from the founder’s supplied award history and do
 
 ## Accessibility and verification
 
-The shared sticky navigation leads to homepage Services/Work/Team and the current page's Contact footer on phones, tablets, and desktop, with a resume download available in the header. The work section includes all 19 visual project cards, visible category/result counts, combined search and filters, one-click reset, and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative hero particles provide keyboard-accessible controls and respect the relevant motion/focus behavior.
+The shared sticky navigation leads to homepage Services/Work/Team and the current page's Contact footer on phones, tablets, and desktop. The Work section shows 11 projects at first, with a control to reveal all 28, search across the full collection, category/result counts, one-click reset and direct details/website/demo actions. Project pages include breadcrumbs and an easy return to `/#work`; missing pages offer clear recovery links and contact options. All recognition entries are visible on `/recognition`, with preview highlights and compact cards. The footer also links to recognition and business registration. Demo players and decorative motion controls support keyboard interaction and visible focus.
 
 Semantic landmarks, a focusable skip destination, labeled search and theme controls, visible keyboard focus, live filter announcements, focus restoration after reset, alt text, and reduced-motion support are included. Main body copy is 17–18px, with larger headings and touch targets. Validation is recorded in `docs/VALIDATION.md`.

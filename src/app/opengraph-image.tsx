@@ -58,8 +58,8 @@ export default async function OpenGraphImage() {
               letterSpacing: -3,
             }}
           >
-            <span>Software that works.</span>
-            <span style={{ color: "#295bff" }}>For your business.</span>
+            <span>Software built to</span>
+            <span style={{ color: "#295bff" }}>fit your business.</span>
           </div>
           {/* ImageResponse uses a native image with embedded local asset bytes. */}
           <img
@@ -81,7 +81,7 @@ export default async function OpenGraphImage() {
             color: "#52617a",
           }}
         >
-          <span>WEB APPLICATIONS · AI EXPERIENCES · PRODUCT DEVELOPMENT</span>
+          <span>WEBSITES · APPS · AUTOMATION</span>
           <span style={{ color: "#172238" }}>syntaxsurge.com</span>
         </div>
       </div>
